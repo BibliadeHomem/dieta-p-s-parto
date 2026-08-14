@@ -3,6 +3,10 @@ import './quiz.js';
 import { atribuirVariante, aplicarVariante } from './experimento.js';
 import { criarAnalytics } from './analytics.js';
 
+function metaEvento(nome, dados = {}) {
+  if (typeof window.fbq === 'function') window.fbq('trackCustom', nome, dados);
+}
+
 initReveal();
 initScroll().start();
 
@@ -17,6 +21,14 @@ document.querySelector('[data-quiz]')?.addEventListener('input', () => {
   quizIniciado = true;
   analytics.registrar('quiz_iniciado', { variante });
 }, { once: true });
+
+document.querySelector('[data-ir="quiz"]')?.addEventListener('click', () => {
+  metaEvento('QuizStarted');
+});
+
+document.addEventListener('quiz:etapa-concluida', ({ detail }) => {
+  metaEvento(`QuizStep${detail.etapa}Completed`, { step: detail.etapa, field: detail.chave });
+});
 
 /* Peça 4: liga o resultado do quiz aos 3 nós da tela de resultado. */
 const FASE_TEXTO = {
@@ -50,6 +62,7 @@ document.addEventListener('quiz:concluido', (ev) => {
     conteudo.inert = false;
   }
   analytics.registrar('quiz_concluido', { variante });
+  metaEvento('QuizCompleted');
 
   const resultado = document.getElementById('resultado');
   if (resultado) {

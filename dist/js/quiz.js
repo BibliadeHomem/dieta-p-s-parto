@@ -152,6 +152,10 @@ export function initQuiz(raiz) {
       return;
     }
 
+    document.dispatchEvent(new CustomEvent('quiz:etapa-concluida', {
+      detail: { etapa: i + 1, chave }
+    }));
+
     ir(i + 1);
   }
 
