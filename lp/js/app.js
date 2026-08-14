@@ -85,8 +85,25 @@ if (oferta && 'IntersectionObserver' in window) {
   observadorOferta.observe(oferta);
 }
 
+const scrollMetaMarcados = new Set();
+const scrollMetaPercentuais = [25, 50, 75, 90];
+addEventListener('scroll', () => {
+  const altura = document.documentElement.scrollHeight - innerHeight;
+  if (altura <= 0) return;
+  const percentual = Math.round((scrollY / altura) * 100);
+  for (const marco of scrollMetaPercentuais) {
+    if (percentual >= marco && !scrollMetaMarcados.has(marco)) {
+      scrollMetaMarcados.add(marco);
+      metaEvento('PageScroll', { percent: marco });
+    }
+  }
+}, { passive: true });
+
 for (const checkout of document.querySelectorAll('[data-checkout]')) {
-  checkout.addEventListener('click', () => analytics.registrar('cta_clicado', { variante }));
+  checkout.addEventListener('click', () => {
+    analytics.registrar('cta_clicado', { variante });
+    metaEvento('InitiateCheckout', { content_name: 'Dieta Pós-Parto', value: 37, currency: 'BRL' });
+  });
 }
 document.addEventListener('checkout:convertido', () => {
   analytics.registrar('conversao', { variante });
@@ -94,6 +111,9 @@ document.addEventListener('checkout:convertido', () => {
 
 /* Âncoras internas: rolagem suave só aqui, nunca global. */
 const desbloquear = document.querySelector('[data-unlock-content]');
+desbloquear?.addEventListener('click', () => {
+  metaEvento('ContinueAfterResult', { placement: 'after_endocrino_notice' });
+});
 const conteudoPosResultado = document.querySelector('[data-after-result]');
 desbloquear?.addEventListener('click', () => {
   if (!conteudoPosResultado) return;
