@@ -1,0 +1,540 @@
+/* ============================================================================
+   PEÇA 5 — Transição resultado → oferta
+   ----------------------------------------------------------------------------
+   Este arquivo abre com as PRIMITIVAS DO ATO FRIO (peças 5, 6 e 7). Elas moram
+   aqui porque montar.mjs concatena em ordem numérica e 05 vem antes de 06/07.
+   Nada aqui vaza para fora do ato: todo seletor é .ato-frio, .quadro ou frio-*.
+
+   Três decisões que respondem ao que o crítico cobra:
+
+   1. QUADRO, não coluna. Cada .quadro é uma cena inteira com palco próprio.
+      Uma peça de copy longa vira quatro composições em vez de uma parede de
+      texto com uma foto esticada atrás.
+
+   2. A ROTAÇÃO PRECISA TER ARESTA. Girar um gradiente full-bleed não lê. Quem
+      gira aqui são objetos com linha reta: o piso com sulcos, a vidraça com
+      caixilho, os batentes da moldura. Linha reta sob perspectiva converge, e
+      convergência é a única prova visual de que algo girou. A rotação é
+      ESTÁTICA no filho (existe parada, existe com prefers-reduced-motion) e o
+      motor só soma um delta por cima via --giro na .camada.
+
+   3. O TEXTO TEM CHÃO PRÓPRIO. .frio-placa é um painel opaco a 92%, não um
+      véu. Sobre o pixel mais claro da foto (pele iluminada, ~#C0B0A0) a
+      composição dá ~#171B21, e --texto-2 (#9DB0C0) sobre isso mede ~7,8:1.
+      Nenhum corpo de texto encosta em pele iluminada em nenhum quadro.
+   ========================================================================== */
+
+/* --- Corredor -------------------------------------------------------------- */
+
+/* O CHÃO DO ATO É CONTÍNUO. Cada quadro tem palco próprio, mas se cada palco
+   pintasse o próprio fundo apareceria uma faixa horizontal reta na emenda —
+   e emenda reta cruzando a tela inteira denuncia a montagem na hora. Então a
+   base de cor é UMA só, declarada na <section>, e ela atravessa os quatro
+   quadros. Os palcos ficam transparentes e carregam só objeto e luz.
+   A escala de cor do gradiente é o arco do ato: 5 é o fundo do poço. */
+.ato-frio {
+  padding-block: 0;
+  overflow: clip;
+}
+.ato-frio::before { display: none; }
+
+/* UM PLANO QUE CONTINUA. Entre a placa de um quadro e a do quadro seguinte
+   existiam faixas inteiras de scroll em que o único evento era a emenda de
+   1 px, e dois cartões separados por nada leem como duas paradas, não como um
+   movimento. O que falta ali não é mais um evento: é o cômodo.
+
+   Então a parede do ato ganha geometria própria, declarada na <section> e não
+   no quadro. Ela não conhece a emenda: a quina do quarto e a lavagem de luz
+   que a janela derrama nessa parede atravessam os quatro quadros inteiros e
+   os três atos frios sem interrupção. z-index negativo de propósito — isto é
+   parede, fica ATRÁS de tudo que está no palco, nunca por cima do sujeito. */
+.ato-frio::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    /* a quina. A parede além dela é um grau mais escura, e é essa diferença de
+       luminância que faz a reta ser aresta de um canto e não um risco. */
+    linear-gradient(90deg,
+      transparent 0 48.4%,
+      rgb(176 202 230 / 0.13) 49.0%,
+      rgb(176 202 230 / 0.13) 49.4%,
+      rgb(5 9 15 / 0.34) 50.2%,
+      rgb(5 9 15 / 0.14) 63%,
+      transparent 80%),
+    /* a luz da janela lavando a parede que fica antes da quina */
+    linear-gradient(90deg,
+      transparent 0 12%,
+      rgb(126 164 206 / 0.10) 33%,
+      rgb(126 164 206 / 0.055) 45%,
+      transparent 49.0%);
+  /* nas duas pontas do ato a parede tem que sumir por atenuação, senão a
+     entrada e a saída do ato ganham uma quina que começa do nada */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 3%, #000 97%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 3%, #000 97%, transparent 100%);
+}
+
+/* A parede do ato. O ripado diagonal fraquíssimo existe por um motivo só: uma
+   faixa de cor chapada entre dois quadros lê como buraco. Com textura
+   contínua, nenhuma banda do scroll fica vazia de informação, nem no ponto de
+   emenda entre um quadro e o próximo. */
+.ato-frio {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.transicao {
+  background-image:
+    repeating-linear-gradient(96deg, transparent 0 6.2%, rgb(150 178 206 / 0.020) 6.2% 6.9%),
+    linear-gradient(to bottom, #0A0F16 0%, #0C121A 44%, #0F1720 100%);
+}
+
+.quadro {
+  position: relative;
+  min-block-size: 76svh;
+  display: grid;
+  align-content: center;
+  padding-block: var(--s-6);
+  isolation: isolate;
+}
+.quadro--alto { min-block-size: 96svh; }
+
+/* Segunda metade da mesma decisão: o palco desvanece nas duas pontas, então
+   nenhum objeto (recorte, placa fotográfica, caixilho) é cortado por uma reta
+   na emenda entre quadros. O que sai do quadro sai por atenuação, que é como
+   a distância já se comporta no resto da cena. */
+.quadro .cena__palco {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 91%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 91%, transparent 100%);
+}
+
+/* Lado da placa. O sujeito ocupa o lado contrário, sempre. */
+.quadro .cena__conteudo { display: flex; }
+.quadro--esq .cena__conteudo { justify-content: flex-start; }
+.quadro--dir .cena__conteudo { justify-content: flex-end; }
+.quadro--centro .cena__conteudo { justify-content: center; }
+
+/* --- Placa de texto -------------------------------------------------------- */
+
+.frio-placa {
+  position: relative;
+  z-index: 5;
+  inline-size: 100%;
+  max-inline-size: 33rem;
+  padding: clamp(1.2rem, 3vw, 2rem) clamp(1.2rem, 3vw, 2.2rem);
+  border-radius: var(--raio-3);
+  background:
+    linear-gradient(176deg,
+      rgb(10 14 20 / 0.93) 0%,
+      rgb(12 17 24 / 0.90) 58%,
+      rgb(9 13 19 / 0.93) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(143 165 184 / 0.22),
+    inset 0 0 0 1px rgb(143 165 184 / 0.10),
+    0 34px 80px -34px rgb(0 0 0 / 0.85);
+}
+.frio-placa > * + * { margin-block-start: var(--s-4); }
+/* Escala própria, fluida, sem media query: em 390 px o corpo cai para ~16 px,
+   o que é o que devolve à cena a faixa de tela que a placa comia inteira. */
+.frio-placa .corpo {
+  max-inline-size: 42ch;
+  font-size: clamp(1rem, 0.86rem + 0.55vw, 1.28rem);
+  text-shadow: 0 1px 16px rgb(0 0 0 / 0.55);
+}
+
+.frio-titulo {
+  color: var(--tinta-clara);
+  max-inline-size: 20ch;
+  text-shadow: 0 2px 26px rgb(0 0 0 / 0.7);
+}
+
+/* Linha de virada: mesma frase da copy, tratamento de placa de sinalização. */
+.frio-linha {
+  color: var(--tinta-clara);
+  font-size: var(--t-lg);
+  font-weight: 660;
+  line-height: var(--lh-head);
+  letter-spacing: -0.018em;
+  max-inline-size: 22ch;
+}
+
+/* A batida curta. Só ela ganha a cor da luz da cena. */
+.frio-batida {
+  color: var(--frio);
+  font-size: var(--t-xl);
+  font-weight: 760;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.03em;
+  max-inline-size: 14ch;
+}
+
+.frio-marca {
+  color: var(--tinta-clara);
+  font-weight: 620;
+  padding-inline-start: var(--s-3);
+  border-inline-start: 2px solid rgb(143 165 184 / 0.55);
+}
+
+.frio-fecho {
+  color: var(--tinta-clara);
+  padding-block-start: var(--s-4);
+  border-block-start: 1px solid rgb(143 165 184 / 0.24);
+}
+
+/* --- Sujeito recortado ----------------------------------------------------- */
+/* NUNCA .camada__img aqui: object-fit:cover em PNG com alfa estica o recorte
+   até o retângulo da camada e destrói a silhueta. Sujeito é posicionado pela
+   altura, com a largura saindo da proporção intrínseca. */
+
+.frio-sujeito {
+  position: absolute;
+  inline-size: auto;
+  max-inline-size: none;
+  block-size: auto;
+  object-fit: contain;
+  /* A borda vertical do arquivo (o alfa foi cortado no limite do quadro
+     original) vira uma reta visível em tela larga. Seis por cento de
+     esvanecimento nas laterais transformam essa reta em queda de luz. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
+}
+
+/* --- Piso em fuga ---------------------------------------------------------- */
+/* O sulco do assoalho é o que prova a rotação: linhas paralelas que convergem.
+   Custa zero byte e é o cue de profundidade mais barato que existe. */
+
+.frio-piso {
+  position: absolute;
+  inset-inline: -34%;
+  inset-block-end: 0;
+  block-size: 74%;
+  transform: rotateX(72deg);
+  transform-origin: 50% 100%;
+  background:
+    linear-gradient(180deg, transparent 0%, rgb(143 165 184 / 0.06) 40%, rgb(143 165 184 / 0.16) 100%),
+    repeating-linear-gradient(90deg,
+      transparent 0 6.4%,
+      rgb(160 186 212 / 0.13) 6.4% 6.8%);
+  -webkit-mask-image: radial-gradient(80% 112% at 50% 100%, #000 22%, transparent 82%);
+          mask-image: radial-gradient(80% 112% at 50% 100%, #000 22%, transparent 82%);
+}
+.frio-piso--perto { block-size: 54%; transform: rotateX(78deg); opacity: 0.85; }
+.frio-piso--longe { block-size: 88%; transform: rotateX(67deg) rotateZ(1.5deg); opacity: 0.8; }
+
+/* --- Vidraça --------------------------------------------------------------- */
+/* A janela é a fonte de luz diegética do ato inteiro. Girada 27deg no eixo Y
+   com caixilho visível, ela é a rotação mais legível da página.
+
+   REPARO DA ESQUADRIA (achado do crítico, rodada 1). A versão anterior era um
+   retângulo girado com fio de 1 px e o interior a 6% de alfa no pé: sem
+   superfície, sem luz, sem espessura. Não lia como janela, lia como slot de
+   imagem que não carregou. Aparecia assim em desktop e nos dois quadros de
+   mobile. As quatro coisas que faltavam, e que estão abaixo:
+
+   1. CÉU DENTRO DO VIDRO. Uma vidraça sem nada atrás não é vidraça. Agora ela
+      tem pré-amanhecer próprio, com linha de horizonte e o primeiro fio âmbar
+      no pé. É esse degrau de luminância que transforma contorno em superfície.
+   2. REFLEXO. Vidro só lê como vidro quando devolve alguma luz. O facho
+      diagonal em screen no ::before é o que separa "painel de vidro" de
+      "buraco na parede".
+   3. CAIXILHO COM CORPO. Cada montante ganhou face clara e face de sombra
+      coladas: 1 px chapado é fio de wireframe, 3 px com duas faces é ripa que
+      ocupa espaço e recebe luz de um lado só.
+   4. PEITORIL. Um plano deitado em X sob o vidro, dentro do mesmo preserve-3d,
+      então ele converge junto com o resto da cena. É o que ancora a janela na
+      parede em vez de deixá-la flutuando. */
+
+.frio-vidraca {
+  position: absolute;
+  inset: 12% 16% 16% 10%;
+  transform: rotateY(27deg);
+  transform-origin: 12% 50%;
+  /* o peitoril é filho e gira em X: sem isto ele achata e vira uma barra */
+  transform-style: preserve-3d;
+  border-radius: 0.4rem;
+  background:
+    /* O pé do céu, onde a luz se acumula. Frio de propósito: a peça 5 é o
+       fundo do poço do arco e não tem um pixel de âmbar. Quem esquenta esta
+       faixa é a peça 7, que sobrescreve o background inteiro. */
+    linear-gradient(to top,
+      rgb(178 202 228 / 0.22) 0%,
+      rgb(146 174 206 / 0.12) 8%,
+      transparent 21%),
+    /* a linha do horizonte. É a única aresta horizontal do céu, e é ela que
+       diz que existe distância atrás do vidro. Fica em 72%, bem abaixo do
+       montante horizontal do caixilho (50%): a 62% as duas linhas quase
+       encostavam e o par lia como caixilho duplicado, não como horizonte. */
+    linear-gradient(to bottom,
+      transparent 0 71.6%,
+      rgb(154 186 220 / 0.20) 71.6% 72.4%,
+      transparent 72.4%),
+    linear-gradient(178deg,
+      rgb(104 142 186 / 0.40) 0%,
+      rgb(78 112 156 / 0.28) 46%,
+      rgb(44 66 96 / 0.19) 78%,
+      rgb(30 46 70 / 0.15) 100%);
+  box-shadow:
+    /* lábio escuro na aresta externa, caixilho claro logo dentro: a ordem
+       importa, a primeira sombra é pintada por cima */
+    inset 0 0 0 1px rgb(8 14 24 / 0.55),
+    inset 0 0 0 4px rgb(174 200 226 / 0.32),
+    /* a luz que entra encosta no pé do vidro antes de cair no piso */
+    inset 0 -16px 28px -12px rgb(178 202 228 / 0.20),
+    0 0 90px -4px rgb(126 164 204 / 0.32);
+}
+/* O reflexo. Duas faixas, uma forte e uma fraca, na diagonal do vidro. */
+.frio-vidraca::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(114deg,
+    transparent 0 24%,
+    rgb(206 228 252 / 0.15) 32%,
+    rgb(206 228 252 / 0.04) 40%,
+    transparent 46%,
+    transparent 61%,
+    rgb(206 228 252 / 0.09) 67%,
+    transparent 75%);
+  mix-blend-mode: screen;
+}
+/* O peitoril. Deitado em X e um pouco mais largo que o vão, como toda soleira. */
+.frio-vidraca::after {
+  content: "";
+  position: absolute;
+  inset-inline: -2.6%;
+  inset-block-start: 100%;
+  block-size: clamp(1rem, 2.4vw, 2rem);
+  transform: rotateX(74deg);
+  transform-origin: 50% 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+    rgb(190 210 234 / 0.30) 0%,
+    rgb(124 150 182 / 0.15) 36%,
+    transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+/* caixilho: 3 colunas x 2 fileiras. As verticais convergem, e é isso que o
+   olho lê como "isso está em ângulo". Cada montante é uma ripa de 3 px com
+   face iluminada e face de sombra, não um risco de 1 px. */
+.frio-vidraca > i {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background:
+    repeating-linear-gradient(90deg,
+      transparent 0 calc(100% / 3 - 6px),
+      rgb(200 220 242 / 0.44) calc(100% / 3 - 6px) calc(100% / 3 - 3px),
+      rgb(10 18 30 / 0.52)    calc(100% / 3 - 3px) calc(100% / 3)),
+    repeating-linear-gradient(0deg,
+      transparent 0 calc(100% / 2 - 6px),
+      rgb(200 220 242 / 0.38) calc(100% / 2 - 6px) calc(100% / 2 - 3px),
+      rgb(10 18 30 / 0.46)    calc(100% / 2 - 3px) calc(100% / 2));
+}
+.frio-vidraca--baixa {
+  inset: 16% 12% 12% 14%;
+  transform: rotateY(-24deg);
+  transform-origin: 88% 50%;
+}
+/* girada para o outro lado, o reflexo tem que vir do outro lado também */
+.frio-vidraca--baixa::before { scale: -1 1; }
+
+/* --- Facho de luz ---------------------------------------------------------- */
+/* O que a janela derrama no chão. Deitado em X, então lê como luz no assoalho
+   e não como um retângulo claro flutuando. */
+
+.frio-facho {
+  position: absolute;
+  inset-block: 30% -26%;
+  inset-inline-start: 8%;
+  inline-size: min(56%, 36rem);
+  transform: rotateX(66deg) rotateZ(-7deg);
+  transform-origin: 50% 0%;
+  background: linear-gradient(178deg,
+    rgb(158 192 228 / 0.26) 0%,
+    rgb(140 176 214 / 0.11) 46%,
+    transparent 100%);
+  mix-blend-mode: screen;
+  filter: blur(clamp(8px, 2.2vw, 26px));
+  /* sem esta máscara o facho lê como um retângulo cinza desfocado, não como
+     luz: luz não tem quatro cantos */
+  -webkit-mask-image: radial-gradient(58% 86% at 50% 6%, #000 8%, transparent 74%);
+          mask-image: radial-gradient(58% 86% at 50% 6%, #000 8%, transparent 74%);
+  opacity: calc(0.42 + var(--e) * 0.48);
+}
+
+/* --- Moldura de primeiro plano --------------------------------------------- */
+/* O equivalente da rocha/caverna da barra. Dois batentes girados em torno da
+   própria aresta externa e um lintel deitado em X. A aresta interna clara é
+   de propósito: é ela que denuncia o ângulo. Serve também de scrim lateral,
+   que é o que garante o contraste nas bordas do quadro. */
+
+.frio-moldura {
+  position: absolute;
+  inset: -10% -6%;
+  transform-style: preserve-3d;
+}
+.frio-moldura > i { position: absolute; display: block; }
+
+.frio-moldura__esq,
+.frio-moldura__dir {
+  inset-block: -6%;
+  inline-size: clamp(3.4rem, 15vw, 13rem);
+}
+.frio-moldura__esq {
+  inset-inline-start: 0;
+  transform: rotateY(34deg);
+  transform-origin: left center;
+  background: linear-gradient(90deg, #020407 0%, #03050A 68%, rgb(3 5 10 / 0) 100%);
+  border-inline-end: 2px solid rgb(150 178 206 / 0.26);
+  box-shadow: 6px 0 26px -6px rgb(126 164 204 / 0.16);
+}
+.frio-moldura__dir {
+  inset-inline-end: 0;
+  transform: rotateY(-34deg);
+  transform-origin: right center;
+  background: linear-gradient(270deg, #020407 0%, #03050A 68%, rgb(3 5 10 / 0) 100%);
+  border-inline-start: 2px solid rgb(150 178 206 / 0.26);
+  box-shadow: -6px 0 26px -6px rgb(126 164 204 / 0.16);
+}
+.frio-moldura__alto {
+  inset-inline: -4%;
+  inset-block-start: 0;
+  block-size: clamp(3.2rem, 14svh, 10rem);
+  transform: rotateX(-26deg);
+  transform-origin: top center;
+  background: linear-gradient(180deg, #020407 0%, #03050A 54%, rgb(3 5 10 / 0) 100%);
+  border-block-end: 1px solid rgb(150 178 206 / 0.16);
+}
+.frio-moldura--larga .frio-moldura__esq,
+.frio-moldura--larga .frio-moldura__dir { inline-size: clamp(3.4rem, 17vw, 15rem); }
+.frio-moldura--porta .frio-moldura__esq { transform: rotateY(46deg); inline-size: clamp(3.6rem, 19vw, 17rem); }
+.frio-moldura--porta .frio-moldura__dir { transform: rotateY(-30deg); }
+
+/* ============================================================================
+   Peça 5 propriamente dita
+   ========================================================================== */
+
+/* O quarto às cinco da manhã. Só GLOW: a cor de base é contínua e vem da
+   <section>, então nada aqui pode ter aresta reta. A peça 5 não tem um pixel
+   de âmbar. O âmbar só nasce na peça 7, no horizonte. */
+.tra-quarto {
+  position: absolute;
+  inset: -12%;
+  background: radial-gradient(58% 46% at 66% 24%, rgb(96 132 176 / 0.22), transparent 72%);
+}
+.tra-quarto--fria {
+  background: radial-gradient(54% 50% at 24% 30%, rgb(112 150 194 / 0.26), transparent 74%);
+}
+.tra-quarto--fundo {
+  background: radial-gradient(50% 44% at 74% 34%, rgb(102 138 182 / 0.20), transparent 76%);
+}
+
+/* A mãe, perto. Recorte com alfa real, então ela flutua na cena que montamos:
+   fundo nosso, chão nosso, moldura nossa. Não é uma foto retangular colada. */
+.tra-mae {
+  inset-block-end: -2%;
+  inset-inline-end: 1%;
+  block-size: 92%;
+  filter:
+    drop-shadow(-26px 12px 46px rgb(0 0 0 / 0.6))
+    saturate(0.82) brightness(0.94);
+}
+.tra-facho { inset-inline-start: 4%; inline-size: min(60%, 40rem); }
+
+.tra-facho--b { inset-inline-start: 2%; inline-size: min(52%, 34rem); transform: rotateX(70deg) rotateZ(6deg); }
+.tra-facho--c { inset-block: 48% -30%; inset-inline-start: 22%; inline-size: min(46%, 30rem); }
+.tra-facho--d { inset-inline-start: 0%; inline-size: min(58%, 38rem); transform: rotateX(68deg) rotateZ(-11deg); }
+
+/* A mesma mãe, longe. Menor, mais dessaturada, mais lavada pela névoa: a
+   distância é contada pela atenuação, não pela escala sozinha. */
+.tra-mae-longe {
+  inset-block-end: 6%;
+  inset-inline-end: 8%;
+  block-size: 66%;
+  opacity: 0.74;
+  filter: saturate(0.6) brightness(0.78) contrast(0.92)
+          drop-shadow(-14px 8px 30px rgb(0 0 0 / 0.55));
+}
+
+/* --- Retrato --------------------------------------------------------------- */
+/* Mobile não é degradação: os mesmos cinco planos continuam existindo. O que
+   muda é a ARQUITETURA do quadro — o sujeito sobe para uma faixa superior e a
+   placa ocupa a base, em vez de os dois disputarem a mesma coluna. */
+
+@media (max-width: 47.9375rem) {
+  /* O quadro vira dois andares: FAIXA DE CENA em cima, placa embaixo. Toda a
+     cenografia migra para o terço superior, que é justamente a faixa que fica
+     livre entre a placa do quadro anterior e a deste. O resultado é um ritmo
+     cena / texto / cena / texto ao longo do scroll inteiro, em vez de duas
+     placas coladas com um vão morto no meio. */
+  .quadro {
+    min-block-size: 88svh;
+    align-content: end;
+    padding-block: var(--s-4) var(--s-5);
+  }
+  .quadro--alto { min-block-size: 100svh; }
+
+  /* A placa não vai de ponta a ponta: a tira que sobra de um lado mostra o
+     batente girado e o que está atrás dele. É pouco espaço, e é ele que
+     mantém a leitura de "existe um espaço além do cartão" em 390 px. */
+  .frio-placa { max-inline-size: 88%; padding: var(--s-4); }
+  .frio-placa .corpo { max-inline-size: none; }
+  .frio-placa > * + * { margin-block-start: var(--s-3); }
+
+  .frio-moldura { inset: -8% -4%; }
+  .frio-moldura__esq,
+  .frio-moldura__dir { inline-size: clamp(2.2rem, 17vw, 6rem); }
+  .frio-moldura--larga .frio-moldura__esq,
+  .frio-moldura--larga .frio-moldura__dir,
+  .frio-moldura--porta .frio-moldura__esq { inline-size: clamp(2.8rem, 22vw, 7.5rem); }
+  .frio-moldura__alto { block-size: clamp(2.4rem, 9svh, 5rem); }
+
+  /* Piso e facho sobem para a faixa de cena; ancorados na base ficariam
+     escondidos atrás da placa. */
+  .frio-piso { block-size: 34%; inset-block-end: 40%; inset-inline: -40%; }
+  .frio-piso--perto { block-size: 28%; inset-block-end: 42%; }
+  .frio-piso--longe { block-size: 38%; inset-block-end: 38%; }
+
+  .frio-vidraca { inset: 3% 22% 52% 4%; transform: rotateY(32deg); }
+  .frio-vidraca--baixa { inset: 3% 4% 52% 22%; transform: rotateY(-30deg); }
+
+  .frio-facho,
+  .tra-facho, .tra-facho--b, .tra-facho--c, .tra-facho--d {
+    inset-block: 8% 46%;
+    inset-inline-start: -10%;
+    inline-size: 78%;
+  }
+
+  .tra-mae { block-size: 50%; inset-block: 2% auto; inset-inline-end: -12%; }
+  .tra-mae-longe { block-size: 46%; inset-block: 2% auto; inset-inline-end: 2%; }
+
+  .frio-linha { font-size: var(--t-md); max-inline-size: none; }
+  .frio-batida { font-size: var(--t-lg); max-inline-size: none; }
+  .frio-titulo { max-inline-size: none; }
+}
+
+/* Tablet retrato (768 a 1023). A largura já comporta duas colunas, mas não a
+   placa de 33rem: ela cobriria o sujeito inteiro. A ESTRUTURA continua lado a
+   lado, só o repartimento muda. */
+@media (min-width: 48rem) and (max-width: 63.999rem) {
+  .frio-placa { max-inline-size: 27rem; }
+  .quadro { min-block-size: 72svh; }
+  .quadro--alto { min-block-size: 88svh; }
+  .tra-mae { block-size: 74%; inset-inline-end: -4%; }
+  .tra-mae-longe { block-size: 56%; inset-inline-end: 2%; }
+}
+
+/* Paisagem baixa de celular: 844x390. Sem a faixa superior não cabe nada, o
+   quadro volta a ser lado a lado. */
+@media (max-width: 60rem) and (max-height: 30rem) {
+  .quadro { min-block-size: 118svh; align-content: center; }
+  .quadro--esq .cena__conteudo { justify-content: flex-start; }
+  .quadro--dir .cena__conteudo { justify-content: flex-end; }
+  .frio-placa { max-inline-size: 26rem; }
+  .tra-mae { block-size: 92%; inset-block-end: -6%; inset-inline-end: -4%; }
+  .tra-mae-longe { block-size: 52%; inset-block-end: 10%; }
+}

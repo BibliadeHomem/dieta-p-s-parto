@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Teste isolado — Peça 8, mecanismo em profundidade</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/cena.css">
+<link rel="stylesheet" href="css/secoes/08-mecanismo.css">
+<style>
+  :root { --grao: url("img/textura-grao.png"); }
+  .t-espaco { min-block-size: 100svh; display: grid; place-items: center;
+              background: var(--azul-noite); color: var(--tinta-fraca); font-size: 0.9rem; }
+  .t-espaco--depois { background: var(--aurora); }
+</style>
+</head>
+<body>
+<main>
+<div class="t-espaco">antes (peça 7, ato frio)</div>
+
+<!-- ============================================================================
+     PEÇA 8 — Mecanismo em profundidade
+     Ato: tecnico. Luz neutra de mesa de trabalho, realce sálvia.
+
+     A copy manda: "Deixa eu te mostrar a conta por dentro." Então a seção abre
+     a conta por dentro, literalmente, em três placas de vidro empilhadas em
+     profundidade real: gasto em repouso, atividade, lactação. Conforme --p
+     avança elas se afastam no eixo Z, a pilha gira de leve, e no fim assentam
+     alinhadas com a linha de soma acesa embaixo.
+
+     TEXTO NÍTIDO SOBRE PLACA 3D — como está resolvido aqui:
+       As placas (.mec__vidro) são as únicas coisas com translateZ/rotate3d.
+       Elas vivem dentro de .mec__vidros, que é aria-hidden, não tem uma única
+       letra, e é um irmão absoluto dos rótulos. Os rótulos (.mec__nivel) são
+       irmãos em 2D, no mesmo box, e recebem SÓ translate3d(0, Y, 0) — o mesmo
+       --ysep que a placa correspondente usa. Ou seja: o texto é sincronizado
+       por custom property com a placa, nunca herda perspective, nunca herda
+       scale, nunca é rasterizado numa escala 3D. Alinhamento entre vidro e
+       rótulo é garantido porque os dois usam o mesmo --i e o mesmo --passo.
+       O preço consciente disso: a placa cresce ~11% quando vem para a frente
+       e o rótulo não cresce junto. Preferimos essa dessincronia sutil a texto
+       borrado em tela de alta densidade.
+
+     A perspectiva é var(--persp), a mesma da página inteira, para os planos
+     não discordarem entre si.
+     ========================================================================= -->
+<section class="cena cena--dupla mec" data-scene data-damp="0.12" data-ato="tecnico" aria-labelledby="mec-tit">
+
+  <!-- Atmosfera: bancada técnica. Só forma e luz, nenhuma palavra. -->
+  <div class="cena__palco cena__palco--fixo mec__palco">
+    <div class="camada" data-z="fundo" style="--deriva:5" aria-hidden="true">
+      <div class="mec__milimetrado"></div>
+    </div>
+    <div class="camada" data-z="tras" style="--deriva:10; --giro:4deg" aria-hidden="true">
+      <div class="mec__bancada"></div>
+    </div>
+    <div class="camada" data-z="meio" style="--deriva:16" aria-hidden="true">
+      <div class="mec__lampada luz"></div>
+    </div>
+    <div class="nevoa" aria-hidden="true"></div>
+    <div class="vinheta" aria-hidden="true"></div>
+  </div>
+
+  <div class="cena__conteudo mec__grade">
+
+    <!-- ---------------------------------------------------------------
+         A conta aberta. Diagrama puro: tudo que ele diz está escrito por
+         extenso na coluna de texto ao lado, então ele é aria-hidden e não
+         duplica leitura para quem usa leitor de tela.
+         --------------------------------------------------------------- -->
+    <div class="mec__conta" aria-hidden="true">
+
+      <div class="mec__vidros">
+        <div class="mec__grupo">
+          <div class="mec__vidro" style="--i:0; --on:var(--on1)"></div>
+          <div class="mec__vidro" style="--i:1; --on:var(--on2)"></div>
+          <div class="mec__vidro" style="--i:2; --on:var(--on3)"></div>
+        </div>
+      </div>
+
+      <span class="mec__trilho"></span>
+
+      <div class="mec__nivel" style="--i:0; --on:var(--on1)">
+        <span class="mec__op"></span>
+        <span class="mec__rotulo">
+          <span class="mec__nome">gasto em repouso</span>
+          <span class="mec__coefs">
+            <b class="mec__chip">10</b><b class="mec__chip">6,25</b><b class="mec__chip">5</b><b class="mec__chip">161</b>
+          </span>
+        </span>
+      </div>
+
+      <div class="mec__nivel" style="--i:1; --on:var(--on2)">
+        <span class="mec__op">&#215;</span>
+        <span class="mec__rotulo">
+          <span class="mec__nome">nível de atividade</span>
+          <span class="mec__barras"><i></i><i></i><i></i><i></i></span>
+        </span>
+      </div>
+
+      <!-- Lactação é FAIXA, nunca número. A copy é explícita: a ciência tem
+           uma faixa estimada e aqui não se crava número fixo de fórmula. -->
+      <div class="mec__nivel" style="--i:2; --on:var(--on3)">
+        <span class="mec__op">+</span>
+        <span class="mec__rotulo">
+          <span class="mec__nome">lactação</span>
+          <span class="mec__faixa"><i></i><em></em><i></i></span>
+          <span class="mec__faixa-nome">faixa estimada</span>
+        </span>
+      </div>
+
+      <div class="mec__total" style="--on:var(--onT)">
+        <span class="mec__op">=</span>
+        <span class="mec__rotulo">
+          <span class="mec__nome mec__nome--total">mínimo calórico seguro</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- ---------------------------------------------------------------
+         A coluna de texto. Plana, 2D, sempre nítida. Sete blocos, cada um
+         acompanhando um estágio da pilha.
+         --------------------------------------------------------------- -->
+    <div class="mec__fluxo">
+      <h2 class="h2 mec__abre" id="mec-tit" data-reveal>Deixa eu te mostrar a conta por dentro. Não pra você confiar em mim. Pra você conferir sozinha.</h2>
+
+    <div class="mec__bloco mec__bloco--piso">
+      <p class="corpo corpo-l" data-reveal>Tem uma diferença que quase ninguém explica. "Quanto comer para emagrecer" é uma pergunta de dieta. "Mínimo calórico seguro" é uma pergunta diferente, e vem antes. É o piso. É o tanto de energia que seu corpo precisa só para funcionar, sem contar o que você gasta cuidando de casa, de bebê, de você. Abaixo desse piso, o corpo entra em alerta. Acima dele, você ainda tem margem para escolher.</p>
+      <p class="corpo corpo-l" data-reveal style="--atraso:110ms">Todo cardápio de internet começa depois desse piso. O problema é que quase nenhum calcula o piso primeiro. Ele chuta um número redondo e monta a dieta em cima do chute.</p>
+    </div>
+
+    <div class="mec__bloco mec__bloco--nome">
+      <p class="corpo corpo-l" data-reveal>A conta que a gente usa tem nome: fórmula de Mifflin-St Jeor. Não é fórmula nossa, é fórmula clínica, usada há décadas para estimar gasto calórico de forma individual. Ela não olha para "mulheres" em geral. Olha para o seu peso, sua altura, sua idade. Três números seus, não uma média de revista.</p>
+      <p class="corpo corpo-l" data-reveal style="--atraso:110ms">Só que peso, altura e idade não bastam para você agora. Você amamenta. E amamentar tem custo calórico real, o corpo gasta energia para produzir leite, isso é fisiologia, não opinião. Uma fórmula que ignora isso erra para você especificamente, mesmo que esteja certa para outra mulher que não amamenta. É por isso que pegar o número genérico de um site qualquer é chute duplo: chute na fórmula, chute na lactação.</p>
+    </div>
+
+    <div class="mec__bloco mec__bloco--formula">
+      <p class="corpo corpo-l" data-reveal>Agora, a parte que quase ninguém te mostra: a fórmula de verdade, com os números dela, não só o nome dela. Não com o seu peso e a sua altura, esses só você vai digitar no quiz, mas com a conta em si, para você acompanhar com a calculadora do celular do seu lado, se quiser.</p>
+      <p class="corpo corpo-l mec__chamada" data-reveal style="--atraso:90ms">A fórmula, para mulher, é esta:</p>
+      <p class="mec__formula" data-reveal="escala" style="--atraso:150ms"><span class="mec__alvo">gasto em repouso</span> = (<b class="mec__coef">10</b> vezes o peso) + (<b class="mec__coef">6,25</b> vezes a altura) − (<b class="mec__coef">5</b> vezes a idade) − <b class="mec__coef">161</b></p>
+      <p class="corpo corpo-l" data-reveal style="--atraso:220ms">Peso entra em quilos, altura entra em centímetros, idade entra em anos, mas os números que ficam fixos na conta, os que não mudam de mulher para mulher, são o <b class="mec__coef">10</b>, o <b class="mec__coef">6,25</b>, o <b class="mec__coef">5</b> e o <b class="mec__coef">161</b>. São os multiplicadores da fórmula em si, não o corpo de ninguém. O seu peso e a sua altura são seus, só o quiz sabe, só você vai digitar. Os coeficientes acima, esses são públicos, são da literatura clínica, e valem exatamente assim para qualquer mulher que rodar a conta.</p>
+    </div>
+
+    <div class="mec__bloco mec__bloco--camadas">
+      <p class="corpo corpo-l" data-reveal>Repare que esse resultado ainda não é o final. Ele é só o gasto do corpo parado, o que você queimaria deitada o dia inteiro. Depois disso, a conta multiplica esse número pelo nível de atividade do seu dia, porque corpo que anda, carrega, sobe escada gasta mais que corpo parado. E se você amamenta, soma um ajuste extra, porque produzir leite consome energia própria do seu corpo, separada de tudo o resto. A ciência sabe que esse ajuste existe e tem uma faixa estimada, mas ele varia de mulher para mulher, então não cravamos aqui um número fixo de fórmula: é o quiz que aplica o ajuste certo para o que você declarar sobre amamentação.</p>
+      <p class="corpo corpo-l" data-reveal style="--atraso:110ms">Gasto em repouso, mais atividade, mais lactação, tudo somado: esse é o mínimo calórico seguro. Uma conta de gasto, não uma promessa de resultado. Ela não pergunta quanto você quer perder. Ela não promete uma data. Ela calcula o que o seu corpo gasta, hoje, considerando que você amamenta.</p>
+    </div>
+
+    <div class="mec__bloco mec__bloco--seu">
+      <p class="corpo corpo-l" data-reveal>É por isso que, quando você chega no seu resultado, ele não aparece pronto como se fosse mágica. A mesma fórmula que você acabou de ver, com o mesmo 10, o mesmo 6,25, o mesmo 5, o mesmo 161, roda de novo, agora com o seu peso e a sua altura no lugar das palavras "peso" e "altura". E o número final é seu, calculado com seus dados, não emprestado de nenhuma média.</p>
+    </div>
+
+    <div class="mec__bloco mec__bloco--limite">
+      <p class="corpo corpo-l" data-reveal>E aqui vai a parte que a gente não vai fingir que não existe. Esse número é o mínimo calórico seguro considerando o que a fórmula sabe calcular: seu corpo, sua fase, sua lactação declarada. Ele não substitui pediatra, não substitui nutricionista, não conhece seu exame de sangue nem uma condição de saúde específica que só você e quem te acompanha sabem. A gente não vai te dizer "pode confiar, é seguro". A gente vai te mostrar a conta, mostrar de onde cada parte dela vem, e deixar a decisão com você. Se alguma coisa no seu caso foge do padrão, essa é justamente a hora de levar esse número para conversar com quem te acompanha, não de aceitar um número sem saber de onde ele veio.</p>
+    </div>
+
+    <div class="mec__bloco mec__bloco--fecho">
+      <p class="corpo corpo-l mec__fecho" data-reveal>É essa diferença que muda tudo. Você não está seguindo uma dieta que alguém inventou. Está vendo uma conta que você entende, com números que existem fora daqui, aplicada aos seus dados. Isso não é sobre confiar na gente. É sobre você conseguir conferir.</p>
+    </div>
+    </div>
+
+  </div>
+</section>
+
+
+<div class="t-espaco t-espaco--depois">depois (peça 9, ato aurora)</div>
+</main>
+<script type="module">
+  import { initScroll, initReveal } from './js/scroll.js';
+  initScroll(document).start();
+  initReveal(document);
+</script>
+</body>
+</html>

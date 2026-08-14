@@ -1,0 +1,533 @@
+/* ============================================================================
+   PEÇA 9 — Stack de valor
+   ----------------------------------------------------------------------------
+   Este arquivo abre com as PRIMITIVAS DO ATO AURORA (peças 9 e 10). Elas moram
+   aqui porque montar.mjs concatena em ordem numérica e 09 vem antes de 10.
+   Nada vaza para fora do ato: todo seletor é .ato-aurora, .aur-* ou .stk-*.
+   As primitivas do ato frio (05) não são reaproveitadas de propósito: o ato
+   aurora tem que poder mudar sem tocar em peça que já venceu a crítica.
+
+   Quatro decisões, cada uma respondendo a uma cobrança registrada:
+
+   1. QUADRO, NÃO PALCO FIXO. A versão anterior tinha um .cena__palco--fixo
+      que não dividia célula de grade com o conteúdo e abria um quadro morto
+      no meio do scroll. Aqui o palco fixo não existe: são quatro .aur-quadro,
+      cada um com data-scene e palco próprios. Não há posição de scroll dentro
+      da peça em que o quadro esteja sem sujeito.
+
+   2. AS FOTOS SÃO CHAPAS, NÃO RECORTES. cozinha-manha, prato-cardapio e
+      mercearia-embalagens são RGB puro, sem alfa. Fingir recorte com máscara
+      radial deixa borda cinzenta boiando. Então cada foto é um objeto físico
+      da cena: chapa com moldura, aresta iluminada, sombra projetada, girada
+      no eixo Y. É a solução que a peça 6 usou em mae-cama-janela.
+
+   3. SUPERFÍCIE, NUNCA FIO SOLTO. A lacuna que o crítico apontou no lado
+      vencedor foi retângulo em wireframe de 1 px sem nada dentro, que lê como
+      imagem que não carregou. Toda forma desenhada aqui (.aur-lamina, chapa,
+      moldura, bancada) tem preenchimento, face iluminada e sombra: recebe luz
+      e recebe perspectiva.
+
+   4. A ROTAÇÃO É ESTÁTICA NO FILHO. rotateY nas chapas, nas lâminas e nos
+      batentes; rotateX no piso, com sulcos. O --giro do motor entra só como
+      delta na .camada. Retas convergindo sob a perspectiva compartilhada é a
+      única coisa que o olho lê como "aquilo girou", e sobrevive inteira a
+      prefers-reduced-motion.
+
+   CONTRASTE: .aur-placa é painel opaco (0,94 a 0,96), não véu. Sobre o pixel
+   mais claro das fotos (~#E8D9C4 no reflexo da bancada) a composição dá
+   ~#1B1310; --texto-2 do ato (#CBB6A5) sobre isso mede ~9,4:1 e --texto
+   (#F7EDE3) ~15:1. Nenhum corpo de texto encosta em foto em nenhum quadro.
+   ========================================================================== */
+
+/* ==========================================================================
+   PRIMITIVAS DO ATO AURORA
+   ========================================================================== */
+
+/* A COR DE BASE É UMA POR <section>, NUNCA POR PALCO. Fundo por palco produz
+   uma faixa horizontal reta em cada emenda de quadro, e emenda reta cruzando
+   a tela denuncia a montagem na hora. Os palcos ficam transparentes e carregam
+   só objeto e luz.
+
+   O gradiente é o arco de luz do ato. Ele começa exatamente em #15131A, que é
+   a cor em que a peça 8 (ato tecnico) entrega a página, e sobe até #3A2A20.
+   A peça 10 pega esse #3A2A20 e continua. Sem isso o amanhecer vira corte. */
+.ato-aurora {
+  padding-block: 0;
+  overflow: clip;
+}
+.ato-aurora::before { display: none; }
+
+.stack {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image:
+    repeating-linear-gradient(94deg, transparent 0 6.4%, rgb(255 201 142 / 0.018) 6.4% 7.1%),
+    linear-gradient(to bottom, #15131A 0%, #1E1719 26%, #2A1F1E 62%, #3A2A20 100%);
+}
+
+/* --- Corredor ------------------------------------------------------------- */
+
+.aur-quadro {
+  position: relative;
+  min-block-size: 78svh;
+  display: grid;
+  align-content: center;
+  padding-block: var(--s-6);
+  isolation: isolate;
+}
+.aur-quadro--alto { min-block-size: 96svh; }
+
+/* O palco desvanece nas duas pontas: nenhuma chapa, lâmina ou batente é
+   cortado por uma reta na emenda entre quadros. O que sai do quadro sai por
+   atenuação, que é como a distância já se comporta no resto da cena. */
+.aur-quadro .cena__palco {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 91%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 91%, transparent 100%);
+}
+
+/* Placa e sujeito em lados opostos do quadro, sempre. */
+.aur-quadro .cena__conteudo { display: flex; }
+.aur-quadro--esq .cena__conteudo { justify-content: flex-start; }
+.aur-quadro--dir .cena__conteudo { justify-content: flex-end; }
+
+/* --- Placa de texto ------------------------------------------------------- */
+
+.aur-placa {
+  position: relative;
+  z-index: 5;
+  inline-size: 100%;
+  max-inline-size: 34rem;
+  padding: clamp(1.2rem, 3vw, 2rem) clamp(1.2rem, 3vw, 2.2rem);
+  border-radius: var(--raio-3);
+  background:
+    linear-gradient(176deg,
+      rgb(22 16 15 / 0.955) 0%,
+      rgb(27 20 17 / 0.935) 56%,
+      rgb(20 15 14 / 0.955) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 201 142 / 0.24),
+    inset 0 0 0 1px rgb(242 183 124 / 0.12),
+    0 34px 80px -34px rgb(0 0 0 / 0.9);
+}
+.aur-placa > * + * { margin-block-start: var(--s-4); }
+/* Escala própria, fluida, sem media query: em 390 px o corpo cai para ~16 px,
+   o que devolve à cena a faixa de tela que a placa comeria inteira. */
+.aur-placa .corpo {
+  max-inline-size: 42ch;
+  font-size: clamp(0.98rem, 0.85rem + 0.5vw, 1.22rem);
+}
+
+.aur-titulo {
+  color: var(--tinta-clara);
+  max-inline-size: 24ch;
+  font-size: clamp(1.35rem, 1.0rem + 1.5vw, 2.3rem);
+  text-shadow: 0 2px 26px rgb(0 0 0 / 0.7);
+}
+
+/* --- Céu do amanhecer ----------------------------------------------------- */
+/* Só glow, nenhuma aresta: a cor de base é contínua e vem da <section>. O
+   ponto de origem da luz desce e esquenta de quadro em quadro, como um sol
+   que sobe atrás da janela da cozinha. */
+
+.aur-ceu {
+  position: absolute;
+  inset: -12%;
+  background:
+    radial-gradient(64% 40% at 62% 12%, rgb(242 183 124 / 0.16), transparent 74%),
+    radial-gradient(48% 34% at 18% 74%, rgb(120 148 178 / 0.10), transparent 78%);
+}
+
+/* --- O fio âmbar, continuado da peça 7 ------------------------------------ */
+/* A peça 7 termina com uma linha fina no horizonte. Aqui ela é a mesma linha,
+   mais alta, mais larga e com halo maior: o amanhecer é a mesma luz crescendo,
+   não uma luz nova. */
+
+.aur-fio {
+  position: absolute;
+  inset-inline: -8%;
+  inset-block-end: 40%;
+  block-size: 3px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgb(242 183 124 / 0.5) 20%,
+    rgb(255 201 142 / 0.95) 50%,
+    rgb(242 183 124 / 0.45) 80%,
+    transparent 100%);
+  box-shadow:
+    0 0 70px 16px rgb(242 183 124 / 0.30),
+    0 0 160px 50px rgb(200 122 60 / 0.16);
+  opacity: calc(0.5 + var(--e) * 0.5);
+}
+
+/* --- Piso e bancada em fuga ------------------------------------------------ */
+/* O sulco é o que prova a rotação: paralelas que convergem. Custa zero byte e
+   é o cue de profundidade mais barato que existe. */
+
+.aur-piso {
+  position: absolute;
+  inset-inline: -34%;
+  inset-block-end: 0;
+  block-size: 70%;
+  transform: rotateX(73deg);
+  transform-origin: 50% 100%;
+  background:
+    linear-gradient(180deg, transparent 0%, rgb(242 183 124 / 0.07) 44%, rgb(255 201 142 / 0.18) 100%),
+    repeating-linear-gradient(90deg,
+      transparent 0 6.2%,
+      rgb(255 210 160 / 0.14) 6.2% 6.7%);
+  -webkit-mask-image: radial-gradient(80% 112% at 50% 100%, #000 22%, transparent 82%);
+          mask-image: radial-gradient(80% 112% at 50% 100%, #000 22%, transparent 82%);
+}
+.aur-piso--perto { block-size: 52%; transform: rotateX(79deg); }
+.aur-piso--longe { block-size: 86%; transform: rotateX(68deg) rotateZ(-1.5deg); opacity: 0.85; }
+
+/* A bancada é uma superfície, não uma linha: face de cima iluminada pelo fio,
+   aresta frontal e queda de sombra. */
+.aur-bancada {
+  position: absolute;
+  inset-inline: -26%;
+  inset-block-end: 6%;
+  block-size: 40%;
+  transform: rotateX(76deg);
+  transform-origin: 50% 100%;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background:
+    linear-gradient(180deg,
+      rgb(96 66 46 / 0.55) 0%,
+      rgb(64 44 32 / 0.42) 42%,
+      rgb(36 26 21 / 0.30) 100%),
+    repeating-linear-gradient(90deg, transparent 0 9%, rgb(255 210 160 / 0.06) 9% 9.5%);
+  box-shadow:
+    inset 0 2px 0 rgb(255 210 160 / 0.26),
+    0 -18px 60px -20px rgb(242 183 124 / 0.22);
+  -webkit-mask-image: radial-gradient(86% 120% at 50% 100%, #000 24%, transparent 86%);
+          mask-image: radial-gradient(86% 120% at 50% 100%, #000 24%, transparent 86%);
+}
+
+/* --- Chapa fotográfica ---------------------------------------------------- */
+/* As três fotos do ato são RGB sem alfa. Nunca .camada__img e nunca máscara
+   radial fingindo recorte: cada uma é uma placa física dentro da cena, com
+   espessura, aresta clara do lado da luz e sombra projetada no lado oposto.
+   A aresta reta girada é o que faz a rotação ser vista, não só suposta. */
+
+.aur-chapa {
+  position: absolute;
+  margin: 0;
+  border-radius: var(--raio-2);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 210 160 / 0.30),
+    inset 0 1px 0 rgb(255 226 196 / 0.36),
+    0 44px 96px -34px rgb(0 0 0 / 0.92);
+}
+.aur-chapa__img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) brightness(0.86);
+}
+/* A luz que existe dentro da foto, continuada para fora do enquadramento. É o
+   que costura a chapa à cena em vez de deixá-la colada por cima. */
+.aur-chapa__luz {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background:
+    radial-gradient(62% 74% at 78% 16%, rgb(255 201 142 / 0.30), transparent 66%),
+    linear-gradient(196deg, transparent 46%, rgb(24 16 13 / 0.55) 100%);
+  opacity: calc(0.62 + var(--e) * 0.38);
+}
+
+/* --- A pilha de lâminas --------------------------------------------------- */
+/* O stack de valor, literal: duas lâminas no quadro B, quatro no C, seis no D.
+   Cada lâmina é SUPERFÍCIE, com face iluminada em cima, corpo com gradiente e
+   sombra por baixo. Empilhadas em Z real dentro do preserve-3d da camada e
+   giradas em bloco, as arestas convergem e a pilha lê como pilha. */
+
+.aur-pilha {
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: rotateY(-27deg) rotateX(8deg);
+  transform-origin: 50% 100%;
+}
+.aur-pilha > i {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 0.55rem;
+  transform: translate3d(0, calc(var(--i) * -0.9rem), calc(var(--i) * -30px));
+  background:
+    linear-gradient(168deg,
+      rgb(120 84 58 / 0.92) 0%,
+      rgb(84 58 42 / 0.90) 46%,
+      rgb(52 36 28 / 0.92) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 214 172 / 0.42),
+    inset 0 0 0 1px rgb(255 201 142 / 0.16),
+    0 14px 26px -12px rgb(0 0 0 / 0.85);
+  /* a lâmina do topo é a mais iluminada: a luz vem de cima e de trás */
+  opacity: calc(0.5 + var(--i) * 0.09 + var(--e) * 0.2);
+}
+/* A face de canto: a espessura da lâmina. Sem ela a pilha lê como sombras
+   empilhadas, não como objetos com volume. */
+.aur-pilha > i::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -0.32rem;
+  block-size: 0.32rem;
+  border-radius: 0 0 0.55rem 0.55rem;
+  background: linear-gradient(to bottom, rgb(60 40 30 / 0.95), rgb(30 20 16 / 0.9));
+}
+
+/* --- Moldura de primeiro plano -------------------------------------------- */
+/* O equivalente da rocha/caverna da barra. Dois batentes girados em torno da
+   própria aresta externa e um lintel deitado em X. A aresta interna clara é
+   que denuncia o ângulo. Serve também de scrim lateral, que é o que garante o
+   contraste nas bordas do quadro. */
+
+.aur-moldura {
+  position: absolute;
+  inset: -10% -6%;
+  transform-style: preserve-3d;
+}
+.aur-moldura > i { position: absolute; display: block; }
+
+.aur-moldura__esq,
+.aur-moldura__dir {
+  inset-block: -6%;
+  inline-size: clamp(3.2rem, 14vw, 12rem);
+}
+.aur-moldura__esq {
+  inset-inline-start: 0;
+  transform: rotateY(33deg);
+  transform-origin: left center;
+  background: linear-gradient(90deg, #0B0708 0%, #120C0B 66%, rgb(18 12 11 / 0) 100%);
+  border-inline-end: 2px solid rgb(242 183 124 / 0.26);
+  box-shadow: 6px 0 30px -6px rgb(242 183 124 / 0.20);
+}
+.aur-moldura__dir {
+  inset-inline-end: 0;
+  transform: rotateY(-33deg);
+  transform-origin: right center;
+  background: linear-gradient(270deg, #0B0708 0%, #120C0B 66%, rgb(18 12 11 / 0) 100%);
+  border-inline-start: 2px solid rgb(242 183 124 / 0.26);
+  box-shadow: -6px 0 30px -6px rgb(242 183 124 / 0.20);
+}
+.aur-moldura__alto {
+  inset-inline: -4%;
+  inset-block-start: 0;
+  block-size: clamp(3rem, 13svh, 9rem);
+  transform: rotateX(-25deg);
+  transform-origin: top center;
+  background: linear-gradient(180deg, #0B0708 0%, #120C0B 54%, rgb(18 12 11 / 0) 100%);
+  border-block-end: 1px solid rgb(242 183 124 / 0.16);
+}
+.aur-moldura--larga .aur-moldura__esq,
+.aur-moldura--larga .aur-moldura__dir { inline-size: clamp(3.2rem, 16vw, 14rem); }
+
+/* ==========================================================================
+   Peça 9 propriamente dita
+   ========================================================================== */
+
+/* O arco de luz de dentro do ato. A origem do clarão desce e esquenta em cada
+   quadro: a barra tem paleta constante do topo ao rodapé, nós amanhecemos
+   dentro de uma seção só. */
+.stk-ceu    { background:
+                radial-gradient(60% 36% at 60% 16%, rgb(242 183 124 / 0.14), transparent 74%),
+                radial-gradient(46% 32% at 16% 76%, rgb(120 148 178 / 0.12), transparent 78%); }
+.stk-ceu--b { background:
+                radial-gradient(70% 42% at 46% 20%, rgb(242 183 124 / 0.20), transparent 74%),
+                radial-gradient(44% 30% at 84% 74%, rgb(255 201 142 / 0.09), transparent 78%); }
+.stk-ceu--c { background:
+                radial-gradient(76% 46% at 66% 24%, rgb(248 191 132 / 0.25), transparent 74%),
+                radial-gradient(46% 32% at 12% 78%, rgb(255 201 142 / 0.11), transparent 78%); }
+.stk-ceu--d { background:
+                radial-gradient(88% 54% at 40% 28%, rgb(255 201 142 / 0.32), transparent 74%),
+                radial-gradient(52% 36% at 88% 76%, rgb(255 214 172 / 0.14), transparent 78%); }
+
+/* As três chapas. Cada uma no lado oposto à placa do seu quadro. */
+.stk-cozinha {
+  inset-block: 14% 24%;
+  inset-inline-end: 2%;
+  inline-size: min(52%, 38rem);
+  transform: rotateY(-22deg);
+  transform-origin: 92% 50%;
+}
+.stk-prato {
+  inset-block: 12% 26%;
+  inset-inline-start: 1%;
+  inline-size: min(50%, 34rem);
+  transform: rotateY(23deg);
+  transform-origin: 8% 50%;
+}
+.stk-mercado {
+  inset-block: 12% 26%;
+  inset-inline-end: 1%;
+  inline-size: min(50%, 34rem);
+  transform: rotateY(-24deg);
+  transform-origin: 92% 50%;
+}
+/* Última chapa do ato: mais perto, mais clara, menos dessaturada. A luz chegou. */
+.stk-cozinha-perto {
+  inset-block: 8% 18%;
+  inset-inline-start: -4%;
+  inline-size: min(58%, 42rem);
+  transform: rotateY(19deg);
+  transform-origin: 6% 50%;
+}
+.stk-cozinha-perto .aur-chapa__img { filter: saturate(1) brightness(1.04); }
+
+/* A pilha cresce de quadro em quadro. Ela fica do MESMO lado da chapa, atrás
+   e abaixo dela: as duas juntas formam o sujeito, e o sujeito fica sempre no
+   lado contrário à placa. */
+.aur-pilha { inline-size: min(30%, 17rem); aspect-ratio: 1.55; }
+.stk-pilha--b { inset-block-end: 13%; inset-inline-start: 9%; }
+.stk-pilha--c { inset-block-end: 13%; inset-inline-end: 9%; transform: rotateY(26deg) rotateX(8deg); }
+.stk-pilha--d { inset-block-end: 11%; inset-inline-start: 12%; inline-size: min(32%, 19rem); }
+
+/* --- Os itens dentro da placa --------------------------------------------- */
+
+.aur-itens { display: grid; gap: var(--s-5); }
+
+.aur-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s-3) var(--s-4);
+  align-items: start;
+}
+.aur-item + .aur-item {
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid rgb(242 183 124 / 0.20);
+}
+
+.aur-item__n {
+  font-family: var(--fonte-num);
+  font-size: var(--t-md);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #1B1310;
+  background: linear-gradient(160deg, var(--ambar-forte), #D89855);
+  padding: 0.24em 0.46em;
+  border-radius: 0.4rem;
+  box-shadow: 0 6px 16px -8px rgb(242 183 124 / 0.7);
+}
+
+.aur-item__txt > * + * { margin-block-start: var(--s-2); }
+.aur-item__tit {
+  color: var(--tinta-clara);
+  font-size: clamp(1.05rem, 0.92rem + 0.6vw, 1.42rem);
+}
+.aur-item__txt .corpo { color: var(--texto-2); }
+
+/* --- Tablet retrato (768 a 1023) ------------------------------------------ */
+/* A largura comporta duas colunas, mas não a placa de 34rem: ela cobriria a
+   chapa inteira. A ESTRUTURA continua lado a lado, só o repartimento muda. */
+
+@media (min-width: 48rem) and (max-width: 63.999rem) {
+  .aur-placa { max-inline-size: 27rem; }
+  .aur-quadro { min-block-size: 76svh; }
+  .aur-quadro--alto { min-block-size: 88svh; }
+  .stk-cozinha, .stk-prato, .stk-mercado { inline-size: min(48%, 24rem); }
+  .stk-cozinha-perto { inline-size: min(52%, 26rem); }
+  .aur-pilha { inline-size: min(32%, 12rem); }
+}
+
+/* --- Retrato -------------------------------------------------------------- */
+/* Mobile não é degradação: os mesmos cinco planos continuam existindo. O que
+   muda é a ARQUITETURA do quadro. O sujeito sobe para uma faixa superior e a
+   placa ocupa a base, em vez de os dois disputarem a mesma coluna. O ritmo do
+   scroll vira cena / texto / cena / texto, sem vão morto entre placas. */
+
+@media (max-width: 47.9375rem) {
+  .aur-quadro {
+    min-block-size: 96svh;
+    align-content: end;
+    padding-block: var(--s-4) var(--s-5);
+  }
+  .aur-quadro--alto { min-block-size: 100svh; }
+
+  /* A placa não vai de ponta a ponta: a tira que sobra de um lado mostra o
+     batente girado e o que está atrás dele. É pouco espaço, e é ele que
+     mantém a leitura de "existe um espaço além do cartão" em 390 px. */
+  .aur-placa { max-inline-size: 92%; padding: var(--s-4); }
+  .aur-placa .corpo { max-inline-size: none; }
+  .aur-placa > * + * { margin-block-start: var(--s-3); }
+  .aur-titulo { max-inline-size: none; }
+
+  .aur-itens { gap: var(--s-4); }
+  .aur-item { gap: var(--s-2) var(--s-3); }
+  .aur-item + .aur-item { padding-block-start: var(--s-4); }
+
+  .aur-moldura { inset: -8% -4%; }
+  .aur-moldura__esq,
+  .aur-moldura__dir { inline-size: clamp(2.1rem, 16vw, 5.6rem); }
+  .aur-moldura--larga .aur-moldura__esq,
+  .aur-moldura--larga .aur-moldura__dir { inline-size: clamp(2.6rem, 21vw, 7rem); }
+  .aur-moldura__alto { block-size: clamp(2.2rem, 8svh, 4.6rem); }
+
+  /* Piso, bancada e fio sobem para a faixa de cena; ancorados na base ficariam
+     escondidos atrás da placa. */
+  .aur-piso { block-size: 30%; inset-block-end: 44%; inset-inline: -40%; }
+  .aur-piso--perto { block-size: 25%; inset-block-end: 46%; }
+  .aur-piso--longe { block-size: 34%; inset-block-end: 42%; }
+  .aur-bancada { block-size: 20%; inset-block-end: 46%; inset-inline: -30%; }
+  .aur-fio { inset-block-end: 62%; }
+
+  /* As chapas ocupam a faixa superior inteira, em par, ainda giradas. */
+  .stk-cozinha, .stk-prato, .stk-mercado, .stk-cozinha-perto {
+    inset-block: 3% 50%;
+    inline-size: 62%;
+  }
+  .stk-cozinha       { inset-inline: auto 1%; transform: rotateY(-19deg); }
+  .stk-prato         { inset-inline: 1% auto; transform: rotateY(20deg); }
+  .stk-mercado       { inset-inline: auto 1%; transform: rotateY(-21deg); }
+  .stk-cozinha-perto { inset-inline: 1% auto; transform: rotateY(17deg); }
+
+  .aur-pilha { inline-size: 34%; aspect-ratio: 1.5; }
+  .stk-pilha--b { inset-block: auto 52%; inset-inline: auto 4%; }
+  .stk-pilha--c { inset-block: auto 52%; inset-inline: 4% auto; }
+  .stk-pilha--d { inset-block: auto 52%; inset-inline: auto 4%; inline-size: 36%; }
+}
+
+/* --- Paisagem baixa de celular: 844x390 ----------------------------------- */
+/* Sem altura para a faixa superior, o quadro volta a ser lado a lado. */
+
+@media (max-width: 60rem) and (max-height: 30rem) {
+  .aur-quadro { min-block-size: 124svh; align-content: center; }
+  .aur-quadro--alto { min-block-size: 124svh; }
+  .aur-quadro--esq .cena__conteudo { justify-content: flex-start; }
+  .aur-quadro--dir .cena__conteudo { justify-content: flex-end; }
+  .aur-placa { max-inline-size: 27rem; }
+
+  .stk-cozinha, .stk-prato, .stk-mercado, .stk-cozinha-perto {
+    inset-block: 6% 8%;
+    inline-size: 44%;
+  }
+  .stk-cozinha       { inset-inline: auto 1%; }
+  .stk-prato         { inset-inline: 1% auto; }
+  .stk-mercado       { inset-inline: auto 1%; }
+  .stk-cozinha-perto { inset-inline: 1% auto; }
+  .aur-pilha { inline-size: 22%; }
+  .stk-pilha--b { inset-block-end: 6%; inset-inline-start: 4%; }
+  .stk-pilha--c { inset-block-end: 6%; inset-inline-end: 4%; inset-inline-start: auto; }
+  .stk-pilha--d { inset-block-end: 6%; inset-inline-start: 4%; }
+  .aur-fio { inset-block-end: 50%; }
+  .aur-bancada { block-size: 30%; inset-block-end: 0; }
+}
+
+/* --- Sem movimento -------------------------------------------------------- */
+/* O motor não escreve --e. A cena tem que ficar acesa e legível parada: todo
+   valor que depende de --e ganha piso alto aqui. */
+
+.reduced-motion .aur-fio,
+.reduced-motion .aur-chapa__luz { opacity: 0.9; }
+.reduced-motion .aur-pilha > i { opacity: calc(0.6 + var(--i) * 0.08); }
+
+@media (prefers-reduced-motion: reduce) {
+  .aur-fio, .aur-chapa__luz { opacity: 0.9; }
+  .aur-pilha > i { opacity: calc(0.6 + var(--i) * 0.08); }
+}

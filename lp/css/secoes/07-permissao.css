@@ -1,0 +1,187 @@
+/* ============================================================================
+   PEÇA 7 — Virada de permissão
+   ----------------------------------------------------------------------------
+   Herda as primitivas do ato frio de 05-transicao.css.
+
+   O que é só desta peça é o ARCO DE LUZ. A barra tem uma paleta constante do
+   primeiro ao último pixel; a nossa progride dentro do próprio ato:
+
+     peça 5   azul mais fundo, zero âmbar
+     peça 6   um ponto quente diegético (o abajur que está dentro da foto)
+     peça 7   o primeiro fio âmbar no horizonte, e ele cresce de quadro em
+              quadro até entregar a página para o ato técnico
+
+   O fio é um objeto, não um filtro: uma linha fina com halo, que acende com
+   --e. Acender por opacity é composição pura, zero paint.
+   ========================================================================== */
+
+/* Emenda com o fim da peça 6 (#131C27) e sobe até o tom mais claro do ato.
+   É a última cor fria da página antes do ato técnico. */
+.permissao {
+  background-image:
+    repeating-linear-gradient(96deg, transparent 0 6.2%, rgb(180 178 176 / 0.020) 6.2% 6.9%),
+    linear-gradient(to bottom, #131C27 0%, #16202C 50%, #1A2531 100%);
+}
+
+.per-horizonte {
+  position: absolute;
+  inset: -12%;
+  background:
+    radial-gradient(78% 32% at 50% 100%, rgb(242 183 124 / 0.18), rgb(150 88 40 / 0.06) 42%, transparent 74%),
+    radial-gradient(54% 36% at 22% 20%, rgb(104 140 184 / 0.18), transparent 76%);
+}
+.per-horizonte--b {
+  background:
+    radial-gradient(84% 36% at 44% 100%, rgb(242 183 124 / 0.24), rgb(150 88 40 / 0.08) 44%, transparent 74%),
+    radial-gradient(54% 36% at 76% 20%, rgb(104 140 184 / 0.20), transparent 76%);
+}
+.per-horizonte--c {
+  background:
+    radial-gradient(92% 42% at 56% 100%, rgb(242 183 124 / 0.32), rgb(150 88 40 / 0.11) 44%, transparent 74%),
+    radial-gradient(48% 32% at 18% 18%, rgb(104 140 184 / 0.16), transparent 78%);
+}
+
+/* --- O fio âmbar ----------------------------------------------------------- */
+
+.per-fio {
+  position: absolute;
+  inset-inline: -6%;
+  inset-block-end: 26%;
+  block-size: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgb(242 183 124 / 0.55) 26%,
+    rgb(255 201 142 / 0.85) 50%,
+    rgb(242 183 124 / 0.5) 74%,
+    transparent 100%);
+  box-shadow: 0 0 34px 6px rgb(242 183 124 / 0.22);
+  opacity: calc(0.3 + var(--e) * 0.6);
+}
+.per-fio--b { inset-block-end: 22%; box-shadow: 0 0 46px 9px rgb(242 183 124 / 0.28); opacity: calc(0.42 + var(--e) * 0.58); }
+.per-fio--c { inset-block-end: 18%; block-size: 3px; box-shadow: 0 0 62px 14px rgb(242 183 124 / 0.34); opacity: calc(0.55 + var(--e) * 0.45); }
+
+/* O piso do ato 7 pega a cor do fio: a luz do horizonte chega no chão. */
+.per-piso {
+  background:
+    linear-gradient(180deg, transparent 0%, rgb(242 183 124 / 0.05) 44%, rgb(242 183 124 / 0.11) 100%),
+    repeating-linear-gradient(90deg,
+      transparent 0 6.4%,
+      rgb(226 178 132 / 0.10) 6.4% 6.75%);
+}
+
+/* --- A vidraça da peça 7 --------------------------------------------------- */
+/* Herda a esquadria reparada de 05-transicao.css (céu, reflexo, caixilho com
+   corpo, peitoril) e muda só o que é do arco de luz: aqui o fio âmbar já
+   alcança a janela, então o céu dentro do vidro é mais quente que o das peças
+   5 e 6, e o peitoril recebe a cor do horizonte em vez do azul. */
+
+.per-vidraca {
+  inset: 8% 10% 14% 8%;
+  transform: rotateY(29deg);
+  box-shadow:
+    inset 0 0 0 1px rgb(14 12 10 / 0.5),
+    inset 0 0 0 4px rgb(198 190 178 / 0.32),
+    inset 0 -18px 30px -12px rgb(242 183 124 / 0.30),
+    0 0 100px -4px rgb(226 178 132 / 0.28);
+  background:
+    linear-gradient(to top,
+      rgb(242 183 124 / 0.34) 0%,
+      rgb(206 162 128 / 0.16) 10%,
+      transparent 24%),
+    linear-gradient(to bottom,
+      transparent 0 70.8%,
+      rgb(226 190 156 / 0.22) 70.8% 71.6%,
+      transparent 71.6%),
+    linear-gradient(178deg,
+      rgb(126 156 194 / 0.34) 0%,
+      rgb(150 152 168 / 0.26) 48%,
+      rgb(208 166 128 / 0.22) 80%,
+      rgb(226 178 132 / 0.20) 100%);
+}
+.per-vidraca::after {
+  background: linear-gradient(to bottom,
+    rgb(232 200 168 / 0.32) 0%,
+    rgb(178 148 124 / 0.16) 36%,
+    transparent 100%);
+}
+
+/* --- As mãos --------------------------------------------------------------- */
+/* Recorte com alfa real ancorado na base. Nunca .camada__img: o cover
+   esticaria a mão até o retângulo da camada. */
+
+/* A máscara existe porque em tela larga o recorte não cobre a largura toda e
+   as duas bordas verticais do arquivo aparecem como aresta reta. Feathering
+   radial resolve nas quatro bordas de uma vez e ainda casa com a atenuação de
+   profundidade do resto da cena. */
+.per-maos {
+  inset-block-end: -2%;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  inline-size: min(112%, 78rem);
+  block-size: auto;
+  -webkit-mask-image: radial-gradient(72% 120% at 50% 30%, #000 46%, transparent 92%);
+          mask-image: radial-gradient(72% 120% at 50% 30%, #000 46%, transparent 92%);
+  filter:
+    drop-shadow(0 -18px 60px rgb(242 183 124 / calc(0.10 + var(--e) * 0.20)))
+    drop-shadow(0 26px 50px rgb(0 0 0 / 0.65))
+    saturate(0.9) brightness(0.9);
+}
+.per-maos--c {
+  inset-block-end: 15%;
+  inset-inline-start: 6%;
+  translate: 0 0;
+  inline-size: min(62%, 44rem);
+  filter:
+    drop-shadow(0 -14px 48px rgb(242 183 124 / calc(0.16 + var(--e) * 0.26)))
+    drop-shadow(0 20px 40px rgb(0 0 0 / 0.6))
+    saturate(0.95) brightness(0.98);
+}
+
+/* --- Texto ----------------------------------------------------------------- */
+
+/* O pico da página. A placa da abertura sobe para o terço superior para não
+   pisar nas mãos, que ocupam a base do quadro. */
+.per-a { align-content: start; padding-block-start: clamp(4rem, 16svh, 10rem); }
+.per-placa { max-inline-size: 38rem; text-align: center; }
+.per-placa .corpo { margin-inline: auto; max-inline-size: 40ch; }
+
+.per-titulo {
+  color: var(--tinta-clara);
+  max-inline-size: 15ch;
+  margin-inline: auto;
+  text-shadow: 0 2px 34px rgb(0 0 0 / 0.75);
+}
+
+.per-linha { color: var(--tinta-clara); }
+.per-batida { color: var(--ambar); max-inline-size: 12ch; }
+.per-fecho { border-block-start-color: rgb(242 183 124 / 0.34); }
+
+@media (min-width: 48rem) and (max-width: 63.999rem) {
+  .per-placa { max-inline-size: 32rem; }
+  .per-maos { inline-size: min(126%, 60rem); }
+  .per-maos--c { inline-size: min(70%, 34rem); inset-block-end: 18%; }
+}
+
+@media (max-width: 47.9375rem) {
+  /* per-a é o único quadro do ato com a placa em cima: as mãos precisam da
+     base inteira do quadro, é o pico da página. */
+  .per-a { align-content: start; min-block-size: 88svh; padding-block-start: clamp(2.5rem, 9svh, 5rem); }
+  .per-placa { max-inline-size: 100%; text-align: start; }
+  .per-placa .corpo { margin-inline: 0; }
+  .per-titulo { max-inline-size: 13ch; margin-inline: 0; }
+
+  .per-maos { inset-block: auto 2%; inline-size: 178%; }
+  .per-maos--c { inset-block: 3% auto; inset-inline-start: -30%; inline-size: 150%; }
+  .per-vidraca { inset: 3% 14% 58% 4%; }
+  .per-fio { inset-block-end: 20%; }
+  .per-fio--b { inset-block-end: 56%; }
+  .per-fio--c { inset-block-end: 52%; }
+  .per-batida { max-inline-size: none; }
+}
+
+@media (max-width: 60rem) and (max-height: 30rem) {
+  .per-a { align-content: center; padding-block-start: var(--s-5); }
+  .per-placa { max-inline-size: 30rem; }
+  .per-maos { inline-size: 96%; inset-block-end: -8%; }
+  .per-maos--c { inline-size: 58%; inset-inline-start: 2%; }
+}

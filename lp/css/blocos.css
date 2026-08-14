@@ -1,0 +1,2824 @@
+/* ============================================================================
+   Blocos — estilos por peça da copy
+   ========================================================================== */
+
+/* O grão roda a 4,5% de opacidade em `overlay` (ver base.css), num tile de
+   220px. O PNG de 256px pesava 27,5 KB — ruído não comprime — e era o terceiro
+   maior arquivo da primeira tela, disputando banda com o LCP. Em webp de 220px
+   (o tamanho em que ele é realmente desenhado) dá 3,8 KB. A 4,5% de opacidade
+   não existe diferença observável entre este e o lossless de 18 KB. Se o webp
+   falhar, a variável simplesmente não resolve e a página fica sem grão: é
+   decoração, não estrutura. */
+:root { --grao: url("../img/textura-grao.webp"); }
+
+/* ---------------------------------------------------------------- PEÇA 1
+   Hero / gancho pré-quiz
+   -------------------------------------------------------------------- */
+
+.hero {
+  min-block-size: 100svh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: end;
+  padding-block: var(--s-6) var(--s-5);
+  overflow: clip;
+}
+.hero::before { display: none; }
+
+/* A janela ao fundo ganha um pulso de luz próprio, lentíssimo. É o que impede
+   a cena de parecer congelada quando o dedo dela para. */
+.hero__janela {
+  position: absolute;
+  inset-inline-start: 30%;
+  inset-block-start: 26%;
+  inline-size: 26%;
+  block-size: 46%;
+  border-radius: 4% 4% 0 0;
+  background: radial-gradient(90% 70% at 50% 30%, rgb(96 132 186 / 0.5), rgb(40 60 96 / 0.1) 70%, transparent);
+  filter: blur(clamp(18px, 4vw, 46px));
+  mix-blend-mode: screen;
+  animation: respirar 13s var(--ease-suave) infinite;
+}
+@keyframes respirar {
+  0%, 100% { opacity: 0.62; transform: scale(1); }
+  50%      { opacity: 0.95; transform: scale(1.05); }
+}
+
+.hero__berco {
+  position: absolute;
+  inset-block-end: 8%;
+  inset-inline-start: 4%;
+  inline-size: min(46%, 30rem);
+  block-size: auto;
+  opacity: 0.92;
+}
+
+.hero__sujeito {
+  position: absolute;
+  inset-block-end: -2%;
+  inset-inline-end: 6%;
+  inline-size: min(40%, 30rem);
+  block-size: auto;
+  filter: drop-shadow(-14px 0 40px rgb(242 183 124 / 0.24));
+}
+
+.hero__abajur {
+  inset-inline-end: 2%;
+  inset-block-end: 6%;
+  inline-size: min(46vw, 34rem);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgb(242 183 124 / 0.55), rgb(160 92 40 / 0.18) 45%, transparent 72%);
+  animation: respirar 9s var(--ease-suave) infinite;
+}
+
+/* A moldura de primeiro plano. Desenhada em CSS, não em imagem: custa zero
+   byte, fica nítida em qualquer densidade de tela, e o recorte se adapta
+   sozinho de 320 px a 2560 px sem precisar de três arquivos.
+   São dois batentes verticais escuros e um lintel, com a borda interna
+   irregular o suficiente para não parecer uma moldura de PowerPoint. */
+.hero__moldura {
+  display: none;
+}
+
+/* Escurecimento local atrás do bloco de texto. Não é vinheta decorativa: é o
+   que garante 4.5:1 quando a janela azul clara cai justamente atrás da
+   headline. Segue o texto, não a cena, então fica fora do palco 3D. */
+.hero__scrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  block-size: 78%;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgb(250 246 239 / .97) 0%, rgb(250 246 239 / .88) 38%, transparent 72%);
+}
+
+.hero__texto {
+  grid-row: 1;
+  align-self: end;
+  padding-block-end: clamp(1rem, 5vh, 3.5rem);
+}
+
+.hero__titulo {
+  max-inline-size: 17ch;
+  margin-block-start: var(--s-3);
+  color: #2C4A52;
+  text-shadow: none;
+}
+
+/* "dieta pós parto amamentando" é termo de SEO obrigatório e também a coisa
+   que o gancho está negando. Riscar o termo faz a negação acontecer na tela,
+   antes da leitura terminar. */
+/* O risco é desenhado como background e não como pseudo-elemento posicionado:
+   assim ele acompanha a quebra de linha. Um ::after absoluto atravessava a
+   coluna inteira quando o termo quebrava em 390 px. */
+.risco {
+  color: #4A6350;
+  background-image: linear-gradient(var(--ambar), var(--ambar));
+  background-repeat: no-repeat;
+  background-position: 0 0.58em;
+  background-size: 0% 0.075em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  animation: riscar 950ms var(--ease-saida) 900ms forwards;
+}
+@keyframes riscar { to { background-size: 100% 0.075em; } }
+.reduced-motion .risco { background-size: 100% 0.075em; animation: none; }
+
+.hero__corpo {
+  margin-block-start: var(--s-4);
+  color: #33312C;
+  text-shadow: none;
+}
+
+.hero__acao {
+  margin-block-start: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+.hero__micro { color: #6B6459; }
+.btn__seta { flex: none; opacity: 0.75; animation: descer 2.6s var(--ease-suave) infinite; }
+@keyframes descer { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(3px);} }
+
+.hero__rolar {
+  grid-row: 2;
+  justify-self: center;
+  inline-size: 1px;
+  block-size: clamp(2.4rem, 7vh, 4rem);
+  position: relative;
+  z-index: 5;
+  opacity: calc(1 - var(--p) * 2.2);
+}
+.hero__rolar-trilho {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--ambar) 45%, transparent), transparent);
+}
+.hero__rolar-ponto {
+  position: absolute;
+  inset-inline-start: -2px;
+  inline-size: 5px;
+  block-size: 5px;
+  border-radius: 50%;
+  background: var(--ambar);
+  box-shadow: 0 0 12px var(--ambar);
+  animation: cair 2.8s var(--ease-suave) infinite;
+}
+@keyframes cair {
+  0%   { transform: translateY(0); opacity: 0; }
+  25%  { opacity: 1; }
+  75%  { opacity: 1; }
+  100% { transform: translateY(calc(clamp(2.4rem, 7vh, 4rem) - 5px)); opacity: 0; }
+}
+
+/* Retrato estreito: o sujeito sai da lateral e vai para o canto inferior,
+   atrás do texto, senão colide com a headline em 390 px. */
+@media (max-width: 47.9375rem) {
+  .hero { align-items: end; }
+  .hero__sujeito { inline-size: min(62%, 17rem); inset-inline-end: -12%; inset-block-end: -2%; opacity: 0.92; }
+  .hero__berco   { inline-size: min(60%, 16rem); inset-inline-start: -10%; inset-block-end: 4%; opacity: 0.5; }
+  /* A janela CSS existe para dar vida à janela da foto quando ela está
+     enquadrada. No recorte retrato ela cai em cima de outra coisa e vira
+     uma segunda janela flutuando. Fora. */
+  .hero__janela  { display: none; }
+  .hero__titulo  { max-inline-size: 13ch; }
+  .hero__acao .btn { inline-size: 100%; }
+  .hero__acao { align-self: stretch; }
+
+  /* Em 390 px os batentes laterais comem metade da tela. Aqui a moldura vira
+     quase só lintel e sombra de canto: mantém o quarto plano sem estrangular
+     a cena. */
+  .hero__moldura { display: none; }
+
+  /* O scrim precisa resolver o contraste da headline SEM apagar a cena.
+     A primeira tentativa cobria 88% da tela a 96% de opacidade e o quarto
+     inteiro sumia: a captura mobile virou um retângulo preto com texto, que
+     é exatamente o "quadro morto" que reprovamos na barra. Agora ele é uma
+     faixa mais curta, mais fraca no topo, e a cena continua legível em volta. */
+  .hero__scrim {
+    block-size: 100%;
+    background: linear-gradient(to bottom, rgb(250 246 239 / .30), transparent 30%), linear-gradient(to top, rgb(250 246 239 / .98) 0%, rgb(250 246 239 / .86) 58%, transparent 88%);
+  }
+  .hero__titulo,
+  .hero__corpo { text-shadow: none; }
+
+  /* A moldura em 390 px estava somando escuro em cima do scrim e afogando o
+     quarto. Ela continua existindo como quarto plano, mas mais discreta. */
+  .hero__moldura { opacity: 0.66; }
+
+  /* A mãe e o bebê sobem para acima da linha do scrim: é o único sujeito da
+     cena e ele não pode ficar submerso. */
+  .hero__sujeito { inset-block-end: 24%; opacity: 0.95; }
+
+  /* Diferencial de velocidade explícito entre planos. Os valores herdados de
+     cena.css são conservadores para uma seção de texto; um hero precisa
+     denunciar a profundidade nos primeiros 40 px de scroll. */
+  .hero .camada[data-z="fundo"]  { --deriva: 5; }
+  .hero .camada[data-z="tras"]   { --deriva: 16; }
+  .hero .camada[data-z="meio"]   { --deriva: 34; }
+  .hero .camada[data-z="frente"] { --deriva: 58; }
+  .hero .camada[data-z="topo"]   { --deriva: 82; }
+  .hero .hero__moldura           { --deriva: 104; }
+}
+
+/* Paisagem baixa (celular deitado): a cena precisa caber sem cortar o CTA. */
+@media (max-height: 33rem) and (orientation: landscape) {
+  .hero { min-block-size: 128svh; }
+  .hero__rolar { display: none; }
+}
+
+/* MONTAGEM:INICIO */
+
+/* ===================== 02-quiz.css ===================== */
+/* ============================================================================
+   PEÇAS 2 e 3 — Quiz + micro-resultados
+   Ato: noite. 4h da manhã, sobre a mesa da cozinha.
+   ----------------------------------------------------------------------------
+   A regra do contrato diz que texto não entra no 3D, e ela continua valendo:
+   nenhum nó de TEXTO daqui recebe translateZ próprio. O que transforma é o
+   CARD INTEIRO, uma caixa só, que rasteriza uma vez e carrega o texto junto
+   como conteúdo dela. Por isso a pilha tem uma `perspective` LOCAL própria
+   (.quiz__pilha), separada da perspectiva do palco: o palco move imagem, a
+   pilha move um objeto de interface. Misturar as duas faria o card herdar a
+   câmera do fundo e desalinhar do texto que ele carrega.
+   ========================================================================== */
+
+.quiz {
+  overflow: clip;
+  /* --progresso é escrito pelo js/quiz.js na própria <section>, 0 → 1.
+     Não vem do scroll. É o quanto da conta já foi montada. */
+  --progresso: 0;
+}
+
+/* --- Fundo: a mesa ------------------------------------------------------ */
+/* Provisório de IMG-05 (quiz-mesa). Mesma caixa, mesma leitura: cozinha à
+   noite, fora de foco, luminância num terço superior. A deriva lenta é o que
+   impede o quadro de ficar morto quando o dedo dela para. */
+
+.quiz__mesa {
+  position: absolute;
+  inset: -10%;
+  background: url("../img/novo-luz.webp") center / cover no-repeat;
+  filter: none;
+  opacity: .72;
+  animation: none;
+}
+@keyframes quiz-deriva {
+  from { transform: translate3d(-1.6%, 1%, 0) scale(1.05); }
+  to   { transform: translate3d(1.6%, -1.8%, 0) scale(1.11); }
+}
+
+/* Vapor da caneca esquecida. Camada `tras`, sempre em movimento lento. */
+.quiz__vapor {
+  position: absolute;
+  inset-inline-start: 18%;
+  inset-block-end: 12%;
+  inline-size: min(52vw, 26rem);
+  aspect-ratio: 1 / 1.3;
+  background: radial-gradient(50% 60% at 50% 80%, rgb(226 208 190 / 0.10), transparent 72%);
+  filter: blur(clamp(20px, 5vw, 44px));
+  mix-blend-mode: screen;
+  animation: none;
+}
+@keyframes quiz-vapor {
+  0%, 100% { opacity: 0.45; transform: translate3d(0, 0, 0) scale(1); }
+  50%      { opacity: 0.9;  transform: translate3d(2%, -4%, 0) scale(1.08); }
+}
+
+/* --- A luz que responde ao progresso, não ao scroll --------------------- */
+/* Este é o pré-anúncio do clarão da peça 4: a cena acende conforme ela
+   responde. Quando o quiz fecha, a lâmpada já está quase no ponto em que a
+   tela de resultado assume. */
+
+.quiz__lampada {
+  inset-inline-start: 50%;
+  inset-block-start: -14%;
+  inline-size: min(130vw, 62rem);
+  aspect-ratio: 1;
+  margin-inline-start: calc(min(130vw, 62rem) / -2);
+  background: radial-gradient(circle,
+    rgb(107 143 113 / 0.20) 0%,
+    rgb(107 143 113 / 0.10) 30%,
+    rgb(44 74 82 / 0.06) 50%,
+    transparent 72%);
+  opacity: calc(0.20 + var(--progresso) * 0.80);
+  transform: scale(calc(0.78 + var(--progresso) * 0.40));
+  transition: opacity 240ms ease-out, transform 240ms ease-out;
+}
+
+/* --- Conteúdo ----------------------------------------------------------- */
+
+.quiz__conteudo {
+  display: grid;
+  gap: var(--s-4);
+}
+
+/* --- Trabalho visível --------------------------------------------------- */
+
+.quiz__passo { display: grid; gap: var(--s-2); }
+
+.quiz__passo-rot {
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ambar) 82%, var(--tinta-clara));
+}
+
+.quiz__trilho {
+  block-size: 3px;
+  border-radius: var(--raio-cheio);
+  background: color-mix(in oklab, var(--tinta-clara) 14%, transparent);
+  overflow: clip;
+}
+.quiz__preenche {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,
+    color-mix(in oklab, var(--ambar) 60%, transparent), var(--ambar-forte));
+  box-shadow: 0 0 14px rgb(242 183 124 / 0.6);
+  transform-origin: left center;
+  transform: scaleX(calc(0.02 + var(--progresso) * 0.98));
+  transition: transform 700ms var(--ease-peso);
+}
+
+/* --- A pilha 3D --------------------------------------------------------- */
+/* Perspectiva local. A altura é escrita pelo JS em --altura-pilha a partir do
+   card ativo, então a pilha "assenta" em vez de ficar do tamanho do maior
+   card do quiz inteiro. Sem JS, o min-block-size segura o layout. */
+
+.quiz__pilha {
+  position: relative;
+  min-block-size: 26rem;
+  block-size: var(--altura-pilha, auto);
+  transition: block-size 220ms ease-out;
+}
+
+.qcard {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  display: grid;
+  gap: var(--s-3);
+  padding: clamp(1.15rem, 4.5vw, 2.1rem);
+  border: 1px solid color-mix(in oklab, var(--ambar) 15%, transparent);
+  border-radius: var(--raio-3);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgb(107 143 113 / 0.08), transparent 62%),
+    #FFFDF8;
+  box-shadow: 0 1rem 3rem rgb(44 74 82 / 0.10);
+
+  /* estado padrão = ainda longe na pilha */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition:
+    transform 180ms ease-out,
+    opacity 180ms ease-out,
+    visibility 0s linear 180ms;
+}
+
+/* O próximo card da fila: atrás, menor, apagado. É ele que faz a pilha
+   existir como objeto, e não como um fade entre telas. */
+.qcard.e-proximo {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(8px);
+  transition-delay: 0s, 0s, 0s;
+}
+
+.qcard.e-ativo {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  box-shadow: 0 1rem 3rem rgb(44 74 82 / 0.10), 0 0 0 1px #E6DFD1;
+  transition-delay: 0s, 0s, 0s;
+}
+
+/* O anterior sai girando pra cima, como se a câmera passasse por baixo dele. */
+.qcard.e-passado {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition-delay: 0s, 0s, 0s;
+}
+
+/* --- Dentro do card ----------------------------------------------------- */
+/* Nada aqui tem transform próprio. O card carrega o texto, o texto não anda
+   sozinho: é o que mantém a leitura nítida durante a troca de passo. */
+
+.qcard__just {
+  font-size: var(--t-sm);
+  line-height: 1.58;
+  color: #6B6459;
+  border-inline-start: 2px solid #D6E0D7;
+  padding-inline-start: var(--s-3);
+  text-wrap: pretty;
+}
+.qcard__rot {
+  display: block;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #4A6350;
+  margin-block-end: 0.35em;
+}
+
+.qcard__campo {
+  display: grid;
+  gap: var(--s-3);
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
+.qcard__pergunta {
+  display: block;
+  padding: 0;
+  font-size: var(--t-md);
+  font-weight: 660;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+  color: var(--tinta-clara);
+  text-wrap: pretty;
+}
+
+/* --- Campo numérico ----------------------------------------------------- */
+
+.campo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  inline-size: 100%;
+  max-inline-size: 15rem;
+  padding: 0 1rem;
+  min-block-size: 3.5rem;
+  border-radius: var(--raio-2);
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px #D8D4CA;
+  transition: box-shadow 260ms var(--ease-suave);
+}
+.campo:focus-within {
+  box-shadow: inset 0 0 0 2px var(--ambar), 0 0 30px -12px rgb(242 183 124 / 0.8);
+}
+.campo__input {
+  flex: 1 1 auto;
+  inline-size: 100%;
+  min-inline-size: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  font-family: var(--fonte-num);
+  font-size: var(--t-lg);
+  font-weight: 620;
+  color: var(--tinta-clara);
+  padding-block: 0.6rem;
+}
+.campo__input::-webkit-outer-spin-button,
+.campo__input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+.campo__input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
+.campo__un {
+  flex: none;
+  font-size: var(--t-sm);
+  font-weight: 640;
+  color: var(--tinta-media);
+}
+
+.qcard__erro {
+  font-size: var(--t-sm);
+  color: #B3543F;
+}
+.qcard__erro[hidden] { display: none; }
+
+/* --- Opções (radio) ----------------------------------------------------- */
+
+.opcoes { display: grid; gap: 0.55rem; }
+
+.opcao {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-block-size: 3.25rem;          /* alvo de toque com folga sobre 44 px */
+  padding: 0.7rem 1rem;
+  border-radius: var(--raio-2);
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px #E6DFD1;
+  cursor: pointer;
+  transition: background-color 220ms var(--ease-suave), box-shadow 220ms var(--ease-suave);
+}
+.opcao:hover { background: #F4F7F2; }
+.opcao input {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0.9rem;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin: -0.625rem 0 0;
+  opacity: 0;
+}
+.opcao__marca {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--tinta-clara) 45%, transparent);
+  transition: box-shadow 220ms var(--ease-suave);
+}
+.opcao__txt {
+  font-size: var(--t-base);
+  line-height: 1.4;
+  color: var(--tinta-clara);
+  text-wrap: pretty;
+}
+.opcao:has(input:checked) {
+  background: #EDF2ED;
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--ambar) 62%, transparent);
+}
+.opcao:has(input:checked) .opcao__marca {
+  box-shadow: inset 0 0 0 2px var(--ambar), inset 0 0 0 6px #FFFDF8,
+              inset 0 0 0 12px var(--ambar);
+}
+.opcao:has(input:focus-visible) { outline: 2px solid var(--ambar); outline-offset: 3px; }
+
+/* --- Checkboxes LGPD ---------------------------------------------------- */
+
+.marca {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  min-block-size: 2.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--raio-2);
+  cursor: pointer;
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tinta-clara) 13%, transparent);
+  transition: box-shadow 220ms var(--ease-suave), background-color 220ms var(--ease-suave);
+}
+/* O consentimento de dado de saúde é o destacado. O de marketing não. */
+.marca--saude {
+  background: #F4F7F2;
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--ambar) 40%, transparent);
+}
+.marca--opcional .marca__txt { color: var(--tinta-media); }
+
+.marca input {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-start: 1rem;
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+  margin: 0;
+  opacity: 0;
+}
+.marca__caixa {
+  flex: none;
+  display: grid;
+  place-items: center;
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+  margin-block-start: 0.12em;
+  border-radius: 0.4rem;
+  color: #21150B;
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--tinta-clara) 48%, transparent);
+  transition: background-color 200ms var(--ease-suave), box-shadow 200ms var(--ease-suave);
+}
+.marca__caixa svg { opacity: 0; transition: opacity 160ms var(--ease-suave); }
+.marca:has(input:checked) .marca__caixa {
+  background: var(--ambar);
+  box-shadow: inset 0 0 0 2px var(--ambar);
+}
+.marca:has(input:checked) .marca__caixa svg { opacity: 1; }
+.marca:has(input:focus-visible) { outline: 2px solid var(--ambar); outline-offset: 3px; }
+.marca__txt { font-size: var(--t-sm); line-height: 1.5; color: var(--tinta-clara); text-wrap: pretty; }
+
+.qcard--lgpd .qcard__campo { gap: 0.6rem; }
+.qcard__nota { margin-block-start: calc(var(--s-2) * -1); }
+
+/* --- Micro-resultado ---------------------------------------------------- */
+/* A absolvição imediata. Entra em menos de 1 s depois da resposta, e entra
+   por baixo, como se tivesse sido escrito na hora. */
+
+.qcard__micro:empty { display: none; }
+.qcard__micro {
+  display: block;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  animation: none;
+}
+@keyframes micro-entra {
+  from { opacity: 0; transform: translate3d(0, 0.7rem, 0); }
+  to   { opacity: 1; transform: none; }
+}
+.micro__tit {
+  font-size: var(--t-sm);
+  font-weight: 720;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--ambar-forte);
+  text-wrap: balance;
+}
+.micro__tit--grande { font-size: var(--t-lg); }
+.micro__txt {
+  font-size: var(--t-xs);
+  line-height: 1.45;
+  color: #6B6459;
+  text-wrap: pretty;
+}
+
+/* O intervalo narrado não tem pergunta: o micro-resultado é a tela inteira. */
+.qcard--intervalo { align-content: center; }
+.qcard--intervalo .qcard__micro {
+  padding: var(--s-4);
+  background: linear-gradient(150deg,
+    color-mix(in oklab, var(--ambar) 18%, transparent), rgb(255 255 255 / 0.02));
+}
+
+/* --- Navegação ---------------------------------------------------------- */
+
+.qcard__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  align-items: center;
+  margin-block-start: var(--s-1);
+}
+.qcard__seguir { flex: 0 1 auto; }
+.qcard__voltar { flex: 0 0 auto; min-block-size: 3.25rem; padding-inline: 1.3rem; font-size: var(--t-base); }
+
+/* --- Telas estreitas ---------------------------------------------------- */
+/* A profundidade não some em 390 px: o próximo card continua atrás, só com
+   deslocamento menor, porque o mesmo Z ocupa fração maior de uma tela curta. */
+
+@media (max-width: 47.9375rem) {
+  .quiz__pilha { min-block-size: 24rem; }
+  .qcard { padding: 1.15rem 1.05rem; border-radius: var(--raio-2); }
+  .qcard.e-proximo { transform: translateY(8px); opacity: 0; }
+  .qcard.e-passado { transform: translateY(-8px); }
+  .qcard__nav { flex-direction: row-reverse; justify-content: flex-end; align-items: center; }
+  .qcard__seguir, .qcard__voltar { inline-size: auto; min-block-size: 2.9rem; }
+  .campo { max-inline-size: none; }
+}
+
+@media (max-width: 22.5rem) {
+  .qcard { padding: 0.95rem 0.85rem; }
+  .qcard__just { padding-inline-start: var(--s-2); }
+}
+
+/* Paisagem baixa: a pilha não pode empurrar o botão para fora da tela. */
+@media (max-height: 33rem) and (orientation: landscape) {
+  .quiz__pilha { min-block-size: 20rem; }
+}
+
+/* --- Sem movimento ------------------------------------------------------ */
+/* Some a pilha 3D inteira: só o card ativo existe, sem transform, sem
+   deriva de fundo, sem animação de entrada do micro-resultado. */
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz__mesa, .quiz__vapor { animation: none; transform: none; }
+  .quiz__pilha { perspective: none; transition: none; }
+  .qcard { transform: none; transition: none; }
+  .qcard.e-proximo, .qcard.e-passado { opacity: 0; visibility: hidden; }
+  .qcard.e-ativo { opacity: 1; visibility: visible; transform: none; }
+  .qcard__micro { animation: none; }
+  .quiz__lampada { transition: none; }
+  .quiz__preenche { transition: none; }
+}
+.reduced-motion .quiz__mesa,
+.reduced-motion .quiz__vapor { animation: none; transform: none; }
+.reduced-motion .quiz__pilha { perspective: none; }
+.reduced-motion .qcard { transform: none; }
+.reduced-motion .qcard.e-proximo,
+.reduced-motion .qcard.e-passado { opacity: 0; visibility: hidden; }
+
+
+/* ===================== 04-resultado.css ===================== */
+/* ============================================================================
+   PEÇA 4 — Tela de resultado do quiz
+   ----------------------------------------------------------------------------
+   Esta é a dobradiça da página. As peças 1 a 3 são penumbra; as 5 a 7 são o
+   ato frio. Aqui, e só aqui no primeiro terço, alguma coisa ACENDE. O quadro
+   mais luminoso até o amanhecer nasce de um objeto que existe na cena: o halo
+   atrás da placa do número. Luz diegética, não filtro.
+
+   ----------------------------------------------------------------------------
+   A PLACA E O NÚMERO — por que são dois elementos e não um
+   ----------------------------------------------------------------------------
+   O número em kcal é o maior tipo da página e o elemento mais importante dela.
+   Se ele entrasse numa camada 3D, o translateZ o rasterizaria numa escala e
+   depois o projetaria em outra: em tela retina isso é borrão garantido, e
+   borrão exatamente no dígito que a leitora veio buscar.
+
+   Então o bloco do número é um composto de dois planos irmãos, nunca aninhados:
+
+     .numero-central            2D, position: relative, sem transform
+       .numero-palco            3D: perspective própria + overflow clip
+         .numero-halo           camada de luz, mix-blend-mode: screen
+         .numero-placa          a placa, translateZ + rotate, contra-escalada
+       .numero-texto            2D puro: label, número, legenda. ZERO transform.
+
+   O texto é IRMÃO do palco, não filho: nenhum ancestral dele tem perspective,
+   preserve-3d ou transform, então ele é pintado direto na resolução do
+   dispositivo, parado ou em movimento.
+
+   A sincronia entre os dois planos é feita por uma custom property só:
+   `--assento` (0 = placa longe e torta, 1 = placa assentada e reta), derivada
+   de --p e lida pelos dois lados. A placa usa --assento para geometria; o
+   texto usa a mesma variável para opacidade e para o brilho do dígito. Um
+   valor, duas leituras, nunca duas animações que possam dessincronizar.
+
+   `.numero-central` carrega o seu próprio [data-scene] porque o número precisa
+   acender quando ELE cruza o centro da tela, não quando a seção inteira cruza.
+   --assento chega exatamente a 1 em --p 0.5, que é onde --e vale 1.
+   ========================================================================== */
+
+.resultado {
+  padding-block: var(--s-8) var(--s-7);
+  overflow: clip;               /* o halo nunca vira rolagem horizontal */
+}
+
+/* --- Camadas do palco da seção ------------------------------------------ */
+
+.res__poeira {
+  opacity: calc(0.16 + var(--e) * 0.26);
+  object-position: 38% 62%;
+}
+
+/* O clarão da cena inteira é fraco de propósito: quem acende é o número.
+   Teto de opacidade calculado para o corpo de texto continuar acima de 4.5:1
+   sobre ele. */
+.res__clarao {
+  inset-inline-start: 50%;
+  inset-block-start: 34%;
+  inline-size: min(120vw, 70rem);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: radial-gradient(circle, rgb(255 201 142 / 0.5), rgb(167 211 192 / 0.14) 42%, transparent 70%);
+  opacity: calc(0.08 + var(--e) * 0.2);
+}
+
+/* Piso em fuga. É o que dá chão ao número: sem um plano horizontal, uma placa
+   flutuando lê como sobreposição, não como objeto no espaço. */
+.res__piso {
+  position: absolute;
+  inset-inline: -60%;
+  inset-block-end: -24%;
+  block-size: 84%;
+  transform: rotateX(76deg);
+  transform-origin: 50% 100%;
+  background:
+    repeating-linear-gradient(to right,
+      rgb(242 183 124 / 0.16) 0 1px, transparent 1px 7.5%),
+    repeating-linear-gradient(to bottom,
+      rgb(242 183 124 / 0.13) 0 1px, transparent 1px 9%);
+  -webkit-mask-image: radial-gradient(58% 70% at 50% 100%, #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 82%);
+          mask-image: radial-gradient(58% 70% at 50% 100%, #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 82%);
+  opacity: calc(0.35 + var(--e) * 0.65);
+}
+
+/* --- Grade da peça ------------------------------------------------------ */
+
+.resultado__grade {
+  display: grid;
+  gap: var(--s-6);
+  align-items: start;
+}
+
+.resultado__cab .h1 { max-inline-size: 15ch; }
+.resultado__titulo { margin-block-start: var(--s-3); color: var(--tinta-clara); }
+.resultado__cab .sub { margin-block-start: var(--s-4); }
+
+/* --- Recibo do cálculo -------------------------------------------------- */
+/* O trabalho visível. Os quatro itens empilham como folhas: cada um entra de
+   um Z um pouco mais fundo que o anterior e assenta na pilha. */
+
+.recibo-calculo {
+  position: relative;
+  padding: var(--s-4) var(--s-4) var(--s-4) 0;
+  border-block-start: 1px solid color-mix(in oklab, var(--ambar) 26%, transparent);
+  counter-reset: passo;
+}
+.recibo-calculo::before {
+  content: "";
+  position: absolute;
+  inset-block-start: -1px;
+  inset-inline-start: 0;
+  inline-size: clamp(3rem, 20%, 7rem);
+  block-size: 2px;
+  background: var(--ambar);
+  transform-origin: left center;
+  transform: scaleX(var(--e));
+}
+
+.recibo-titulo {
+  font-size: var(--t-sm);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto);
+}
+
+.recibo-calculo ul {
+  margin-block-start: var(--s-4);
+  display: grid;
+  gap: var(--s-3);
+}
+
+.recibo-calculo li {
+  position: relative;
+  padding: var(--s-3) var(--s-3) var(--s-3) clamp(2.9rem, 9vw, 3.9rem);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--texto-2);
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--noite-2) 92%, var(--ambar) 8%),
+    color-mix(in oklab, var(--noite) 96%, transparent));
+  border: 1px solid color-mix(in oklab, var(--tinta-clara) 9%, transparent);
+  border-radius: var(--raio-2);
+  box-shadow: var(--sombra-1);
+}
+.recibo-calculo li::before {
+  counter-increment: passo;
+  content: counter(passo, decimal-leading-zero);
+  position: absolute;
+  inset-inline-start: var(--s-3);
+  inset-block-start: calc(var(--s-3) + 0.15em);
+  font-family: var(--fonte-num);
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ambar);
+  opacity: 0.85;
+}
+
+/* Entrada em cascata com deslocamento em Z. O transform é transitório e
+   termina em `none`: enquanto o item está parado, o texto é 2D puro. */
+.recibo-calculo li[data-reveal],
+.projecao li[data-reveal] {
+  transform:
+    perspective(800px)
+    rotateX(11deg)
+    translate3d(0, calc(1.1rem + var(--i, 0) * 0.22rem), calc(-42px - var(--i, 0) * 24px));
+  transform-origin: 50% -30%;
+}
+.recibo-calculo li[data-reveal].is-in,
+.projecao li[data-reveal].is-in { transform: none; }
+
+.recibo-nota,
+.projecao-nota { --atraso: calc(var(--i, 0) * 85ms); }
+
+.recibo-nota {
+  margin-block-start: var(--s-4);
+  font-size: var(--t-sm);
+  color: var(--texto);
+  font-weight: 620;
+}
+
+/* O valor que o quiz preenche em runtime. Marcado para a leitora reconhecer
+   que aquele pedaço da frase é a resposta dela. */
+.dado {
+  color: var(--ambar-forte);
+  font-weight: 680;
+  white-space: nowrap;
+  border-block-end: 1px solid color-mix(in oklab, var(--ambar) 45%, transparent);
+}
+
+/* --- O número ----------------------------------------------------------- */
+
+.numero-central {
+  --placa-sobra: clamp(1.3rem, 4.5vw, 2.4rem);
+  --halo-sobra: clamp(2.5rem, 8vw, 6rem);
+  --pk: 1300;                    /* perspectiva local, sem unidade, p/ calc  */
+  --zk: 520;                     /* profundidade de partida da placa, em px  */
+  --giro-placa: -17deg;
+  --inclina-placa: 9deg;
+
+  /* A ÚNICA variável de sincronia entre o plano 3D e o plano 2D.
+     0 = placa longe, torta e chegando. 1 = placa assentada, reta, no lugar.
+     Bate 1 em --p 0.5, que é o instante em que --e vale 1. */
+  --assento: clamp(0, calc(var(--p) * 2.4 - 0.2), 1);
+  --voo: calc(1 - var(--assento));
+
+  position: relative;
+  isolation: isolate;
+  margin-block: var(--s-3);
+}
+
+.numero-palco {
+  position: absolute;
+  inset: calc(var(--halo-sobra) * -1);
+  z-index: 0;
+  perspective: calc(var(--pk) * 1px);
+  perspective-origin: 50% 46%;
+  transform-style: preserve-3d;
+  overflow: clip;                /* o halo nunca escapa para o texto vizinho */
+  pointer-events: none;
+  border-radius: var(--raio-3);
+}
+
+/* O halo é camada separada, ATRÁS da placa, e é o "acender" da página.
+   mix-blend-mode: screen sobre o fundo de noite: só soma luz, nunca escurece.
+   A máscara radial garante que a borda do clip nunca apareça como linha. */
+.numero-halo {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: calc(0.1 + var(--e) * 0.6);
+  transform: scale(calc(0.62 + var(--e) * 0.46));
+  -webkit-mask-image: radial-gradient(closest-side, #000 40%, rgb(0 0 0 / 0.4) 70%, transparent 100%);
+          mask-image: radial-gradient(closest-side, #000 40%, rgb(0 0 0 / 0.4) 70%, transparent 100%);
+}
+/* <picture> vira display:contents para que a porcentagem abaixo resolva
+   contra o palco, e não contra um wrapper que encolhe até o tamanho
+   intrínseco da imagem. O centro é feito por posicionamento absoluto, não por
+   alinhamento de grade: um item que estoura a área de grade não centraliza de
+   forma confiável entre navegadores. */
+.numero-halo picture { display: contents; }
+.numero-halo img {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
+  inline-size: 128%;
+  max-inline-size: none;
+  block-size: auto;
+  aspect-ratio: 1;
+}
+
+/* A PLACA: este é o objeto 3D. Chega de longe (translateZ negativo grande),
+   torta nos dois eixos, e assenta reta. A contra-escala (pk + zk) / pk mantém
+   o tamanho aparente constante durante a viagem: sem ela o movimento lê como
+   zoom, não como aproximação.
+   O fundo é OPACO de propósito: é o que garante contraste do número por cima
+   do halo, que é claro. */
+.numero-placa {
+  position: absolute;
+  inset: calc(var(--halo-sobra) - var(--placa-sobra));
+  border-radius: var(--raio-3);
+  background:
+    linear-gradient(168deg, #1B1218 0%, #120D13 46%, #0B080C 100%);
+  border: 1px solid color-mix(in oklab, var(--ambar) 30%, transparent);
+  box-shadow:
+    var(--sombra-3),
+    inset 0 1px 0 color-mix(in oklab, var(--ambar-forte) 22%, transparent);
+  transform-origin: 50% 62%;
+  transform:
+    translate3d(calc(var(--voo) * -5%), calc(var(--voo) * 7%), calc(var(--voo) * var(--zk) * -1px))
+    rotateY(calc(var(--voo) * var(--giro-placa)))
+    rotateX(calc(var(--voo) * var(--inclina-placa)))
+    scale(calc(1 + var(--voo) * var(--zk) / var(--pk)));
+}
+
+/* O NÚMERO: plano 2D por cima, sem uma linha de transform, nunca.
+   Só opacidade responde ao scroll, e ela sobe e fica: o número não pode
+   apagar quando a leitora rola para ler o resto. */
+.numero-texto {
+  position: relative;
+  z-index: 1;
+  padding: var(--placa-sobra) calc(var(--placa-sobra) * 1.15);
+  text-align: center;
+  opacity: clamp(0.18, calc(var(--p) * 2.6), 1);
+}
+
+.numero-label {
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  color: var(--tinta-media);
+  max-inline-size: 26ch;
+  margin-inline: auto;
+}
+
+.numero-valor {
+  margin-block: var(--s-2);
+  font-family: var(--fonte-num);
+  font-size: clamp(3.2rem, 14vw, 6.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--salvia-clara);
+  /* brilho estático: text-shadow animado é paint, e paint por scroll está
+     fora do contrato. O que varia com --assento é só a opacidade do bloco. */
+  text-shadow: 0 0 34px rgb(127 181 155 / 0.42), 0 2px 0 rgb(0 0 0 / 0.5);
+  overflow-wrap: anywhere;
+}
+.numero-unidade {
+  font-size: 0.34em;
+  font-weight: 620;
+  letter-spacing: 0.02em;
+  color: #B5D8C7;   /* salvia clara puxada para o branco, valor fixo: este é o
+                       segundo texto mais importante da página e não pode
+                       depender de como cada navegador resolve color-mix */
+}
+
+.numero-legenda {
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--texto-2);
+  max-inline-size: 34ch;
+  margin-inline: auto;
+}
+
+/* --- Bloco de segurança ------------------------------------------------- */
+
+.bloco-seguranca {
+  display: grid;
+  gap: var(--s-3);
+  padding-inline-start: var(--s-4);
+  border-inline-start: 1px solid color-mix(in oklab, var(--tinta-clara) 14%, transparent);
+}
+.bloco-seguranca .h3 { color: var(--tinta-clara); }
+.bloco-seguranca p {
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  color: var(--texto-2);
+  max-inline-size: var(--medida-larga);
+  text-wrap: pretty;
+}
+
+/* --- Projeção ----------------------------------------------------------- */
+/* Fala de energia e de rotina. Nunca de peso, de medida, de prazo. A nota
+   final sobre não haver prazo é obrigatória e é o fecho do bloco. */
+
+.projecao { display: grid; gap: var(--s-3); }
+
+.projecao-titulo {
+  font-size: var(--t-md);
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  color: var(--tinta-clara);
+  text-wrap: balance;
+}
+.projecao-intro { font-size: var(--t-sm); color: var(--texto-2); }
+
+.projecao ul { display: grid; gap: var(--s-2); margin-block-start: var(--s-2); }
+.projecao li {
+  position: relative;
+  padding-inline-start: 1.75em;
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--texto-2);
+}
+.projecao li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.62em;
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  border-radius: 50%;
+  background: var(--salvia);
+  box-shadow: 0 0 10px rgb(127 181 155 / 0.6);
+}
+
+.projecao-nota {
+  margin-block-start: var(--s-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  /* --tinta-fraca reprovou aqui: sobre o clarão desta cena ela mede 3.9:1.
+     Esta nota é obrigatória por compliance, então ela sobe para --texto-2. */
+  color: var(--texto-2);
+  border-block-start: 1px dashed color-mix(in oklab, var(--tinta-clara) 16%, transparent);
+  padding-block-start: var(--s-3);
+}
+
+/* --- Loop aberto -------------------------------------------------------- */
+
+.loop-aberto {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  text-align: center;
+  padding: var(--s-5) var(--s-4);
+  border-radius: var(--raio-3);
+  background:
+    radial-gradient(120% 140% at 50% 0%,
+      color-mix(in oklab, var(--ambar-fundo) 26%, transparent) 0%,
+      transparent 62%),
+    color-mix(in oklab, var(--noite-2) 88%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ambar) 18%, transparent);
+}
+.loop-aberto > p:first-child {
+  font-size: var(--t-md);
+  line-height: 1.5;
+  color: var(--texto);
+  max-inline-size: 44ch;
+  text-wrap: pretty;
+}
+.cta-transicao { min-inline-size: min(100%, 24rem); }
+.microcopy-cta {
+  font-size: var(--t-sm);
+  /* mesma correção da projecao-nota: o card do loop é o ponto mais claro da
+     seção depois da placa, e --tinta-fraca cai para 4.1:1 em cima dele */
+  color: var(--texto-2);
+  max-inline-size: 40ch;
+}
+
+/* --- Desktop: o recibo ao lado do número -------------------------------- */
+/* A conta à esquerda e o resultado à direita, no mesmo quadro. A leitora vê
+   o trabalho e o produto do trabalho ao mesmo tempo. */
+
+@media (min-width: 64rem) {
+  .resultado__grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+    column-gap: clamp(2.5rem, 5vw, 5rem);
+    row-gap: var(--s-7);
+  }
+  .resultado__cab  { grid-column: 1 / -1; }
+  .recibo-calculo  { grid-column: 1; }
+  .numero-central  { grid-column: 2; align-self: center; }
+  .bloco-seguranca { grid-column: 1; }
+  .projecao        { grid-column: 2; }
+  .loop-aberto     { grid-column: 1 / -1; }
+
+  .recibo-calculo li { font-size: var(--t-base); }
+  .bloco-seguranca p, .projecao li { font-size: var(--t-base); }
+}
+
+/* Telas muito largas: a placa não pode virar um outdoor. Trava de medida. */
+@media (min-width: 100rem) {
+  .numero-central { --zk: 620; --pk: 1700; max-inline-size: 44rem; }
+  .numero-valor { font-size: clamp(4rem, 6vw, 7.2rem); }
+}
+
+/* --- Mobile ------------------------------------------------------------- */
+/* Profundidade real em 390 px: a placa continua chegando de longe, só que de
+   uma distância proporcional à perspectiva curta. Mesma sensação, sem
+   embrulho: o giro cai porque a placa ocupa quase a largura da tela e um
+   rotateY de 17 graus jogaria metade dela para fora do quadro. */
+
+@media (max-width: 47.9375rem) {
+  .resultado { padding-block: var(--s-7) var(--s-6); }
+  .numero-central {
+    --pk: 820;
+    --zk: 300;
+    --giro-placa: -11deg;
+    --inclina-placa: 7deg;
+  }
+  /* a placa cresce --placa-sobra para fora do bloco de texto; sem esta margem
+     ela encostaria exatamente na borda da tela em 390 px e a moldura de 1 px
+     seria cortada. Assim a placa fica alinhada com a coluna de texto da
+     página inteira. */
+  .numero-central { margin-inline: var(--placa-sobra); }
+  .numero-valor { font-size: clamp(2.8rem, 13.5vw, 4.4rem); }
+  .recibo-calculo li { padding-inline-start: clamp(2.6rem, 11vw, 3.4rem); }
+  .cta-transicao { inline-size: 100%; }
+  .loop-aberto { padding-inline: var(--s-3); }
+}
+
+/* Celular deitado: a seção não pode virar uma coluna infinita de 8 telas. */
+@media (max-height: 33rem) and (orientation: landscape) and (min-width: 40rem) {
+  .resultado__grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--s-5);
+  }
+  .resultado__cab, .loop-aberto { grid-column: 1 / -1; }
+  .numero-central { align-self: center; }
+}
+
+/* --- Sem movimento ------------------------------------------------------ */
+/* A placa fica assentada e reta, o halo fica aceso num nível fixo, o número
+   é legível. A cena inteira faz sentido parada. */
+
+.reduced-motion .numero-placa,
+.reduced-motion .recibo-calculo li[data-reveal],
+.reduced-motion .projecao li[data-reveal] { transform: none; }
+.reduced-motion .numero-halo { transform: scale(1); opacity: 0.5; }
+.reduced-motion .numero-texto { opacity: 1; }
+.reduced-motion .recibo-calculo::before { transform: scaleX(1); }
+.reduced-motion .res__clarao { opacity: 0.2; }
+.reduced-motion .res__poeira { opacity: 0.3; }
+.reduced-motion .res__piso { opacity: 0.8; }
+
+@media (prefers-reduced-motion: reduce) {
+  .numero-placa,
+  .recibo-calculo li[data-reveal],
+  .projecao li[data-reveal] { transform: none; }
+  .numero-halo { transform: scale(1); opacity: 0.5; }
+  .numero-texto { opacity: 1; }
+  .recibo-calculo::before { transform: scaleX(1); }
+  .res__clarao { opacity: 0.2; }
+  .res__poeira { opacity: 0.3; }
+  .res__piso { opacity: 0.8; }
+}
+
+
+/* ===================== 04b-previa-produto.css ===================== */
+.previa-produto {
+  background: #FAF6EF;
+  color: #173f35;
+  padding-block: clamp(4rem, 9vw, 8rem);
+}
+.previa-produto__conteudo { display: grid; gap: var(--s-5); }
+.previa-produto__conteudo > .corpo { max-inline-size: 62ch; }
+.previa-produto__grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+}
+.previa-produto__foto,
+.previa-produto__pagina {
+  margin: 0;
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  border: 1px solid rgb(23 63 53 / 18%);
+  border-radius: 1.25rem;
+  background: #FFFDF8;
+  box-shadow: 0 1rem 2.5rem rgb(23 63 53 / 10%);
+}
+.previa-produto__foto img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: .8rem;
+}
+.previa-produto__pagina--foto img { inline-size: 100%; border-radius: .8rem; margin-block: .4rem; }
+.previa-produto__foto figcaption { margin-block-start: .75rem; font-size: .875rem; }
+.previa-produto__pagina { display: grid; align-content: start; gap: .8rem; }
+.previa-produto__pagina ol,
+.previa-produto__pagina ul { margin: 0; padding-inline-start: 1.25rem; display: grid; gap: .5rem; }
+.previa-produto__pagina ol { counter-reset: refeicao; list-style: none; padding: 0; }
+.previa-produto__pagina ol li { counter-increment: refeicao; display: grid; grid-template-columns: 2rem 1fr; align-items: center; gap: .75rem; }
+.previa-produto__pagina ol li::before { content: counter(refeicao, decimal-leading-zero); display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: #dce8de; color: #4a6350; font: 700 .7rem/1 var(--fonte-num); }
+.receita-preview { display: grid; gap: .9rem; padding: 1rem; border-radius: 1rem; background: #f3f4ed; border: 1px solid #d7ded4; transform: rotate(-1deg); box-shadow: .65rem .65rem 0 #e7ded0; }
+.receita-preview__topo { display: flex; justify-content: space-between; color: #6b6459; font-size: .72rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+.receita-preview h4 { color: #2c4a52; font-size: 1.2rem; line-height: 1.2; }
+.receita-preview__colunas { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.receita-preview__colunas > div { display: grid; gap: .25rem; font-size: .77rem; line-height: 1.45; color: #6b6459; }
+.receita-preview__colunas b { color: #4a6350; }
+.receita-preview > p { font-size: .72rem; color: #6b6459; border-top: 1px solid #d7ded4; padding-top: .55rem; }
+@media (max-width: 47.9375rem) {
+  .previa-produto__grade { grid-template-columns: 1fr; }
+}
+
+
+/* ===================== 09-stack-valor.css ===================== */
+/* ============================================================================
+   PEÇA 9 — Stack de valor
+   ----------------------------------------------------------------------------
+   Este arquivo abre com as PRIMITIVAS DO ATO AURORA (peças 9 e 10). Elas moram
+   aqui porque montar.mjs concatena em ordem numérica e 09 vem antes de 10.
+   Nada vaza para fora do ato: todo seletor é .ato-aurora, .aur-* ou .stk-*.
+   As primitivas do ato frio (05) não são reaproveitadas de propósito: o ato
+   aurora tem que poder mudar sem tocar em peça que já venceu a crítica.
+
+   Quatro decisões, cada uma respondendo a uma cobrança registrada:
+
+   1. QUADRO, NÃO PALCO FIXO. A versão anterior tinha um .cena__palco--fixo
+      que não dividia célula de grade com o conteúdo e abria um quadro morto
+      no meio do scroll. Aqui o palco fixo não existe: são quatro .aur-quadro,
+      cada um com data-scene e palco próprios. Não há posição de scroll dentro
+      da peça em que o quadro esteja sem sujeito.
+
+   2. AS FOTOS SÃO CHAPAS, NÃO RECORTES. cozinha-manha, prato-cardapio e
+      mercearia-embalagens são RGB puro, sem alfa. Fingir recorte com máscara
+      radial deixa borda cinzenta boiando. Então cada foto é um objeto físico
+      da cena: chapa com moldura, aresta iluminada, sombra projetada, girada
+      no eixo Y. É a solução que a peça 6 usou em mae-cama-janela.
+
+   3. SUPERFÍCIE, NUNCA FIO SOLTO. A lacuna que o crítico apontou no lado
+      vencedor foi retângulo em wireframe de 1 px sem nada dentro, que lê como
+      imagem que não carregou. Toda forma desenhada aqui (.aur-lamina, chapa,
+      moldura, bancada) tem preenchimento, face iluminada e sombra: recebe luz
+      e recebe perspectiva.
+
+   4. A ROTAÇÃO É ESTÁTICA NO FILHO. rotateY nas chapas, nas lâminas e nos
+      batentes; rotateX no piso, com sulcos. O --giro do motor entra só como
+      delta na .camada. Retas convergindo sob a perspectiva compartilhada é a
+      única coisa que o olho lê como "aquilo girou", e sobrevive inteira a
+      prefers-reduced-motion.
+
+   CONTRASTE: .aur-placa é painel opaco (0,94 a 0,96), não véu. Sobre o pixel
+   mais claro das fotos (~#E8D9C4 no reflexo da bancada) a composição dá
+   ~#1B1310; --texto-2 do ato (#CBB6A5) sobre isso mede ~9,4:1 e --texto
+   (#F7EDE3) ~15:1. Nenhum corpo de texto encosta em foto em nenhum quadro.
+   ========================================================================== */
+
+/* ==========================================================================
+   PRIMITIVAS DO ATO AURORA
+   ========================================================================== */
+
+/* A COR DE BASE É UMA POR <section>, NUNCA POR PALCO. Fundo por palco produz
+   uma faixa horizontal reta em cada emenda de quadro, e emenda reta cruzando
+   a tela denuncia a montagem na hora. Os palcos ficam transparentes e carregam
+   só objeto e luz.
+
+   O gradiente é o arco de luz do ato. Ele começa exatamente em #15131A, que é
+   a cor em que a peça 8 (ato tecnico) entrega a página, e sobe até #3A2A20.
+   A peça 10 pega esse #3A2A20 e continua. Sem isso o amanhecer vira corte. */
+.ato-aurora {
+  padding-block: 0;
+  overflow: clip;
+}
+.ato-aurora::before { display: none; }
+
+.stack {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image:
+    repeating-linear-gradient(94deg, transparent 0 6.4%, rgb(255 201 142 / 0.018) 6.4% 7.1%),
+    linear-gradient(to bottom, #15131A 0%, #1E1719 26%, #2A1F1E 62%, #3A2A20 100%);
+}
+
+/* --- Corredor ------------------------------------------------------------- */
+
+.aur-quadro {
+  position: relative;
+  min-block-size: 78svh;
+  display: grid;
+  align-content: center;
+  padding-block: var(--s-6);
+  isolation: isolate;
+}
+.aur-quadro--alto { min-block-size: 96svh; }
+
+/* O palco desvanece nas duas pontas: nenhuma chapa, lâmina ou batente é
+   cortado por uma reta na emenda entre quadros. O que sai do quadro sai por
+   atenuação, que é como a distância já se comporta no resto da cena. */
+.aur-quadro .cena__palco {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 91%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 9%, #000 91%, transparent 100%);
+}
+
+/* Placa e sujeito em lados opostos do quadro, sempre. */
+.aur-quadro .cena__conteudo { display: flex; }
+.aur-quadro--esq .cena__conteudo { justify-content: flex-start; }
+.aur-quadro--dir .cena__conteudo { justify-content: flex-end; }
+
+/* --- Placa de texto ------------------------------------------------------- */
+
+.aur-placa {
+  position: relative;
+  z-index: 5;
+  inline-size: 100%;
+  max-inline-size: 34rem;
+  padding: clamp(1.2rem, 3vw, 2rem) clamp(1.2rem, 3vw, 2.2rem);
+  border-radius: var(--raio-3);
+  background:
+    linear-gradient(176deg,
+      rgb(22 16 15 / 0.955) 0%,
+      rgb(27 20 17 / 0.935) 56%,
+      rgb(20 15 14 / 0.955) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 201 142 / 0.24),
+    inset 0 0 0 1px rgb(242 183 124 / 0.12),
+    0 34px 80px -34px rgb(0 0 0 / 0.9);
+}
+.aur-placa > * + * { margin-block-start: var(--s-4); }
+/* Escala própria, fluida, sem media query: em 390 px o corpo cai para ~16 px,
+   o que devolve à cena a faixa de tela que a placa comeria inteira. */
+.aur-placa .corpo {
+  max-inline-size: 42ch;
+  font-size: clamp(0.98rem, 0.85rem + 0.5vw, 1.22rem);
+}
+
+.aur-titulo {
+  color: var(--tinta-clara);
+  max-inline-size: 24ch;
+  font-size: clamp(1.35rem, 1.0rem + 1.5vw, 2.3rem);
+  text-shadow: 0 2px 26px rgb(0 0 0 / 0.7);
+}
+
+/* --- Céu do amanhecer ----------------------------------------------------- */
+/* Só glow, nenhuma aresta: a cor de base é contínua e vem da <section>. O
+   ponto de origem da luz desce e esquenta de quadro em quadro, como um sol
+   que sobe atrás da janela da cozinha. */
+
+.aur-ceu {
+  position: absolute;
+  inset: -12%;
+  background:
+    radial-gradient(64% 40% at 62% 12%, rgb(242 183 124 / 0.16), transparent 74%),
+    radial-gradient(48% 34% at 18% 74%, rgb(120 148 178 / 0.10), transparent 78%);
+}
+
+/* --- O fio âmbar, continuado da peça 7 ------------------------------------ */
+/* A peça 7 termina com uma linha fina no horizonte. Aqui ela é a mesma linha,
+   mais alta, mais larga e com halo maior: o amanhecer é a mesma luz crescendo,
+   não uma luz nova. */
+
+.aur-fio {
+  position: absolute;
+  inset-inline: -8%;
+  inset-block-end: 40%;
+  block-size: 3px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgb(242 183 124 / 0.5) 20%,
+    rgb(255 201 142 / 0.95) 50%,
+    rgb(242 183 124 / 0.45) 80%,
+    transparent 100%);
+  box-shadow:
+    0 0 70px 16px rgb(242 183 124 / 0.30),
+    0 0 160px 50px rgb(200 122 60 / 0.16);
+  opacity: calc(0.5 + var(--e) * 0.5);
+}
+
+/* --- Piso e bancada em fuga ------------------------------------------------ */
+/* O sulco é o que prova a rotação: paralelas que convergem. Custa zero byte e
+   é o cue de profundidade mais barato que existe. */
+
+.aur-piso {
+  position: absolute;
+  inset-inline: -34%;
+  inset-block-end: 0;
+  block-size: 70%;
+  transform: rotateX(73deg);
+  transform-origin: 50% 100%;
+  background:
+    linear-gradient(180deg, transparent 0%, rgb(242 183 124 / 0.07) 44%, rgb(255 201 142 / 0.18) 100%),
+    repeating-linear-gradient(90deg,
+      transparent 0 6.2%,
+      rgb(255 210 160 / 0.14) 6.2% 6.7%);
+  -webkit-mask-image: radial-gradient(80% 112% at 50% 100%, #000 22%, transparent 82%);
+          mask-image: radial-gradient(80% 112% at 50% 100%, #000 22%, transparent 82%);
+}
+.aur-piso--perto { block-size: 52%; transform: rotateX(79deg); }
+.aur-piso--longe { block-size: 86%; transform: rotateX(68deg) rotateZ(-1.5deg); opacity: 0.85; }
+
+/* A bancada é uma superfície, não uma linha: face de cima iluminada pelo fio,
+   aresta frontal e queda de sombra. */
+.aur-bancada {
+  position: absolute;
+  inset-inline: -26%;
+  inset-block-end: 6%;
+  block-size: 40%;
+  transform: rotateX(76deg);
+  transform-origin: 50% 100%;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background:
+    linear-gradient(180deg,
+      rgb(96 66 46 / 0.55) 0%,
+      rgb(64 44 32 / 0.42) 42%,
+      rgb(36 26 21 / 0.30) 100%),
+    repeating-linear-gradient(90deg, transparent 0 9%, rgb(255 210 160 / 0.06) 9% 9.5%);
+  box-shadow:
+    inset 0 2px 0 rgb(255 210 160 / 0.26),
+    0 -18px 60px -20px rgb(242 183 124 / 0.22);
+  -webkit-mask-image: radial-gradient(86% 120% at 50% 100%, #000 24%, transparent 86%);
+          mask-image: radial-gradient(86% 120% at 50% 100%, #000 24%, transparent 86%);
+}
+
+/* --- Chapa fotográfica ---------------------------------------------------- */
+/* As três fotos do ato são RGB sem alfa. Nunca .camada__img e nunca máscara
+   radial fingindo recorte: cada uma é uma placa física dentro da cena, com
+   espessura, aresta clara do lado da luz e sombra projetada no lado oposto.
+   A aresta reta girada é o que faz a rotação ser vista, não só suposta. */
+
+.aur-chapa {
+  position: absolute;
+  margin: 0;
+  border-radius: var(--raio-2);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 210 160 / 0.30),
+    inset 0 1px 0 rgb(255 226 196 / 0.36),
+    0 44px 96px -34px rgb(0 0 0 / 0.92);
+}
+.aur-chapa__img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) brightness(0.86);
+}
+/* A luz que existe dentro da foto, continuada para fora do enquadramento. É o
+   que costura a chapa à cena em vez de deixá-la colada por cima. */
+.aur-chapa__luz {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background:
+    radial-gradient(62% 74% at 78% 16%, rgb(255 201 142 / 0.30), transparent 66%),
+    linear-gradient(196deg, transparent 46%, rgb(24 16 13 / 0.55) 100%);
+  opacity: calc(0.62 + var(--e) * 0.38);
+}
+
+/* --- A pilha de lâminas --------------------------------------------------- */
+/* O stack de valor, literal: duas lâminas no quadro B, quatro no C, seis no D.
+   Cada lâmina é SUPERFÍCIE, com face iluminada em cima, corpo com gradiente e
+   sombra por baixo. Empilhadas em Z real dentro do preserve-3d da camada e
+   giradas em bloco, as arestas convergem e a pilha lê como pilha. */
+
+.aur-pilha {
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: rotateY(-27deg) rotateX(8deg);
+  transform-origin: 50% 100%;
+}
+.aur-pilha > i {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 0.55rem;
+  transform: translate3d(0, calc(var(--i) * -0.9rem), calc(var(--i) * -30px));
+  background:
+    linear-gradient(168deg,
+      rgb(120 84 58 / 0.92) 0%,
+      rgb(84 58 42 / 0.90) 46%,
+      rgb(52 36 28 / 0.92) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 214 172 / 0.42),
+    inset 0 0 0 1px rgb(255 201 142 / 0.16),
+    0 14px 26px -12px rgb(0 0 0 / 0.85);
+  /* a lâmina do topo é a mais iluminada: a luz vem de cima e de trás */
+  opacity: calc(0.5 + var(--i) * 0.09 + var(--e) * 0.2);
+}
+/* A face de canto: a espessura da lâmina. Sem ela a pilha lê como sombras
+   empilhadas, não como objetos com volume. */
+.aur-pilha > i::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -0.32rem;
+  block-size: 0.32rem;
+  border-radius: 0 0 0.55rem 0.55rem;
+  background: linear-gradient(to bottom, rgb(60 40 30 / 0.95), rgb(30 20 16 / 0.9));
+}
+
+/* --- Moldura de primeiro plano -------------------------------------------- */
+/* O equivalente da rocha/caverna da barra. Dois batentes girados em torno da
+   própria aresta externa e um lintel deitado em X. A aresta interna clara é
+   que denuncia o ângulo. Serve também de scrim lateral, que é o que garante o
+   contraste nas bordas do quadro. */
+
+.aur-moldura {
+  position: absolute;
+  inset: -10% -6%;
+  transform-style: preserve-3d;
+}
+.aur-moldura > i { position: absolute; display: block; }
+
+.aur-moldura__esq,
+.aur-moldura__dir {
+  inset-block: -6%;
+  inline-size: clamp(3.2rem, 14vw, 12rem);
+}
+.aur-moldura__esq {
+  inset-inline-start: 0;
+  transform: rotateY(33deg);
+  transform-origin: left center;
+  background: linear-gradient(90deg, #0B0708 0%, #120C0B 66%, rgb(18 12 11 / 0) 100%);
+  border-inline-end: 2px solid rgb(242 183 124 / 0.26);
+  box-shadow: 6px 0 30px -6px rgb(242 183 124 / 0.20);
+}
+.aur-moldura__dir {
+  inset-inline-end: 0;
+  transform: rotateY(-33deg);
+  transform-origin: right center;
+  background: linear-gradient(270deg, #0B0708 0%, #120C0B 66%, rgb(18 12 11 / 0) 100%);
+  border-inline-start: 2px solid rgb(242 183 124 / 0.26);
+  box-shadow: -6px 0 30px -6px rgb(242 183 124 / 0.20);
+}
+.aur-moldura__alto {
+  inset-inline: -4%;
+  inset-block-start: 0;
+  block-size: clamp(3rem, 13svh, 9rem);
+  transform: rotateX(-25deg);
+  transform-origin: top center;
+  background: linear-gradient(180deg, #0B0708 0%, #120C0B 54%, rgb(18 12 11 / 0) 100%);
+  border-block-end: 1px solid rgb(242 183 124 / 0.16);
+}
+.aur-moldura--larga .aur-moldura__esq,
+.aur-moldura--larga .aur-moldura__dir { inline-size: clamp(3.2rem, 16vw, 14rem); }
+
+/* ==========================================================================
+   Peça 9 propriamente dita
+   ========================================================================== */
+
+/* O arco de luz de dentro do ato. A origem do clarão desce e esquenta em cada
+   quadro: a barra tem paleta constante do topo ao rodapé, nós amanhecemos
+   dentro de uma seção só. */
+.stk-ceu    { background:
+                radial-gradient(60% 36% at 60% 16%, rgb(242 183 124 / 0.14), transparent 74%),
+                radial-gradient(46% 32% at 16% 76%, rgb(120 148 178 / 0.12), transparent 78%); }
+.stk-ceu--b { background:
+                radial-gradient(70% 42% at 46% 20%, rgb(242 183 124 / 0.20), transparent 74%),
+                radial-gradient(44% 30% at 84% 74%, rgb(255 201 142 / 0.09), transparent 78%); }
+.stk-ceu--c { background:
+                radial-gradient(76% 46% at 66% 24%, rgb(248 191 132 / 0.25), transparent 74%),
+                radial-gradient(46% 32% at 12% 78%, rgb(255 201 142 / 0.11), transparent 78%); }
+.stk-ceu--d { background:
+                radial-gradient(88% 54% at 40% 28%, rgb(255 201 142 / 0.32), transparent 74%),
+                radial-gradient(52% 36% at 88% 76%, rgb(255 214 172 / 0.14), transparent 78%); }
+
+/* As três chapas. Cada uma no lado oposto à placa do seu quadro. */
+.stk-cozinha {
+  inset-block: 14% 24%;
+  inset-inline-end: 2%;
+  inline-size: min(52%, 38rem);
+  transform: rotateY(-22deg);
+  transform-origin: 92% 50%;
+}
+.stk-prato {
+  inset-block: 12% 26%;
+  inset-inline-start: 1%;
+  inline-size: min(50%, 34rem);
+  transform: rotateY(23deg);
+  transform-origin: 8% 50%;
+}
+.stk-mercado {
+  inset-block: 12% 26%;
+  inset-inline-end: 1%;
+  inline-size: min(50%, 34rem);
+  transform: rotateY(-24deg);
+  transform-origin: 92% 50%;
+}
+/* Última chapa do ato: mais perto, mais clara, menos dessaturada. A luz chegou. */
+.stk-cozinha-perto {
+  inset-block: 8% 18%;
+  inset-inline-start: -4%;
+  inline-size: min(58%, 42rem);
+  transform: rotateY(19deg);
+  transform-origin: 6% 50%;
+}
+.stk-cozinha-perto .aur-chapa__img { filter: saturate(1) brightness(1.04); }
+
+/* A pilha cresce de quadro em quadro. Ela fica do MESMO lado da chapa, atrás
+   e abaixo dela: as duas juntas formam o sujeito, e o sujeito fica sempre no
+   lado contrário à placa. */
+.aur-pilha { inline-size: min(30%, 17rem); aspect-ratio: 1.55; }
+.stk-pilha--b { inset-block-end: 13%; inset-inline-start: 9%; }
+.stk-pilha--c { inset-block-end: 13%; inset-inline-end: 9%; transform: rotateY(26deg) rotateX(8deg); }
+.stk-pilha--d { inset-block-end: 11%; inset-inline-start: 12%; inline-size: min(32%, 19rem); }
+
+/* --- Os itens dentro da placa --------------------------------------------- */
+
+.aur-itens { display: grid; gap: var(--s-5); }
+
+.aur-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s-3) var(--s-4);
+  align-items: start;
+}
+.aur-item + .aur-item {
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid rgb(242 183 124 / 0.20);
+}
+
+.aur-item__n {
+  font-family: var(--fonte-num);
+  font-size: var(--t-md);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #1B1310;
+  background: linear-gradient(160deg, var(--ambar-forte), #D89855);
+  padding: 0.24em 0.46em;
+  border-radius: 0.4rem;
+  box-shadow: 0 6px 16px -8px rgb(242 183 124 / 0.7);
+}
+
+.aur-item__txt > * + * { margin-block-start: var(--s-2); }
+.aur-item__tit {
+  color: var(--tinta-clara);
+  font-size: clamp(1.05rem, 0.92rem + 0.6vw, 1.42rem);
+}
+.aur-item__txt .corpo { color: var(--texto-2); }
+
+/* --- Tablet retrato (768 a 1023) ------------------------------------------ */
+/* A largura comporta duas colunas, mas não a placa de 34rem: ela cobriria a
+   chapa inteira. A ESTRUTURA continua lado a lado, só o repartimento muda. */
+
+@media (min-width: 48rem) and (max-width: 63.999rem) {
+  .aur-placa { max-inline-size: 27rem; }
+  .aur-quadro { min-block-size: 76svh; }
+  .aur-quadro--alto { min-block-size: 88svh; }
+  .stk-cozinha, .stk-prato, .stk-mercado { inline-size: min(48%, 24rem); }
+  .stk-cozinha-perto { inline-size: min(52%, 26rem); }
+  .aur-pilha { inline-size: min(32%, 12rem); }
+}
+
+/* --- Retrato -------------------------------------------------------------- */
+/* Mobile não é degradação: os mesmos cinco planos continuam existindo. O que
+   muda é a ARQUITETURA do quadro. O sujeito sobe para uma faixa superior e a
+   placa ocupa a base, em vez de os dois disputarem a mesma coluna. O ritmo do
+   scroll vira cena / texto / cena / texto, sem vão morto entre placas. */
+
+@media (max-width: 47.9375rem) {
+  .aur-quadro {
+    min-block-size: 96svh;
+    align-content: end;
+    padding-block: var(--s-4) var(--s-5);
+  }
+  .aur-quadro--alto { min-block-size: 100svh; }
+
+  /* A placa não vai de ponta a ponta: a tira que sobra de um lado mostra o
+     batente girado e o que está atrás dele. É pouco espaço, e é ele que
+     mantém a leitura de "existe um espaço além do cartão" em 390 px. */
+  .aur-placa { max-inline-size: 92%; padding: var(--s-4); }
+  .aur-placa .corpo { max-inline-size: none; }
+  .aur-placa > * + * { margin-block-start: var(--s-3); }
+  .aur-titulo { max-inline-size: none; }
+
+  .aur-itens { gap: var(--s-4); }
+  .aur-item { gap: var(--s-2) var(--s-3); }
+  .aur-item + .aur-item { padding-block-start: var(--s-4); }
+
+  .aur-moldura { inset: -8% -4%; }
+  .aur-moldura__esq,
+  .aur-moldura__dir { inline-size: clamp(2.1rem, 16vw, 5.6rem); }
+  .aur-moldura--larga .aur-moldura__esq,
+  .aur-moldura--larga .aur-moldura__dir { inline-size: clamp(2.6rem, 21vw, 7rem); }
+  .aur-moldura__alto { block-size: clamp(2.2rem, 8svh, 4.6rem); }
+
+  /* Piso, bancada e fio sobem para a faixa de cena; ancorados na base ficariam
+     escondidos atrás da placa. */
+  .aur-piso { block-size: 30%; inset-block-end: 44%; inset-inline: -40%; }
+  .aur-piso--perto { block-size: 25%; inset-block-end: 46%; }
+  .aur-piso--longe { block-size: 34%; inset-block-end: 42%; }
+  .aur-bancada { block-size: 20%; inset-block-end: 46%; inset-inline: -30%; }
+  .aur-fio { inset-block-end: 62%; }
+
+  /* As chapas ocupam a faixa superior inteira, em par, ainda giradas. */
+  .stk-cozinha, .stk-prato, .stk-mercado, .stk-cozinha-perto {
+    inset-block: 3% 50%;
+    inline-size: 62%;
+  }
+  .stk-cozinha       { inset-inline: auto 1%; transform: rotateY(-19deg); }
+  .stk-prato         { inset-inline: 1% auto; transform: rotateY(20deg); }
+  .stk-mercado       { inset-inline: auto 1%; transform: rotateY(-21deg); }
+  .stk-cozinha-perto { inset-inline: 1% auto; transform: rotateY(17deg); }
+
+  .aur-pilha { inline-size: 34%; aspect-ratio: 1.5; }
+  .stk-pilha--b { inset-block: auto 52%; inset-inline: auto 4%; }
+  .stk-pilha--c { inset-block: auto 52%; inset-inline: 4% auto; }
+  .stk-pilha--d { inset-block: auto 52%; inset-inline: auto 4%; inline-size: 36%; }
+}
+
+/* --- Paisagem baixa de celular: 844x390 ----------------------------------- */
+/* Sem altura para a faixa superior, o quadro volta a ser lado a lado. */
+
+@media (max-width: 60rem) and (max-height: 30rem) {
+  .aur-quadro { min-block-size: 124svh; align-content: center; }
+  .aur-quadro--alto { min-block-size: 124svh; }
+  .aur-quadro--esq .cena__conteudo { justify-content: flex-start; }
+  .aur-quadro--dir .cena__conteudo { justify-content: flex-end; }
+  .aur-placa { max-inline-size: 27rem; }
+
+  .stk-cozinha, .stk-prato, .stk-mercado, .stk-cozinha-perto {
+    inset-block: 6% 8%;
+    inline-size: 44%;
+  }
+  .stk-cozinha       { inset-inline: auto 1%; }
+  .stk-prato         { inset-inline: 1% auto; }
+  .stk-mercado       { inset-inline: auto 1%; }
+  .stk-cozinha-perto { inset-inline: 1% auto; }
+  .aur-pilha { inline-size: 22%; }
+  .stk-pilha--b { inset-block-end: 6%; inset-inline-start: 4%; }
+  .stk-pilha--c { inset-block-end: 6%; inset-inline-end: 4%; inset-inline-start: auto; }
+  .stk-pilha--d { inset-block-end: 6%; inset-inline-start: 4%; }
+  .aur-fio { inset-block-end: 50%; }
+  .aur-bancada { block-size: 30%; inset-block-end: 0; }
+}
+
+/* --- Sem movimento -------------------------------------------------------- */
+/* O motor não escreve --e. A cena tem que ficar acesa e legível parada: todo
+   valor que depende de --e ganha piso alto aqui. */
+
+.reduced-motion .aur-fio,
+.reduced-motion .aur-chapa__luz { opacity: 0.9; }
+.reduced-motion .aur-pilha > i { opacity: calc(0.6 + var(--i) * 0.08); }
+
+@media (prefers-reduced-motion: reduce) {
+  .aur-fio, .aur-chapa__luz { opacity: 0.9; }
+  .aur-pilha > i { opacity: calc(0.6 + var(--i) * 0.08); }
+}
+
+
+/* ===================== 10-ancoragem.css ===================== */
+/* ============================================================================
+   PEÇA 10 — Ancoragem
+   Ato: aurora. Barras reais, proporcionais ao preço (base R$ 1.200 = 100%),
+   nunca um preço riscado artificial — a regra do contrato contra urgência
+   e desconto falso vale também para o desenho da ancoragem.
+   ========================================================================== */
+
+.ancora__consultorio {
+  opacity: 0.42;
+  filter: saturate(0.85) brightness(0.8) sepia(0.08);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 96%);
+          mask-image: linear-gradient(to bottom, #000 55%, transparent 96%);
+}
+
+.ancora__luz {
+  inset-inline-start: 60%;
+  inset-block-start: -8%;
+  inline-size: min(70vw, 40rem);
+  aspect-ratio: 1.4;
+  background: radial-gradient(ellipse, color-mix(in oklab, var(--ambar-forte) 42%, transparent), transparent 72%);
+}
+
+.ancora__grade { position: relative; z-index: 2; display: grid; gap: var(--s-7); }
+
+.ancora__texto { max-inline-size: 40rem; }
+.ancora__texto .h2 { margin-block: var(--s-2) var(--s-5); }
+
+.ancora__barras {
+  display: grid;
+  gap: var(--s-4);
+  max-inline-size: 44rem;
+}
+
+.ancora__barra { display: grid; gap: var(--s-2); }
+
+.ancora__trilho {
+  block-size: 0.7rem;
+  border-radius: var(--raio-cheio);
+  background: rgb(255 255 255 / 0.08);
+  overflow: hidden;
+}
+.ancora__preenche {
+  block-size: 100%;
+  inline-size: var(--valor, 10%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--ambar), var(--ambar-forte));
+}
+.ancora__barra--concorrente .ancora__preenche {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--texto-2) 60%, transparent), color-mix(in oklab, var(--texto-2) 40%, transparent));
+}
+
+.ancora__legenda {
+  font-size: var(--t-sm);
+  color: var(--texto-2);
+  max-inline-size: 46ch;
+}
+.ancora__legenda b { color: var(--texto); font-weight: 640; }
+
+.ancora__virada {
+  display: grid;
+  gap: var(--s-3);
+  max-inline-size: 44rem;
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid color-mix(in oklab, var(--ambar-forte) 26%, transparent);
+}
+.ancora__pergunta { color: var(--texto); font-weight: 640; }
+
+@media (min-width: 62rem) {
+  .ancora__grade { grid-template-columns: minmax(0, 26rem) minmax(0, 1fr); align-items: start; }
+  .ancora__virada { grid-column: 1 / -1; }
+}
+
+
+/* ===================== 11-preco.css ===================== */
+/* ============================================================================
+   PEÇA 11 — Preço + reason-why
+   Ato: manha. Primeiro tema claro da página — [data-ato="manha"] já inverte
+   --fundo/--texto/--realce, então nenhuma cor é escrita aqui à mão.
+   ========================================================================== */
+
+.preco__luz-fundo {
+  position: absolute;
+  inset: -10%;
+  background: radial-gradient(65% 55% at 78% 15%, color-mix(in oklab, var(--realce) 22%, transparent), transparent 70%);
+}
+
+/* Objeto macro pequeno, não full-bleed: .camada__img encheria o palco
+   inteiro por causa do object-fit:cover herdado, então aqui a moeda é um
+   elemento próprio, com tamanho e posição explícitos. */
+.preco__moeda-caixa {
+  position: absolute;
+  inset-inline-end: 4%;
+  inset-block-start: 10%;
+  inline-size: min(46vw, 22rem);
+  aspect-ratio: 1000/545;
+}
+.preco__moeda {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  border-radius: var(--raio-2);
+  box-shadow: var(--sombra-3);
+  filter: saturate(1.05);
+  opacity: 0.85;
+}
+
+.preco__grade { position: relative; z-index: 2; display: grid; gap: var(--s-6); max-inline-size: 46rem; margin-inline: auto; }
+
+.preco__placa {
+  justify-self: center;
+  text-align: center;
+  padding: var(--s-6) var(--s-7);
+  border-radius: var(--raio-3);
+  background: color-mix(in oklab, var(--manha) 60%, white 10%);
+  box-shadow: var(--sombra-2), inset 0 1px 0 rgb(255 255 255 / 0.6);
+  outline: 1px solid color-mix(in oklab, var(--realce) 24%, transparent);
+}
+
+.preco__valor {
+  font-family: var(--fonte-num);
+  font-size: clamp(3rem, 2rem + 6vw, 6rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--tinta-escura);
+  letter-spacing: -0.02em;
+}
+.preco__cifrao { font-size: 0.4em; vertical-align: super; color: var(--realce); }
+.preco__centavos { font-size: 0.42em; color: var(--tinta-escura-2); }
+
+.preco__condicao {
+  margin-block-start: var(--s-2);
+  font-size: var(--t-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tinta-escura-2);
+}
+
+.preco__razao { max-inline-size: 42rem; margin-inline: auto; }
+
+.preco__fecho {
+  padding-block-start: var(--s-4);
+  border-block-start: 1px solid color-mix(in oklab, var(--realce) 30%, transparent);
+  color: var(--tinta-escura);
+  font-weight: 600;
+}
+
+/* A variante B muda composição, não preço, garantia ou condições. */
+[data-offer-variant="B"] .preco__grade {
+  max-inline-size: 62rem;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, .72fr);
+  align-items: center;
+}
+[data-offer-variant="B"] .preco__texto,
+[data-offer-variant="B"] .preco__razao { grid-column: 1; }
+[data-offer-variant="B"] .preco__placa {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  transform: rotate(1.5deg);
+}
+@media (max-width: 61.9375rem) {
+  [data-offer-variant="B"] .preco__grade { grid-template-columns: 1fr; }
+  [data-offer-variant="B"] .preco__placa,
+  [data-offer-variant="B"] .preco__texto,
+  [data-offer-variant="B"] .preco__razao { grid-column: 1; grid-row: auto; }
+}
+
+@media (min-width: 62rem) {
+  .preco__grade { grid-template-columns: minmax(0, 22rem) 1fr; align-items: start; }
+  .preco__texto { grid-column: 1 / -1; }
+  .preco__placa { grid-column: 1; align-self: start; }
+  .preco__razao { grid-column: 2; }
+}
+
+/* Abaixo de 62rem a coluna vira única e o texto passa por baixo da moeda:
+   sem esse ajuste ela flutua por cima do parágrafo e derruba o contraste. */
+@media (max-width: 61.9375rem) {
+  .preco__moeda-caixa {
+    inset-inline-end: 2%;
+    inset-block-start: 2%;
+    inline-size: min(34vw, 12rem);
+    opacity: 0.55;
+  }
+}
+
+
+/* ===================== 13-faq.css ===================== */
+/* ============================================================================
+   PEÇA 13 — FAQ / objeções
+   Ato: manha. <details> nativo cobre teclado e leitor de tela sem JS. Só o
+   ::marker é trocado por uma cruz que gira — transform/opacity, nada de
+   altura animada (o navegador já anima abertura como layout, aceitável
+   porque não é a técnica de scroll do motor, é interação local do usuário).
+   ========================================================================== */
+
+.faq__luz {
+  position: absolute;
+  inset: -10%;
+  background: radial-gradient(55% 45% at 80% 10%, color-mix(in oklab, var(--realce) 16%, transparent), transparent 70%);
+}
+
+.faq__grade { position: relative; z-index: 2; max-inline-size: 46rem; margin-inline: auto; }
+
+.faq__cab { margin-block-end: var(--s-6); }
+.faq__cab .h2 { margin-block-start: var(--s-2); }
+
+.faq__lista { display: grid; gap: var(--s-3); }
+
+.faq__item {
+  border-radius: var(--raio-2);
+  background: color-mix(in oklab, var(--manha) 55%, white 8%);
+  box-shadow: var(--sombra-1);
+  outline: 1px solid color-mix(in oklab, var(--tinta-escura) 8%, transparent);
+}
+
+.faq__pergunta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-5);
+  font-weight: 660;
+  font-size: var(--t-base);
+  color: var(--tinta-escura);
+  cursor: pointer;
+  list-style: none;
+  min-block-size: 44px;
+}
+.faq__pergunta::-webkit-details-marker { display: none; }
+
+.faq__mais {
+  position: relative;
+  flex: none;
+  inline-size: 1.1rem;
+  block-size: 1.1rem;
+}
+.faq__mais::before,
+.faq__mais::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: var(--tinta-escura-2);
+  border-radius: 1px;
+}
+.faq__mais::before { inline-size: 100%; block-size: 2px; }
+.faq__mais::after { inline-size: 2px; block-size: 100%; transition: transform 300ms var(--ease-suave); }
+.faq__item[open] .faq__mais::after { transform: rotate(90deg); }
+
+.faq__resposta { padding: 0 var(--s-5) var(--s-5); color: var(--tinta-escura-2); }
+.faq__resposta p { max-width: none; }
+
+
+/* ===================== 14-cta-final.css ===================== */
+/* ============================================================================
+   PEÇA 14 — CTA final + LGPD
+   Ato: manha. Cozinha em luz plena — mesmo cômodo da peça 9, agora perto.
+   ========================================================================== */
+
+.cta-final__cozinha {
+  opacity: 0.5;
+  filter: saturate(1.02) brightness(1.02);
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 40%, #000 40%, transparent 92%);
+          mask-image: radial-gradient(70% 60% at 50% 40%, #000 40%, transparent 92%);
+}
+
+.cta-final__luz {
+  inset-inline-start: 50%;
+  inset-block-start: -10%;
+  translate: -50% 0;
+  inline-size: min(90vw, 46rem);
+  aspect-ratio: 1.8;
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in oklab, var(--realce) 30%, transparent), transparent 74%);
+}
+
+.cta-final__texto { position: relative; z-index: 5; text-align: center; }
+.cta-final__texto .h2 { margin-block: var(--s-2) var(--s-3); }
+.cta-final__texto .corpo { margin-inline: auto; }
+
+.cta-final__caixa {
+  margin-block-start: var(--s-6);
+  max-inline-size: 30rem;
+  margin-inline: auto;
+  padding: var(--s-6);
+  border-radius: var(--raio-3);
+  background: color-mix(in oklab, var(--manha) 60%, white 12%);
+  box-shadow: var(--sombra-2);
+  outline: 1px solid color-mix(in oklab, var(--realce) 22%, transparent);
+  text-align: center;
+}
+
+.cta-final__preco { margin-block-start: var(--s-3); }
+
+.cta-final__check {
+  display: flex;
+  align-items: start;
+  gap: 0.7rem;
+  margin-block-start: var(--s-5);
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid color-mix(in oklab, var(--tinta-escura) 12%, transparent);
+  text-align: start;
+  font-size: var(--t-sm);
+  color: var(--tinta-escura-2);
+  cursor: pointer;
+}
+.cta-final__check input {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin-block-start: 0.1em;
+  accent-color: var(--realce);
+}
+.cta-final__check em { display: block; margin-block-start: 0.3em; font-style: normal; color: var(--tinta-fraca); }
+
+.cta-final__defesa {
+  margin-block-start: var(--s-4);
+  color: var(--tinta-escura-2);
+}
+
+
+/* ===================== 15-rodape.css ===================== */
+/* ============================================================================
+   PEÇA 15 — Rodapé
+   Sem palco 3D: é a única peça que a barra também não anima, e o contrato
+   não exige profundidade em disclaimer legal.
+   ========================================================================== */
+
+.rodape {
+  padding-block: var(--s-6) var(--s-5);
+  border-block-start: 1px solid color-mix(in oklab, var(--tinta-escura) 10%, transparent);
+}
+
+.rodape__grade {
+  display: grid;
+  gap: var(--s-3);
+  max-inline-size: 40rem;
+}
+
+.rodape__disclaimer { color: var(--tinta-escura-2); }
+
+.rodape__responsavel,
+.rodape__dados { color: var(--tinta-fraca); }
+
+.rodape__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  margin-block-start: var(--s-2);
+}
+.rodape__links a {
+  font-size: var(--t-sm);
+  color: var(--tinta-escura-2);
+  min-block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rodape__copyright { color: var(--tinta-fraca); }
+
+
+/* ===================== 99-direcao-atual.css ===================== */
+/* Direção visual atual: tema claro, uma família de cores e menos cenografia. */
+
+[data-ato="noite"],
+[data-ato="frio"],
+[data-ato="tecnico"],
+[data-ato="aurora"],
+[data-ato="manha"],
+[data-ato="claro"] {
+  --fundo: #faf6ef;
+  --texto: #2c4a52;
+  --texto-2: #6b6459;
+  --realce: #4a6350;
+  color-scheme: light;
+}
+
+.etiqueta::before { background: #c97b5c; }
+
+.risco {
+  background-position: 0 calc(100% - .02em);
+  background-size: 0% .1em;
+  padding-block-end: .08em;
+}
+@keyframes riscar { to { background-size: 100% .1em; } }
+
+.conteudo-pos-resultado[hidden],
+.cta-transicao[hidden] { display: none !important; }
+
+.hero__sujeito--mobile { display: none; }
+
+.cena::before { opacity: .28; }
+
+.transicao,
+.empatia,
+.permissao { display: none; }
+
+.resultado,
+.mec,
+.stack,
+.ancora,
+.preco,
+.garantia,
+.faq,
+.cta-final {
+  color: #33312c;
+}
+
+.resultado {
+  background: #edf2ed;
+  padding-block: clamp(4.5rem, 9vw, 7.5rem);
+}
+
+.resultado > .cena__palco { display: none; }
+.resultado__grade { gap: clamp(2rem, 5vw, 4rem); }
+.resultado__titulo,
+.resultado .h3,
+.resultado .projecao-titulo { color: #2c4a52; }
+
+.resultado-resumo {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid #cfdbd0;
+  border-radius: 1.75rem;
+  background: #fffdf8;
+  box-shadow: 0 1.5rem 4rem -2.2rem rgb(44 74 82 / .28);
+}
+
+.resultado-resumo::after {
+  content: "";
+  position: absolute;
+  width: 14rem;
+  height: 14rem;
+  inset: auto -5rem -6rem auto;
+  border-radius: 50%;
+  background: #dce8de;
+  opacity: .7;
+  pointer-events: none;
+}
+
+.resultado-resumo .numero-label { color: #6b6459; text-align: left; margin: 0; }
+.resultado-resumo .numero-valor { color: #2c4a52; text-shadow: none; }
+.resultado-resumo .numero-unidade { color: #4a6350; }
+.resultado-justificativa {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: .55rem;
+  max-width: 52ch;
+  color: #5d574e;
+  font-size: var(--t-sm);
+  line-height: 1.65;
+}
+
+.bloco-seguranca,
+.projecao {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid #d7ded4;
+  border-radius: 1.35rem;
+  background: rgb(255 253 248 / .78);
+}
+
+.bloco-seguranca {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(15rem, .9fr);
+  gap: clamp(1.25rem, 4vw, 3rem);
+  align-items: center;
+  padding: 0;
+  overflow: hidden;
+}
+.bloco-seguranca__texto { display: grid; gap: var(--s-3); padding: clamp(1.4rem, 4vw, 2.5rem); }
+.bloco-seguranca__foto { align-self: stretch; margin: 0; position: relative; min-height: 20rem; }
+.bloco-seguranca__foto img { width: 100%; height: 100%; object-fit: cover; object-position: 64% center; }
+.bloco-seguranca__foto figcaption { position: absolute; inset: auto .7rem .7rem auto; padding: .3rem .55rem; border-radius: 999px; background: rgb(255 253 248 / .9); color: #6b6459; font-size: .7rem; }
+
+.resultado .bloco-seguranca p,
+.resultado .projecao-intro,
+.resultado .projecao li,
+.resultado .projecao-nota { color: #625c52; }
+
+.loop-aberto {
+  background: #2c4a52;
+  border-color: #2c4a52;
+  box-shadow: 0 1.5rem 4rem -2rem rgb(44 74 82 / .42);
+}
+.loop-aberto > p:first-child { color: #faf6ef; }
+.loop-aberto .microcopy-cta { color: #dce8de; }
+.loop-aberto .btn { --btn-bg: #fffdf8; --btn-fg: #2c4a52; box-shadow: none; }
+
+.mec {
+  min-block-size: auto;
+  display: block;
+  background: #faf6ef;
+  padding-block: clamp(4.5rem, 9vw, 8rem);
+}
+.mec > .cena__palco--fixo { display: none; }
+.mec > .cena__conteudo { display: block; }
+.mec__fluxo { max-width: 52rem; margin-inline: auto; }
+.mec__abre,
+.mec__chamada,
+.mec__nome,
+.mec__faixa-nome,
+.mec__fecho { color: #2c4a52; text-shadow: none; }
+.mec__bloco { padding: clamp(1.2rem, 3vw, 2rem); border-radius: 1.25rem; background: #fffdf8; border: 1px solid #e6dfd1; }
+.mec__formula { background: #edf2ed; border-color: #cfdbd0; box-shadow: none; }
+.mec__formula,
+.mec__formula .mec__coef,
+.mec__alvo,
+.mec__bloco .corpo,
+.mec__bloco--limite .corpo { color: #4f4a42; }
+
+.stack {
+  background: #f5efe6;
+  padding-block: clamp(4.5rem, 8vw, 7rem);
+}
+.stack::after,
+.stack .cena__palco { display: none; }
+.aur-quadro,
+.aur-quadro--alto { min-block-size: auto; padding-block: 0; }
+.aur-quadro + .aur-quadro { margin-block-start: 1rem; }
+.aur-quadro .cena__conteudo { display: block; }
+.aur-placa {
+  max-inline-size: none;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid #e6dfd1;
+  border-radius: 1.4rem;
+  background: #fffdf8;
+  box-shadow: none;
+}
+.aur-titulo,
+.aur-item__tit { color: #2c4a52; text-shadow: none; }
+.aur-placa .corpo,
+.aur-item__txt .corpo { color: #6b6459; }
+.aur-itens { gap: 1rem; }
+.aur-item { padding: 1rem 0; }
+.aur-item__n { color: #4a6350; background: #dce8de; box-shadow: none; }
+
+.ancora { background: #edf2ed; }
+.ancora .cena__palco { opacity: .12; }
+.ancora__virada { background: #fffdf8; border-color: #cfdbd0; box-shadow: none; }
+
+.preco { background: #faf6ef; }
+.preco .cena__palco { opacity: .16; }
+.preco__placa {
+  border-color: #cfdbd0;
+  border-block-start: 4px solid #c97b5c;
+  background: #fffdf8;
+  box-shadow: 0 1.5rem 4rem -2rem rgb(44 74 82 / .24);
+}
+.preco__valor,
+.preco__cifrao,
+.preco__centavos,
+.conta-card__valor,
+.conta-card__valor small { color: #2c4a52; }
+.preco__condicao { color: #6b6459; }
+
+.garantia { background: #f3f4ed; }
+.garantia .cena__palco { opacity: .16; }
+.garantia__texto {
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid #cfdbd0;
+  border-radius: 1.75rem;
+  background: rgb(255 253 248 / .9);
+}
+
+.faq { background: #faf6ef; }
+.faq .cena__palco { display: none; }
+.faq__item { border-color: #e6dfd1; background: #fffdf8; box-shadow: none; }
+
+.cta-final { background: #edf2ed; }
+.cta-final .cena__palco { opacity: .18; }
+.cta-final__caixa { background: #fffdf8; border-color: #cfdbd0; box-shadow: 0 1.5rem 4rem -2rem rgb(44 74 82 / .26); }
+
+@media (min-width: 64rem) {
+  .resultado-resumo { grid-column: 1 / -1; }
+  .bloco-seguranca,
+  .projecao { grid-column: 1 / -1; }
+  .stack .aur-quadro { width: min(100% - var(--gutter) * 2, 74rem); margin-inline: auto; }
+}
+
+@media (max-width: 47.9375rem) {
+  .hero .camada[data-z="fundo"] { transform: none; }
+  .hero .camada[data-z="fundo"] .camada__img { object-position: 42% center; }
+  .hero__texto { padding-block-end: 2rem; }
+  .hero__titulo { max-inline-size: 12ch; font-size: clamp(2.35rem, 12vw, 3.4rem); }
+  .hero__corpo { font-size: 1.03rem; }
+  .hero__sujeito { inset-inline-end: -18%; opacity: .54; }
+  .hero__scrim { background: linear-gradient(to top, #faf6ef 4%, rgb(250 246 239 / .94) 50%, rgb(250 246 239 / .38) 88%, transparent); }
+  .resultado-resumo .numero-valor { font-size: clamp(3rem, 15vw, 4.5rem); }
+  .bloco-seguranca { grid-template-columns: 1fr; }
+  .bloco-seguranca__foto { min-height: 17rem; order: -1; }
+}
+
+/* Ícones dos seis itens do material. */
+.icones-defs {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+}
+.aur-item__n {
+  display: grid;
+  place-items: center;
+  inline-size: 3.1rem;
+  block-size: 3.1rem;
+  padding: 0;
+  border: 1px solid #cbd9ce;
+  border-radius: .9rem;
+  background: linear-gradient(145deg, #edf3ed, #d9e6db);
+}
+.aur-item__n svg {
+  inline-size: 1.55rem;
+  block-size: 1.55rem;
+  fill: none;
+  stroke: #3f6150;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.stack-abertura {
+  display: grid;
+  grid-template-columns: minmax(0, .82fr) minmax(20rem, 1.18fr);
+  gap: clamp(1.25rem, 4vw, 3rem);
+  align-items: center;
+  padding: 0;
+  overflow: hidden;
+}
+.stack-abertura__texto { padding: clamp(1.4rem, 4vw, 2.5rem); }
+.stack-abertura__foto { align-self: stretch; min-block-size: 24rem; margin: 0; overflow: hidden; }
+.stack-abertura__foto img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: 58% center; }
+
+/* Comparação de custos e prévia visual do material. */
+.ancora {
+  min-block-size: auto;
+  padding-block: clamp(4.5rem, 9vw, 8rem);
+  background: #edf2ed;
+}
+.ancora__nova {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+.ancora__cab {
+  max-inline-size: 48rem;
+}
+.ancora__cab .h2 {
+  margin-block-start: var(--s-3);
+  color: #2c4a52;
+}
+.ancora__comparacao {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(22rem, 1.1fr);
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: stretch;
+}
+.ancora__foto {
+  margin: 0;
+  min-block-size: 27rem;
+  overflow: hidden;
+  border: 1px solid #cbd7ce;
+  border-radius: 1.6rem;
+  background: #fffdf8;
+}
+.ancora__foto img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 53% center;
+}
+.ancora__conta {
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+  gap: .75rem;
+}
+.conta-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.4rem, 4vw, 2.4rem);
+  border: 1px solid #d7ded4;
+  border-radius: 1.5rem;
+  background: #fffdf8;
+}
+.conta-card--pacote {
+  border-color: #d9c8b8;
+  background: #f8eee4;
+}
+.conta-card__rotulo {
+  color: #5e584f;
+  font-size: clamp(.88rem, 1.5vw, 1rem);
+  font-weight: 700;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+.conta-card__valor {
+  display: block;
+  margin-block: .2rem;
+  color: #2c4a52;
+  font-family: var(--fonte-num);
+  font-size: clamp(3.8rem, 8vw, 7.2rem);
+  line-height: .96;
+  letter-spacing: -.055em;
+}
+.conta-card__valor--riscado { position: relative; inline-size: max-content; }
+.conta-card__valor--riscado::after {
+  content: "";
+  position: absolute;
+  inset: 50% -.04em auto -.04em;
+  block-size: .07em;
+  border-radius: 999px;
+  background: #c97b5c;
+  opacity: .9;
+  transform: rotate(-4deg);
+  pointer-events: none;
+}
+.conta-card__valor small {
+  font-size: .3em;
+  letter-spacing: 0;
+  vertical-align: super;
+}
+.conta-card__nota {
+  color: #70695e;
+  font-size: var(--t-sm);
+}
+.conta-card__ou {
+  justify-self: center;
+  padding: .35rem .8rem;
+  border-radius: 999px;
+  background: #2c4a52;
+  color: #fffdf8;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.material-showcase {
+  display: grid;
+  grid-template-columns: minmax(17rem, .62fr) minmax(0, 1.38fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  padding-block-start: clamp(2rem, 5vw, 4rem);
+  border-block-start: 1px solid #cfd9d0;
+}
+.material-showcase__texto {
+  display: grid;
+  gap: var(--s-3);
+}
+.material-showcase__texto .h2 { color: #2c4a52; }
+.material-showcase__texto .corpo { color: #625c52; }
+.material-mockup {
+  overflow: hidden;
+  border: 1px solid #c8d5ca;
+  border-radius: 1.65rem;
+  background: #fffdf8;
+  box-shadow: 0 2rem 5rem -3rem rgb(44 74 82 / .42);
+}
+.material-mockup__barra {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .85rem 1rem;
+  border-block-end: 1px solid #e2e6df;
+  background: #f5f0e8;
+}
+.material-mockup__barra > span {
+  inline-size: .55rem;
+  block-size: .55rem;
+  border-radius: 50%;
+  background: #c97b5c;
+}
+.material-mockup__barra > span:nth-child(2) { background: #d2aa68; }
+.material-mockup__barra > span:nth-child(3) { background: #78957d; }
+.material-mockup__barra b {
+  margin-inline-start: .45rem;
+  color: #50665a;
+  font-size: .76rem;
+}
+.material-mockup__grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(12rem, .8fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+.material-mockup__dia,
+.material-mockup__apoio article {
+  border: 1px solid #e2e6df;
+  border-radius: 1rem;
+  background: #fff;
+}
+.material-mockup__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .85rem;
+  border-block-end: 1px solid #edf0eb;
+  color: #365447;
+  font-size: .72rem;
+}
+.material-mockup__topo span,
+.material-mockup__tag {
+  padding: .25rem .5rem;
+  border-radius: 999px;
+  background: #dce8de;
+  color: #456150;
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.mini-refeicao {
+  display: grid;
+  grid-template-columns: 1.7rem minmax(0, 1fr);
+  gap: .55rem;
+  align-items: center;
+  padding: .55rem .75rem;
+  border-block-end: 1px solid #f0eee9;
+}
+.mini-refeicao:last-child { border: 0; }
+.mini-refeicao i {
+  display: grid;
+  place-items: center;
+  inline-size: 1.7rem;
+  block-size: 1.7rem;
+  border-radius: .5rem;
+  background: #edf2ed;
+  color: #53705d;
+  font-size: .65rem;
+  font-style: normal;
+}
+.mini-refeicao div { min-inline-size: 0; }
+.mini-refeicao b,
+.mini-refeicao span { display: block; }
+.mini-refeicao b { color: #365447; font-size: .72rem; }
+.mini-refeicao span { overflow: hidden; color: #70695e; font-size: .64rem; text-overflow: ellipsis; white-space: nowrap; }
+.mini-refeicao--foto { grid-template-columns: 3.3rem minmax(0, 1fr); }
+.mini-refeicao--foto img { inline-size: 3.3rem; block-size: 2.7rem; border-radius: .55rem; object-fit: cover; }
+.material-mockup__apoio { display: grid; gap: 1rem; }
+.material-mockup__apoio article { padding: .9rem; }
+.material-mockup__apoio h3 { margin-block: .65rem; color: #365447; font-size: .85rem; }
+.material-mockup__apoio ul,
+.material-mockup__apoio p { color: #70695e; font-size: .68rem; line-height: 1.8; }
+.material-mockup__apoio li { padding-block: .2rem; border-block-end: 1px solid #f0eee9; }
+
+/* Explicação em blocos antes do preço. */
+.preco {
+  min-block-size: auto;
+  padding-block: clamp(4.5rem, 9vw, 8rem);
+  background: #faf6ef;
+}
+.preco__grade,
+[data-offer-variant="B"] .preco__grade {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  max-inline-size: 74rem;
+}
+.preco__razao,
+[data-offer-variant="B"] .preco__razao {
+  grid-column: 1;
+  max-inline-size: none;
+}
+.preco__razao > .h2 {
+  max-inline-size: 46rem;
+  margin-block: var(--s-3) var(--s-5);
+  color: #2c4a52;
+}
+.custo-grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.custo-card {
+  padding: clamp(1.3rem, 3vw, 2rem);
+  border: 1px solid #ded8ce;
+  border-radius: 1.5rem;
+  background: #fffdf8;
+}
+.custo-card--material {
+  border-color: #bfd0c2;
+  background: #edf3ed;
+}
+.custo-card__icone {
+  display: grid;
+  place-items: center;
+  inline-size: 3.25rem;
+  block-size: 3.25rem;
+  margin-block-end: 1rem;
+  border-radius: 1rem;
+  background: #f3e8dd;
+  color: #8a5a43;
+}
+.custo-card--material .custo-card__icone { background: #d8e6da; color: #456150; }
+.custo-card__icone svg {
+  inline-size: 1.65rem;
+  block-size: 1.65rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.custo-card__sobre { color: #726a60; font-size: .82rem; font-weight: 700; text-transform: uppercase; }
+.custo-card h3 { margin-block: .4rem 1rem; color: #2c4a52; font-size: clamp(1.25rem, 2vw, 1.65rem); }
+.custo-card ul { display: grid; gap: .7rem; color: #5f594f; }
+.custo-card li { position: relative; padding-inline-start: 1.35rem; }
+.custo-card li::before { content: ""; position: absolute; inset: .55em auto auto 0; inline-size: .45rem; block-size: .45rem; border-radius: 50%; background: #c97b5c; }
+.custo-card--material li::before { background: #6e9277; }
+.preco__explicacao {
+  max-inline-size: 62rem;
+  margin-block-start: 1rem;
+  padding: 1rem 1.2rem;
+  border-inline-start: 4px solid #c97b5c;
+  background: #fffdf8;
+  color: #5f594f;
+  line-height: 1.65;
+}
+.preco__oferta,
+[data-offer-variant="B"] .preco__oferta {
+  grid-column: 1;
+  grid-row: auto;
+  justify-self: center;
+  inline-size: min(100%, 34rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid #cbd7ce;
+  border-radius: 1.75rem;
+  background: #fffdf8;
+  text-align: center;
+  box-shadow: 0 2rem 5rem -3rem rgb(44 74 82 / .42);
+}
+.preco__oferta-rotulo { color: #50665a; font-size: .78rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.preco__oferta .preco__placa { padding: 1.5rem 1rem 1rem; border: 0; border-radius: 0; box-shadow: none; }
+.preco__inclui { color: #6b6459; font-size: .82rem; line-height: 1.55; }
+.preco__cta {
+  inline-size: 100%;
+  margin-block-start: 1.2rem;
+  text-align: center;
+}
+
+.lead-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem;
+}
+.lead-campo:first-child { grid-column: 1 / -1; }
+.lead-campo {
+  display: grid;
+  gap: .35rem;
+  color: #4a6350;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.lead-campo input {
+  inline-size: 100%;
+  min-block-size: 3.25rem;
+  padding-inline: .9rem;
+  border: 1px solid #d8d4ca;
+  border-radius: .85rem;
+  outline: 0;
+  background: #fff;
+  color: #2c4a52;
+  font: 500 1rem/1.2 var(--fonte-corpo);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.lead-campo input:focus { border-color: #4a6350; box-shadow: 0 0 0 3px rgb(74 99 80 / .12); }
+.lead-campo input[aria-invalid="true"] { border-color: #b3543f; }
+.campo__input::placeholder { color: #aaa69e; opacity: 1; font-family: var(--fonte-corpo); font-size: .92rem; font-weight: 500; }
+
+.rodape__disclaimer {
+  padding: .9rem 1rem;
+  border: 1px solid color-mix(in oklab, var(--tinta-escura) 10%, transparent);
+  border-radius: .8rem;
+  background: rgb(255 255 255 / .34);
+  line-height: 1.65;
+}
+
+@media (max-width: 55rem) {
+  .ancora__comparacao,
+  .material-showcase,
+  .stack-abertura { grid-template-columns: 1fr; }
+  .ancora__foto { min-block-size: 20rem; }
+  .material-showcase__texto { max-inline-size: 42rem; }
+  .stack-abertura__foto { min-block-size: 20rem; order: -1; }
+
+  .hero .camada[data-z="frente"] > .hero__sujeito { display: none !important; }
+  .hero__sujeito--mobile {
+    display: block !important;
+    inline-size: min(42vw, 20rem);
+    inset-inline-end: -1%;
+    inset-block-end: 27%;
+    z-index: 5;
+    opacity: .95 !important;
+  }
+}
+
+@media (max-width: 39.9375rem) {
+  .aur-item { grid-template-columns: 2.75rem minmax(0, 1fr); }
+  .aur-item__n { inline-size: 2.65rem; block-size: 2.65rem; border-radius: .8rem; }
+  .aur-item__n svg { inline-size: 1.35rem; block-size: 1.35rem; }
+  .ancora__foto { min-block-size: 14rem; }
+  .conta-card__valor { font-size: clamp(3.6rem, 20vw, 5rem); }
+  .material-mockup__grade { grid-template-columns: 1fr; }
+  .material-mockup__apoio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .custo-grade { grid-template-columns: 1fr; }
+  .stack-abertura__foto { min-block-size: 14rem; aspect-ratio: 1.45; }
+  .stack-abertura__foto img { object-position: 57% center; }
+  .lead-campos { grid-template-columns: 1fr; }
+  .lead-campo:first-child { grid-column: auto; }
+  .hero__sujeito--mobile {
+    inline-size: min(42vw, 11rem);
+    inset-inline-end: -2%;
+    inset-block-end: 50%;
+    opacity: .94 !important;
+    -webkit-mask-image: linear-gradient(#000 0 78%, transparent 100%);
+            mask-image: linear-gradient(#000 0 78%, transparent 100%);
+  }
+}
+
+@media (max-width: 25rem) {
+  .material-mockup__apoio { grid-template-columns: 1fr; }
+}
+
+/* MONTAGEM:FIM */

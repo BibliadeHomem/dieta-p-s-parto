@@ -1,0 +1,64 @@
+/* ============================================================================
+   PEÇA 14 — CTA final + LGPD
+   Ato: manha. Cozinha em luz plena — mesmo cômodo da peça 9, agora perto.
+   ========================================================================== */
+
+.cta-final__cozinha {
+  opacity: 0.5;
+  filter: saturate(1.02) brightness(1.02);
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 40%, #000 40%, transparent 92%);
+          mask-image: radial-gradient(70% 60% at 50% 40%, #000 40%, transparent 92%);
+}
+
+.cta-final__luz {
+  inset-inline-start: 50%;
+  inset-block-start: -10%;
+  translate: -50% 0;
+  inline-size: min(90vw, 46rem);
+  aspect-ratio: 1.8;
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in oklab, var(--realce) 30%, transparent), transparent 74%);
+}
+
+.cta-final__texto { position: relative; z-index: 5; text-align: center; }
+.cta-final__texto .h2 { margin-block: var(--s-2) var(--s-3); }
+.cta-final__texto .corpo { margin-inline: auto; }
+
+.cta-final__caixa {
+  margin-block-start: var(--s-6);
+  max-inline-size: 30rem;
+  margin-inline: auto;
+  padding: var(--s-6);
+  border-radius: var(--raio-3);
+  background: color-mix(in oklab, var(--manha) 60%, white 12%);
+  box-shadow: var(--sombra-2);
+  outline: 1px solid color-mix(in oklab, var(--realce) 22%, transparent);
+  text-align: center;
+}
+
+.cta-final__preco { margin-block-start: var(--s-3); }
+
+.cta-final__check {
+  display: flex;
+  align-items: start;
+  gap: 0.7rem;
+  margin-block-start: var(--s-5);
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid color-mix(in oklab, var(--tinta-escura) 12%, transparent);
+  text-align: start;
+  font-size: var(--t-sm);
+  color: var(--tinta-escura-2);
+  cursor: pointer;
+}
+.cta-final__check input {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin-block-start: 0.1em;
+  accent-color: var(--realce);
+}
+.cta-final__check em { display: block; margin-block-start: 0.3em; font-style: normal; color: var(--tinta-fraca); }
+
+.cta-final__defesa {
+  margin-block-start: var(--s-4);
+  color: var(--tinta-escura-2);
+}

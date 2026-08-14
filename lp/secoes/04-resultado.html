@@ -1,0 +1,152 @@
+<!-- ==========================================================================
+     PEÇA 4 — Tela de resultado do quiz
+     Ato: noite. É a cena onde a luz nasce: o primeiro clarão da página.
+     Antes dela é penumbra, depois dela vem o ato frio. Esta é a dobradiça.
+
+     Duas notas de estrutura, para quem monta:
+
+     1. O <h1> da página vive no hero (peça 1). O contrato pede um único <h1>
+        e hierarquia sem pulo, então o título desta peça é <h2 class="h1">
+        (mesmo peso visual, texto idêntico ao da copy, nem uma vírgula mexida)
+        e "Precisa passar no endócrino antes?" desce para <h3>.
+
+     2. .numero-central carrega o seu PRÓPRIO data-scene. O motor escreve
+        --p/--c/--e por elemento observado, e o número precisa acender quando
+        ELE cruza o centro da tela, não quando a seção inteira cruza. A seção
+        é alta; sem isso a placa assentaria fora do quadro.
+
+     Valores de runtime: os três nós marcados com data-quiz continuam com o
+     token literal da copy como conteúdo de origem. quiz.js (calcularMinimo)
+     substitui o textContent de:
+       #res-fase   (data-quiz="fase")
+       #res-rotina (data-quiz="rotina")
+       #res-cifra  (data-quiz="minimo")
+     ========================================================================== -->
+<div class="conteudo-liberado" data-gated hidden inert>
+<section class="cena resultado" id="resultado" data-scene data-damp="0.12" data-ato="noite" aria-labelledby="res-tit">
+
+  <div class="cena__palco" aria-hidden="true">
+
+    <!-- poeira em suspensão: o ar da cena, bem lá atrás -->
+    <div class="camada" data-z="fundo">
+      <picture>
+        <source srcset="img/atmosfera-poeira.webp" type="image/webp">
+        <img class="camada__img res__poeira" src="img/atmosfera-poeira.png" alt="" width="900" height="900" loading="lazy" decoding="async">
+      </picture>
+    </div>
+
+    <!-- o clarão da cena inteira. Fraco de propósito: quem acende é o número -->
+    <div class="camada" data-z="tras">
+      <div class="res__clarao luz"></div>
+    </div>
+
+    <!-- piso em fuga: a única coisa que gira nesta cena, e o que dá chão ao número -->
+    <div class="camada" data-z="meio" style="--giro: 7deg; --inclina: 3deg">
+      <div class="res__piso"></div>
+    </div>
+
+    <div class="nevoa"></div>
+    <div class="vinheta"></div>
+  </div>
+
+  <div class="cena__conteudo resultado__grade">
+
+    <header class="resultado__cab">
+      <p class="etiqueta" data-reveal>DIAGNÓSTICO CALÓRICO PRONTO</p>
+      <h2 class="h1 resultado__titulo" id="res-tit" data-reveal style="--atraso:90ms">Esse número aqui é sobre você.</h2>
+      <p class="corpo corpo-l sub" data-reveal style="--atraso:180ms">Não sobre o bebê, não sobre a casa, não sobre o que falta fazer hoje. Sobre você.</p>
+    </header>
+
+    <div class="resultado-resumo" data-result-summary aria-live="polite">
+      <p class="numero-label">Sua estimativa calórica educativa por dia</p>
+      <p class="numero-valor"><span class="numero-cifra" data-result-value>{{minimo_calorico}}</span> <span class="numero-unidade">kcal</span></p>
+      <div class="resultado-justificativa" data-justification>
+        <p>Usamos Mifflin-St Jeor para mulheres, fator de atividade 1,375 e, quando há amamentação, acrescentamos 450 kcal antes de aplicar o piso de segurança.</p>
+        <p>O piso aplicado é de 1.800 kcal durante a amamentação e 1.200 kcal nos demais casos, evitando estimativas extremas.</p>
+      </div>
+    </div>
+
+    <div class="recibo-calculo" hidden>
+      <p class="recibo-titulo" data-reveal>Como a gente chegou nele:</p>
+      <ul class="reveal-serie">
+        <li data-reveal style="--i:0">Seu peso e sua altura entraram na fórmula de Mifflin-St Jeor, a mesma que nutricionista usa pra calcular gasto calórico de base.</li>
+        <li data-reveal style="--i:1">Sua idade ajustou a taxa metabólica.</li>
+        <li data-reveal style="--i:2">Você marcou que está amamentando: <span class="dado" id="res-fase" data-quiz="fase">{{fase_amamentacao}}</span>. Isso soma energia extra na conta, porque produzir leite gasta caloria, não é frescura.</li>
+        <li data-reveal style="--i:3">Você marcou seu nível de rotina como <span class="dado" id="res-rotina" data-quiz="rotina">{{nivel_atividade}}</span>. Isso também entrou.</li>
+      </ul>
+      <p class="recibo-nota" data-reveal style="--i:4">Nada aqui foi chutado. Cada resposta sua mudou um número na conta.</p>
+    </div>
+
+    <!-- ------------------------------------------------------------------
+         O número. Placa em 3D, número em 2D. Ver o comentário longo em
+         css/secoes/04-resultado.css, seção "A placa e o número".
+         ------------------------------------------------------------------ -->
+    <div class="numero-central" data-scene data-damp="0.16" hidden>
+
+      <div class="numero-palco" aria-hidden="true">
+        <div class="numero-halo">
+          <picture>
+            <source srcset="img/resultado-halo.webp" type="image/webp">
+            <img src="img/resultado-halo.png" alt="" width="1400" height="970" loading="lazy" decoding="async">
+          </picture>
+        </div>
+        <div class="numero-placa"></div>
+      </div>
+
+      <div class="numero-texto">
+        <p class="numero-label">Seu mínimo calórico seguro por dia, amamentando</p>
+        <p class="numero-valor" role="status"><span class="numero-cifra" id="res-cifra" data-quiz="minimo">{{minimo_calorico}}</span> <span class="numero-unidade">kcal</span></p>
+        <p class="numero-legenda">É o piso. Comer menos que isso, o corpo prioriza o leite e corta de você primeiro.</p>
+      </div>
+
+    </div>
+
+    <div class="bloco-seguranca">
+      <div class="bloco-seguranca__texto">
+        <h3 class="h3" data-reveal>Precisa passar no endócrino antes?</h3>
+        <p data-reveal style="--atraso:80ms">
+          Se você tem alguma condição de saúde, usa remédio ou está com alguma preocupação sobre você ou o bebê, converse com uma médica ou nutricionista antes.
+        </p>
+        <p data-reveal style="--atraso:150ms">
+          Este número é uma referência para você entender por onde começar. Ele não substitui uma consulta e pode até ajudar você a chegar nela com uma pergunta mais clara.
+        </p>
+      </div>
+      <figure class="bloco-seguranca__foto">
+        <img src="img/medica-consultorio-v1.webp" alt="Médica em um consultório claro" width="1200" height="900" loading="lazy" decoding="async">
+        <figcaption>Imagem ilustrativa</figcaption>
+      </figure>
+    </div>
+
+    <div class="projecao">
+      <p class="projecao-titulo" data-reveal>O que esse mínimo destrava, se você seguir ele</p>
+      <p class="projecao-intro" data-reveal style="--atraso:80ms">
+        Não é sobre o quanto você vai perder. É sobre o que volta.
+      </p>
+      <ul class="reveal-serie">
+        <li data-reveal style="--i:0">Energia que sobra no fim da tarde, em vez de acabar antes do banho do bebê.</li>
+        <li data-reveal style="--i:1">Comer uma refeição inteira sentada, sem a cabeça calculando se pode ou não pode.</li>
+        <li data-reveal style="--i:2">Parar de abrir o aplicativo de dieta genérico e fechar de novo, sem confiança nenhuma.</li>
+        <li data-reveal style="--i:3">Ter uma resposta pronta na próxima vez que alguém perguntar "e você, como está comendo".</li>
+      </ul>
+      <p class="projecao-nota" data-reveal style="--i:4">
+        Isso não tem prazo marcado aqui, porque ninguém consegue prometer prazo pra você com
+        responsabilidade. Tem direção.
+      </p>
+    </div>
+
+    <div class="loop-aberto" data-reveal="escala">
+      <p>
+        Você já tem o número. O que falta ninguém costuma contar: o que fazer com ele, dia a dia,
+        sem virar mais uma aba aberta que você nunca volta a olhar.
+      </p>
+      <button class="btn cta-transicao" type="button" data-unlock-content aria-controls="conteudo-pos-resultado" aria-expanded="false">
+        Ver o que fazer com esse número
+        <svg class="btn__seta" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 3v12M4 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <p class="microcopy-cta">Sem compromisso. O número já é seu, continue vendo o resto.</p>
+    </div>
+
+  </div>
+</section>
+
+<div class="conteudo-pos-resultado" id="conteudo-pos-resultado" data-after-result hidden inert>

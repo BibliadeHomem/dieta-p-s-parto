@@ -1,0 +1,115 @@
+/* ============================================================================
+   Tokens — Dieta Pós-Parto
+   A variável que organiza a página inteira é a LUZ. A página começa às 4h da
+   manhã e termina de manhã. Cada ato tem sua temperatura de cor, e a transição
+   entre atos é o que o scroll storytelling está contando.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* --- Superfícies, do fundo do poço à manhã --------------------------- */
+  --noite:        #FAF6EF;
+  --noite-2:      #FFFDF8;
+  --azul-noite:   #F3F4ED;
+  --azul-noite-2: #E8EEE5;
+  --tecnico:      #EDF2ED;
+  --aurora:       #F5EFE6;
+  --manha:        #FAF6EF;
+  --manha-2:      #FFFDF8;
+
+  /* --- Luz ------------------------------------------------------------- */
+  --ambar:        #2C4A52;
+  --ambar-forte:  #4A6350;
+  --ambar-fundo:  #E8EEE5;
+  --salvia:       #6B8F71;
+  --salvia-clara: #DCE8DE;
+  --frio:         #4A6350;
+
+  /* --- Tinta ----------------------------------------------------------- */
+  --tinta-clara:  #2C4A52;
+  --tinta-media:  #6B6459;
+  --tinta-fraca:  #6B6459;
+  --tinta-escura: #33312C;
+  --tinta-escura-2: #6B6459;
+
+  /* Aliases que os blocos usam. Cada ato reescreve estes três. */
+  --fundo:  var(--noite);
+  --texto:  var(--tinta-clara);
+  --texto-2: var(--tinta-media);
+  --realce: var(--ambar);
+
+  /* --- Tipografia ------------------------------------------------------ */
+  /* Nenhuma webfont externa. A stack de sistema carrega em 0 ms, tem
+     acentuação completa em pt-BR e é a única escolha honesta para um
+     celular fraco. O caráter vem do tratamento, não do arquivo. */
+  --fonte: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+           "Helvetica Neue", Arial, sans-serif;
+  --fonte-num: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono",
+               Consolas, monospace;
+
+  /* Escala fluida. clamp em toda a escala: uma resolução qualquer, entre
+     320 px e 2560 px, cai numa medida legível sem media query. */
+  --t-xs:   clamp(0.75rem, 0.72rem + 0.15vw, 0.86rem);
+  --t-sm:   clamp(0.86rem, 0.82rem + 0.2vw,  1.00rem);
+  --t-base: clamp(1.00rem, 0.95rem + 0.3vw,  1.19rem);
+  --t-md:   clamp(1.15rem, 1.06rem + 0.45vw, 1.44rem);
+  --t-lg:   clamp(1.38rem, 1.20rem + 0.9vw,  2.00rem);
+  --t-xl:   clamp(1.75rem, 1.40rem + 1.8vw,  3.00rem);
+  --t-2xl:  clamp(2.20rem, 1.60rem + 3.0vw,  4.40rem);
+  --t-3xl:  clamp(2.80rem, 1.80rem + 5.0vw,  6.80rem);
+
+  --lh-tight: 1.06;
+  --lh-head:  1.14;
+  --lh-body:  1.62;
+
+  /* --- Espaço ---------------------------------------------------------- */
+  --s-1: clamp(0.25rem, 0.5vw, 0.4rem);
+  --s-2: clamp(0.5rem,  1vw,   0.8rem);
+  --s-3: clamp(0.8rem,  1.6vw, 1.25rem);
+  --s-4: clamp(1.2rem,  2.4vw, 2rem);
+  --s-5: clamp(1.8rem,  3.6vw, 3rem);
+  --s-6: clamp(2.6rem,  5.5vw, 4.8rem);
+  --s-7: clamp(4rem,    9vw,   8rem);
+  --s-8: clamp(6rem,    14vw,  13rem);
+
+  --medida: 34ch;          /* medida de leitura de corpo                   */
+  --medida-larga: 46ch;
+  --gutter: clamp(1.1rem, 5vw, 2.6rem);
+  --largura: min(100% - var(--gutter) * 2, 74rem);
+  --largura-texto: min(100% - var(--gutter) * 2, 40rem);
+
+  /* --- Profundidade ---------------------------------------------------- */
+  /* Uma perspectiva só para a página inteira. Se cada cena tiver a sua, os
+     planos discordam entre si e a ilusão de um espaço contínuo quebra. */
+  --persp: clamp(700px, 90vw, 1400px);
+  --z-fundo:  -900px;
+  --z-tras:   -520px;
+  --z-meio:   -240px;
+  --z-frente:  -80px;
+  --z-topo:    120px;
+
+  --raio-1: 0.5rem;
+  --raio-2: 1rem;
+  --raio-3: 1.75rem;
+  --raio-cheio: 999px;
+
+  /* --- Curvas ---------------------------------------------------------- */
+  --ease-saida: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-suave: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-peso:  cubic-bezier(0.22, 1, 0.36, 1);
+
+  --sombra-1: 0 1px 2px rgb(0 0 0 / 0.28), 0 4px 12px rgb(0 0 0 / 0.22);
+  --sombra-2: 0 2px 6px rgb(0 0 0 / 0.3), 0 18px 48px rgb(0 0 0 / 0.36);
+  --sombra-3: 0 30px 90px rgb(0 0 0 / 0.5);
+  --brilho-ambar: 0 0 60px -10px rgb(242 183 124 / 0.55);
+  --brilho-salvia: 0 0 70px -12px rgb(127 181 155 / 0.5);
+}
+
+/* Atos: cada seção declara seu ato e herda a paleta dele. Trocar de ato é
+   uma transição de cor de 1 propriedade, não uma reescrita de estilo. */
+[data-ato="noite"]   { --fundo: var(--noite);      --texto: var(--tinta-clara);  --texto-2: var(--tinta-media); --realce: var(--ambar); }
+[data-ato="frio"]    { --fundo: var(--azul-noite); --texto: var(--tinta-clara); --texto-2: var(--tinta-media); --realce: var(--frio); color-scheme: light; }
+[data-ato="tecnico"] { --fundo: var(--tecnico);    --texto: var(--tinta-clara);  --texto-2: var(--tinta-media); --realce: var(--salvia); }
+[data-ato="aurora"]  { --fundo: var(--aurora);     --texto: var(--tinta-clara); --texto-2: var(--tinta-media); --realce: var(--ambar-forte); color-scheme: light; }
+[data-ato="manha"]   { --fundo: var(--manha);      --texto: var(--tinta-escura); --texto-2: var(--tinta-escura-2); --realce: #B8763A; color-scheme: light; }

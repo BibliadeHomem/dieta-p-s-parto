@@ -1,0 +1,468 @@
+/* ============================================================================
+   PEÇAS 2 e 3 — Quiz + micro-resultados
+   Ato: noite. 4h da manhã, sobre a mesa da cozinha.
+   ----------------------------------------------------------------------------
+   A regra do contrato diz que texto não entra no 3D, e ela continua valendo:
+   nenhum nó de TEXTO daqui recebe translateZ próprio. O que transforma é o
+   CARD INTEIRO, uma caixa só, que rasteriza uma vez e carrega o texto junto
+   como conteúdo dela. Por isso a pilha tem uma `perspective` LOCAL própria
+   (.quiz__pilha), separada da perspectiva do palco: o palco move imagem, a
+   pilha move um objeto de interface. Misturar as duas faria o card herdar a
+   câmera do fundo e desalinhar do texto que ele carrega.
+   ========================================================================== */
+
+.quiz {
+  overflow: clip;
+  /* --progresso é escrito pelo js/quiz.js na própria <section>, 0 → 1.
+     Não vem do scroll. É o quanto da conta já foi montada. */
+  --progresso: 0;
+}
+
+/* --- Fundo: a mesa ------------------------------------------------------ */
+/* Provisório de IMG-05 (quiz-mesa). Mesma caixa, mesma leitura: cozinha à
+   noite, fora de foco, luminância num terço superior. A deriva lenta é o que
+   impede o quadro de ficar morto quando o dedo dela para. */
+
+.quiz__mesa {
+  position: absolute;
+  inset: -10%;
+  background: url("../img/novo-luz.webp") center / cover no-repeat;
+  filter: none;
+  opacity: .72;
+  animation: none;
+}
+@keyframes quiz-deriva {
+  from { transform: translate3d(-1.6%, 1%, 0) scale(1.05); }
+  to   { transform: translate3d(1.6%, -1.8%, 0) scale(1.11); }
+}
+
+/* Vapor da caneca esquecida. Camada `tras`, sempre em movimento lento. */
+.quiz__vapor {
+  position: absolute;
+  inset-inline-start: 18%;
+  inset-block-end: 12%;
+  inline-size: min(52vw, 26rem);
+  aspect-ratio: 1 / 1.3;
+  background: radial-gradient(50% 60% at 50% 80%, rgb(226 208 190 / 0.10), transparent 72%);
+  filter: blur(clamp(20px, 5vw, 44px));
+  mix-blend-mode: screen;
+  animation: none;
+}
+@keyframes quiz-vapor {
+  0%, 100% { opacity: 0.45; transform: translate3d(0, 0, 0) scale(1); }
+  50%      { opacity: 0.9;  transform: translate3d(2%, -4%, 0) scale(1.08); }
+}
+
+/* --- A luz que responde ao progresso, não ao scroll --------------------- */
+/* Este é o pré-anúncio do clarão da peça 4: a cena acende conforme ela
+   responde. Quando o quiz fecha, a lâmpada já está quase no ponto em que a
+   tela de resultado assume. */
+
+.quiz__lampada {
+  inset-inline-start: 50%;
+  inset-block-start: -14%;
+  inline-size: min(130vw, 62rem);
+  aspect-ratio: 1;
+  margin-inline-start: calc(min(130vw, 62rem) / -2);
+  background: radial-gradient(circle,
+    rgb(107 143 113 / 0.20) 0%,
+    rgb(107 143 113 / 0.10) 30%,
+    rgb(44 74 82 / 0.06) 50%,
+    transparent 72%);
+  opacity: calc(0.20 + var(--progresso) * 0.80);
+  transform: scale(calc(0.78 + var(--progresso) * 0.40));
+  transition: opacity 240ms ease-out, transform 240ms ease-out;
+}
+
+/* --- Conteúdo ----------------------------------------------------------- */
+
+.quiz__conteudo {
+  display: grid;
+  gap: var(--s-4);
+}
+
+/* --- Trabalho visível --------------------------------------------------- */
+
+.quiz__passo { display: grid; gap: var(--s-2); }
+
+.quiz__passo-rot {
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--ambar) 82%, var(--tinta-clara));
+}
+
+.quiz__trilho {
+  block-size: 3px;
+  border-radius: var(--raio-cheio);
+  background: color-mix(in oklab, var(--tinta-clara) 14%, transparent);
+  overflow: clip;
+}
+.quiz__preenche {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,
+    color-mix(in oklab, var(--ambar) 60%, transparent), var(--ambar-forte));
+  box-shadow: 0 0 14px rgb(242 183 124 / 0.6);
+  transform-origin: left center;
+  transform: scaleX(calc(0.02 + var(--progresso) * 0.98));
+  transition: transform 700ms var(--ease-peso);
+}
+
+/* --- A pilha 3D --------------------------------------------------------- */
+/* Perspectiva local. A altura é escrita pelo JS em --altura-pilha a partir do
+   card ativo, então a pilha "assenta" em vez de ficar do tamanho do maior
+   card do quiz inteiro. Sem JS, o min-block-size segura o layout. */
+
+.quiz__pilha {
+  position: relative;
+  min-block-size: 26rem;
+  block-size: var(--altura-pilha, auto);
+  transition: block-size 220ms ease-out;
+}
+
+.qcard {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  display: grid;
+  gap: var(--s-3);
+  padding: clamp(1.15rem, 4.5vw, 2.1rem);
+  border: 1px solid color-mix(in oklab, var(--ambar) 15%, transparent);
+  border-radius: var(--raio-3);
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgb(107 143 113 / 0.08), transparent 62%),
+    #FFFDF8;
+  box-shadow: 0 1rem 3rem rgb(44 74 82 / 0.10);
+
+  /* estado padrão = ainda longe na pilha */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition:
+    transform 180ms ease-out,
+    opacity 180ms ease-out,
+    visibility 0s linear 180ms;
+}
+
+/* O próximo card da fila: atrás, menor, apagado. É ele que faz a pilha
+   existir como objeto, e não como um fade entre telas. */
+.qcard.e-proximo {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(8px);
+  transition-delay: 0s, 0s, 0s;
+}
+
+.qcard.e-ativo {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  box-shadow: 0 1rem 3rem rgb(44 74 82 / 0.10), 0 0 0 1px #E6DFD1;
+  transition-delay: 0s, 0s, 0s;
+}
+
+/* O anterior sai girando pra cima, como se a câmera passasse por baixo dele. */
+.qcard.e-passado {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition-delay: 0s, 0s, 0s;
+}
+
+/* --- Dentro do card ----------------------------------------------------- */
+/* Nada aqui tem transform próprio. O card carrega o texto, o texto não anda
+   sozinho: é o que mantém a leitura nítida durante a troca de passo. */
+
+.qcard__just {
+  font-size: var(--t-sm);
+  line-height: 1.58;
+  color: #6B6459;
+  border-inline-start: 2px solid #D6E0D7;
+  padding-inline-start: var(--s-3);
+  text-wrap: pretty;
+}
+.qcard__rot {
+  display: block;
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #4A6350;
+  margin-block-end: 0.35em;
+}
+
+.qcard__campo {
+  display: grid;
+  gap: var(--s-3);
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
+.qcard__pergunta {
+  display: block;
+  padding: 0;
+  font-size: var(--t-md);
+  font-weight: 660;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+  color: var(--tinta-clara);
+  text-wrap: pretty;
+}
+
+/* --- Campo numérico ----------------------------------------------------- */
+
+.campo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  inline-size: 100%;
+  max-inline-size: 15rem;
+  padding: 0 1rem;
+  min-block-size: 3.5rem;
+  border-radius: var(--raio-2);
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px #D8D4CA;
+  transition: box-shadow 260ms var(--ease-suave);
+}
+.campo:focus-within {
+  box-shadow: inset 0 0 0 2px var(--ambar), 0 0 30px -12px rgb(242 183 124 / 0.8);
+}
+.campo__input {
+  flex: 1 1 auto;
+  inline-size: 100%;
+  min-inline-size: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  font-family: var(--fonte-num);
+  font-size: var(--t-lg);
+  font-weight: 620;
+  color: var(--tinta-clara);
+  padding-block: 0.6rem;
+}
+.campo__input::-webkit-outer-spin-button,
+.campo__input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+.campo__input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
+.campo__un {
+  flex: none;
+  font-size: var(--t-sm);
+  font-weight: 640;
+  color: var(--tinta-media);
+}
+
+.qcard__erro {
+  font-size: var(--t-sm);
+  color: #B3543F;
+}
+.qcard__erro[hidden] { display: none; }
+
+/* --- Opções (radio) ----------------------------------------------------- */
+
+.opcoes { display: grid; gap: 0.55rem; }
+
+.opcao {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-block-size: 3.25rem;          /* alvo de toque com folga sobre 44 px */
+  padding: 0.7rem 1rem;
+  border-radius: var(--raio-2);
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px #E6DFD1;
+  cursor: pointer;
+  transition: background-color 220ms var(--ease-suave), box-shadow 220ms var(--ease-suave);
+}
+.opcao:hover { background: #F4F7F2; }
+.opcao input {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0.9rem;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin: -0.625rem 0 0;
+  opacity: 0;
+}
+.opcao__marca {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--tinta-clara) 45%, transparent);
+  transition: box-shadow 220ms var(--ease-suave);
+}
+.opcao__txt {
+  font-size: var(--t-base);
+  line-height: 1.4;
+  color: var(--tinta-clara);
+  text-wrap: pretty;
+}
+.opcao:has(input:checked) {
+  background: #EDF2ED;
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--ambar) 62%, transparent);
+}
+.opcao:has(input:checked) .opcao__marca {
+  box-shadow: inset 0 0 0 2px var(--ambar), inset 0 0 0 6px #FFFDF8,
+              inset 0 0 0 12px var(--ambar);
+}
+.opcao:has(input:focus-visible) { outline: 2px solid var(--ambar); outline-offset: 3px; }
+
+/* --- Checkboxes LGPD ---------------------------------------------------- */
+
+.marca {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  min-block-size: 2.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--raio-2);
+  cursor: pointer;
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tinta-clara) 13%, transparent);
+  transition: box-shadow 220ms var(--ease-suave), background-color 220ms var(--ease-suave);
+}
+/* O consentimento de dado de saúde é o destacado. O de marketing não. */
+.marca--saude {
+  background: #F4F7F2;
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--ambar) 40%, transparent);
+}
+.marca--opcional .marca__txt { color: var(--tinta-media); }
+
+.marca input {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-start: 1rem;
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+  margin: 0;
+  opacity: 0;
+}
+.marca__caixa {
+  flex: none;
+  display: grid;
+  place-items: center;
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+  margin-block-start: 0.12em;
+  border-radius: 0.4rem;
+  color: #21150B;
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--tinta-clara) 48%, transparent);
+  transition: background-color 200ms var(--ease-suave), box-shadow 200ms var(--ease-suave);
+}
+.marca__caixa svg { opacity: 0; transition: opacity 160ms var(--ease-suave); }
+.marca:has(input:checked) .marca__caixa {
+  background: var(--ambar);
+  box-shadow: inset 0 0 0 2px var(--ambar);
+}
+.marca:has(input:checked) .marca__caixa svg { opacity: 1; }
+.marca:has(input:focus-visible) { outline: 2px solid var(--ambar); outline-offset: 3px; }
+.marca__txt { font-size: var(--t-sm); line-height: 1.5; color: var(--tinta-clara); text-wrap: pretty; }
+
+.qcard--lgpd .qcard__campo { gap: 0.6rem; }
+.qcard__nota { margin-block-start: calc(var(--s-2) * -1); }
+
+/* --- Micro-resultado ---------------------------------------------------- */
+/* A absolvição imediata. Entra em menos de 1 s depois da resposta, e entra
+   por baixo, como se tivesse sido escrito na hora. */
+
+.qcard__micro:empty { display: none; }
+.qcard__micro {
+  display: block;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  animation: none;
+}
+@keyframes micro-entra {
+  from { opacity: 0; transform: translate3d(0, 0.7rem, 0); }
+  to   { opacity: 1; transform: none; }
+}
+.micro__tit {
+  font-size: var(--t-sm);
+  font-weight: 720;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--ambar-forte);
+  text-wrap: balance;
+}
+.micro__tit--grande { font-size: var(--t-lg); }
+.micro__txt {
+  font-size: var(--t-xs);
+  line-height: 1.45;
+  color: #6B6459;
+  text-wrap: pretty;
+}
+
+/* O intervalo narrado não tem pergunta: o micro-resultado é a tela inteira. */
+.qcard--intervalo { align-content: center; }
+.qcard--intervalo .qcard__micro {
+  padding: var(--s-4);
+  background: linear-gradient(150deg,
+    color-mix(in oklab, var(--ambar) 18%, transparent), rgb(255 255 255 / 0.02));
+}
+
+/* --- Navegação ---------------------------------------------------------- */
+
+.qcard__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  align-items: center;
+  margin-block-start: var(--s-1);
+}
+.qcard__seguir { flex: 0 1 auto; }
+.qcard__voltar { flex: 0 0 auto; min-block-size: 3.25rem; padding-inline: 1.3rem; font-size: var(--t-base); }
+
+/* --- Telas estreitas ---------------------------------------------------- */
+/* A profundidade não some em 390 px: o próximo card continua atrás, só com
+   deslocamento menor, porque o mesmo Z ocupa fração maior de uma tela curta. */
+
+@media (max-width: 47.9375rem) {
+  .quiz__pilha { min-block-size: 24rem; }
+  .qcard { padding: 1.15rem 1.05rem; border-radius: var(--raio-2); }
+  .qcard.e-proximo { transform: translateY(8px); opacity: 0; }
+  .qcard.e-passado { transform: translateY(-8px); }
+  .qcard__nav { flex-direction: row-reverse; justify-content: flex-end; align-items: center; }
+  .qcard__seguir, .qcard__voltar { inline-size: auto; min-block-size: 2.9rem; }
+  .campo { max-inline-size: none; }
+}
+
+@media (max-width: 22.5rem) {
+  .qcard { padding: 0.95rem 0.85rem; }
+  .qcard__just { padding-inline-start: var(--s-2); }
+}
+
+/* Paisagem baixa: a pilha não pode empurrar o botão para fora da tela. */
+@media (max-height: 33rem) and (orientation: landscape) {
+  .quiz__pilha { min-block-size: 20rem; }
+}
+
+/* --- Sem movimento ------------------------------------------------------ */
+/* Some a pilha 3D inteira: só o card ativo existe, sem transform, sem
+   deriva de fundo, sem animação de entrada do micro-resultado. */
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz__mesa, .quiz__vapor { animation: none; transform: none; }
+  .quiz__pilha { perspective: none; transition: none; }
+  .qcard { transform: none; transition: none; }
+  .qcard.e-proximo, .qcard.e-passado { opacity: 0; visibility: hidden; }
+  .qcard.e-ativo { opacity: 1; visibility: visible; transform: none; }
+  .qcard__micro { animation: none; }
+  .quiz__lampada { transition: none; }
+  .quiz__preenche { transition: none; }
+}
+.reduced-motion .quiz__mesa,
+.reduced-motion .quiz__vapor { animation: none; transform: none; }
+.reduced-motion .quiz__pilha { perspective: none; }
+.reduced-motion .qcard { transform: none; }
+.reduced-motion .qcard.e-proximo,
+.reduced-motion .qcard.e-passado { opacity: 0; visibility: hidden; }

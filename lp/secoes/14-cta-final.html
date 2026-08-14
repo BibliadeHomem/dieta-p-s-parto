@@ -1,0 +1,53 @@
+<!-- ==========================================================================
+     PEÇA 14 — CTA final + LGPD
+     Ato: manha. Fecho da página: cozinha em luz plena, o mesmo cômodo da
+     peça 9 mas agora em primeiro plano — é o lugar pra onde o cardápio vai.
+     Checkbox de marketing aqui é o SEGUNDO dos dois exigidos pelo contrato:
+     o de dado de saúde já vive na peça 2 (quiz), separado e desmarcado.
+     A microcopy de defesa do investimento fica sempre visível, não
+     condicionada a um sensor de hesitação que este build não tem: ela
+     cumpre a mesma função (reduzir ansiedade de saída) sem depender de JS
+     extra fora do escopo do motor.
+     ========================================================================== -->
+<section class="cena cena--alta cta-final" id="comprar" data-scene data-damp="0.12" data-ato="manha" aria-labelledby="cta-tit">
+
+  <div class="cena__palco" aria-hidden="true">
+    <div class="camada" data-z="fundo" style="--deriva:9">
+      <picture>
+        <img class="camada__img cta-final__cozinha" src="img/novo-luz.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
+      </picture>
+    </div>
+    <div class="camada" data-z="topo" style="--deriva:60">
+      <div class="cta-final__luz luz"></div>
+    </div>
+    <div class="nevoa"></div>
+    <div class="vinheta"></div>
+  </div>
+
+  <div class="cena__conteudo cena__conteudo--texto cta-final__texto">
+
+    <p class="etiqueta" data-reveal>ÚLTIMA PARTE</p>
+    <h2 class="h2" id="cta-tit" data-offer-title data-reveal style="--atraso:80ms">Seu mínimo calórico já está calculado.</h2>
+    <p class="corpo corpo-l" data-reveal style="--atraso:120ms">Falta só a parte que transforma esse número em prato, em lista de compras, em rotina possível pras próximas 12 semanas.</p>
+
+    <div class="cta-final__caixa" data-reveal="escala" style="--atraso:160ms">
+
+      <!-- Sem link de checkout real definido no contrato/STATE ainda: âncora
+           placeholder, no mesmo padrão dos links legais do rodapé (peça 15). -->
+      <a class="btn btn--largo" href="#" data-checkout="placeholder">
+        Quero meu cardápio das 12 semanas
+        <svg class="btn__seta" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 3v12M4 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <p class="mini cta-final__preco">Pagamento único de R$ 37, à vista. Sem parcelamento, sem mensalidade depois.</p>
+
+      <label class="cta-final__check">
+        <input type="checkbox" name="lgpd_marketing" value="1">
+        <span>Quero receber e-mails com dicas sobre alimentação no puerpério e novidades do material. <em>Isso é opcional. Marque só se quiser. Você compra o cardápio de qualquer jeito.</em></span>
+      </label>
+
+      <p class="mini cta-final__defesa">Você já respondeu o quiz e já viu seu mínimo calórico na tela. Esse número é seu, com ou sem o cardápio. O que falta agora é a parte que transforma esse número em prato de verdade, com lista de compras pela sua faixa de renda.</p>
+
+    </div>
+
+  </div>
+</section>

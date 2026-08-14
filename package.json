@@ -1,0 +1,12 @@
+{
+  "name": "fitflix-landing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node _build/montar.mjs && node _build/build.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.55.0"
+  }
+}

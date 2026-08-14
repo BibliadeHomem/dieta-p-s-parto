@@ -1,0 +1,71 @@
+/* ============================================================================
+   PEÇA 10 — Ancoragem
+   Ato: aurora. Barras reais, proporcionais ao preço (base R$ 1.200 = 100%),
+   nunca um preço riscado artificial — a regra do contrato contra urgência
+   e desconto falso vale também para o desenho da ancoragem.
+   ========================================================================== */
+
+.ancora__consultorio {
+  opacity: 0.42;
+  filter: saturate(0.85) brightness(0.8) sepia(0.08);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 96%);
+          mask-image: linear-gradient(to bottom, #000 55%, transparent 96%);
+}
+
+.ancora__luz {
+  inset-inline-start: 60%;
+  inset-block-start: -8%;
+  inline-size: min(70vw, 40rem);
+  aspect-ratio: 1.4;
+  background: radial-gradient(ellipse, color-mix(in oklab, var(--ambar-forte) 42%, transparent), transparent 72%);
+}
+
+.ancora__grade { position: relative; z-index: 2; display: grid; gap: var(--s-7); }
+
+.ancora__texto { max-inline-size: 40rem; }
+.ancora__texto .h2 { margin-block: var(--s-2) var(--s-5); }
+
+.ancora__barras {
+  display: grid;
+  gap: var(--s-4);
+  max-inline-size: 44rem;
+}
+
+.ancora__barra { display: grid; gap: var(--s-2); }
+
+.ancora__trilho {
+  block-size: 0.7rem;
+  border-radius: var(--raio-cheio);
+  background: rgb(255 255 255 / 0.08);
+  overflow: hidden;
+}
+.ancora__preenche {
+  block-size: 100%;
+  inline-size: var(--valor, 10%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--ambar), var(--ambar-forte));
+}
+.ancora__barra--concorrente .ancora__preenche {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--texto-2) 60%, transparent), color-mix(in oklab, var(--texto-2) 40%, transparent));
+}
+
+.ancora__legenda {
+  font-size: var(--t-sm);
+  color: var(--texto-2);
+  max-inline-size: 46ch;
+}
+.ancora__legenda b { color: var(--texto); font-weight: 640; }
+
+.ancora__virada {
+  display: grid;
+  gap: var(--s-3);
+  max-inline-size: 44rem;
+  padding-block-start: var(--s-5);
+  border-block-start: 1px solid color-mix(in oklab, var(--ambar-forte) 26%, transparent);
+}
+.ancora__pergunta { color: var(--texto); font-weight: 640; }
+
+@media (min-width: 62rem) {
+  .ancora__grade { grid-template-columns: minmax(0, 26rem) minmax(0, 1fr); align-items: start; }
+  .ancora__virada { grid-column: 1 / -1; }
+}

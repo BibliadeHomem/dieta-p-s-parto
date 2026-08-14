@@ -1,0 +1,183 @@
+<!-- ==========================================================================
+     PEÇA 6 — Lead de empatia
+     Ato: frio. Continuação direta do corredor da peça 5, mesmas primitivas
+     (.quadro, .frio-placa, .frio-moldura, .frio-piso, .frio-vidraca).
+
+     A câmera entra no quarto. mae-cama-janela não tem alfa (é RGB), então ela
+     não é recortada: vira um OBJETO da cena, uma placa fotográfica com quadro,
+     aresta e sombra, girada de verdade sob a perspectiva compartilhada. Isso
+     resolve o mesmo problema do recorte por outro caminho, e ainda dá uma
+     aresta reta a mais para a rotação ficar legível.
+
+     A luz continua diegética e agora tem duas fontes que existem dentro da
+     foto: a janela fria à esquerda e o abajur quente ao lado da cama. É a
+     primeira vez no ato que aparece luz quente, e ela é um ponto, não um céu.
+     O céu quente é da peça 7.
+
+     A âncora de personagem volta no quadro C: a mesma mãe de janela da peça 5,
+     recortada, agora vista de perto de novo.
+     ========================================================================== -->
+<section class="cena ato-frio empatia" data-ato="frio" aria-labelledby="emp-tit">
+
+  <!-- ---------------------------------------------------------------- A -->
+  <div class="quadro quadro--alto quadro--dir emp-a" data-scene data-damp="0.14">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:6">
+        <div class="emp-parede"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:13; --giro:8deg">
+        <div class="frio-piso frio-piso--longe"></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:22; --giro:7deg">
+        <div class="emp-retrato">
+          <img class="emp-retrato__img" src="img/novo-problema.webp" alt="Mulher em momento contemplativo junto à janela" width="1800" height="1005" loading="lazy" decoding="async">
+          <span class="emp-retrato__luz"></span>
+        </div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:32">
+        <div class="emp-abajur"></div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:48; --giro:6deg">
+        <div class="frio-moldura">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <h2 class="h2 frio-titulo" id="emp-tit" data-reveal>Antes de continuar, uma pergunta que ninguém fez direito até agora.</h2>
+        <p class="corpo corpo-l" data-reveal style="--atraso:120ms">Não "quanto você quer perder". Não "qual seu objetivo estético". A pergunta que ficou faltando é outra: quando foi a última vez que alguém perguntou algo sobre você que não fosse sobre o bebê?</p>
+        <p class="corpo corpo-l frio-marca" data-reveal="lado" style="--atraso:190ms">A resposta, provavelmente, é: faz tempo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- B -->
+  <!-- Corte para o detalhe: a janela do mesmo quarto, mesma foto, outro
+       enquadramento. É a câmera se movendo dentro da cena em vez de trocar de
+       cenário, que é o que dá continuidade. -->
+  <div class="quadro quadro--esq emp-b" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:5">
+        <div class="emp-parede emp-parede--funda"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:14; --giro:11deg">
+        <div class="emp-detalhe">
+          <img class="emp-detalhe__img" src="img/novo-problema.webp" alt="" width="1800" height="1005" loading="lazy" decoding="async">
+        </div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:24">
+        <div class="frio-facho emp-facho"></div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:34; --giro:9deg">
+        <div class="frio-piso frio-piso--perto"></div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:50; --giro:5deg">
+        <div class="frio-moldura frio-moldura--larga">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <p class="corpo corpo-l" data-reveal>Você troca fralda de olho fechado. Sabe a hora certa da mamada antes do choro. Decorou o telefone do pediatra. E em algum lugar desse turno que não acaba, você virou a última das suas próprias preocupações. Não porque você relaxou. Porque não sobrou espaço.</p>
+        <p class="corpo corpo-l" data-reveal style="--atraso:150ms">Tem um nome pra essa sensação de olhar no espelho e não reconhecer quem está ali. Não é frescura, e não é exagero. É o que acontece quando uma pessoa passa meses inteiros cuidando de alguém sem que ninguém, nem ela mesma, cuide de volta.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- C -->
+  <!-- A âncora volta. Mesma mulher da peça 5, mesmo recorte, luz um passo
+       menos fria: a janela atrás dela já tem mais claro que tinha lá atrás. -->
+  <div class="quadro quadro--dir emp-c" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:6">
+        <div class="emp-parede emp-parede--clara"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:14; --giro:10deg">
+        <div class="frio-vidraca frio-vidraca--baixa emp-vidraca"><i></i></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:22; --giro:6deg">
+        <picture>
+          <source srcset="img/mae-janela-caneca.webp" type="image/webp">
+          <img class="frio-sujeito emp-mae" src="img/mae-janela-caneca.png" alt="" width="1600" height="1866" loading="lazy" decoding="async">
+        </picture>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:34; --giro:8deg">
+        <div class="frio-piso frio-piso--perto"></div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:50; --giro:6deg">
+        <div class="frio-moldura frio-moldura--porta">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <p class="corpo corpo-l" data-reveal>E é aqui que a maioria das dietas erra. Elas perguntam seu peso. Perguntam sua meta. Nunca perguntam quantas horas você dorme picado, se você janta em pé, se sobra dinheiro depois da farmácia, se tem alguém pra segurar o bebê enquanto você come sentada. Um cardápio pronto, genérico, feito pra uma vida que não é a sua, não falhou porque você não seguiu direito. Falhou porque nunca foi desenhado pra existir dentro do resguardo. <span class="emp-batida">O problema nunca foi você. Foi o formato.</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- D -->
+  <div class="quadro quadro--esq emp-d" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:5">
+        <div class="emp-parede emp-parede--funda"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:13; --giro:9deg">
+        <div class="frio-vidraca emp-vidraca--d"><i></i></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:24">
+        <div class="emp-abajur emp-abajur--d"></div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:36; --giro:10deg">
+        <div class="frio-piso"></div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:52; --giro:6deg">
+        <div class="frio-moldura frio-moldura--larga">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <p class="corpo corpo-l" data-reveal>Se você carrega aquele peso de culpa por não conseguir se cuidar, pode soltar agora. Ninguém consegue priorizar a própria alimentação num formato que não leva em conta que o dia começou às 4h, que o corpo está amamentando, e que o orçamento não é elástico. Isso não é falta de força de vontade. É matemática mal feita, de alguém que nunca perguntou como é a sua semana de verdade.</p>
+        <p class="corpo corpo-l frio-fecho" data-reveal style="--atraso:160ms">O número que você acabou de ver na tela não veio de um formato genérico. Veio de perguntas sobre a sua vida, a que você respondeu. E o que fazer com esse número é a próxima parte.</p>
+      </div>
+    </div>
+  </div>
+
+</section>

@@ -1,0 +1,354 @@
+<!-- ==========================================================================
+     PEÇAS 2 e 3 — Quiz de 7 passos + micro-resultados
+     Ato: noite. 4h da manhã, sobre a mesa da cozinha.
+
+     Movimento central: a pergunta vem primeiro. A justificativa curta aparece
+     logo depois do campo, no mesmo card, sem competir com a ação principal.
+
+     Profundidade: os cards vivem numa pilha 3D real com perspectiva PRÓPRIA
+     (.quiz__pilha), separada da perspectiva do palco. O card inteiro é que
+     transforma; o texto dentro dele nunca recebe translateZ próprio, então
+     ele rasteriza uma vez, na escala certa, e lê nítido em movimento.
+
+     Copy literal de COPY_FINAL_LP.md §3 (peça 2) e §4 (peça 3).
+     ======================================================================= -->
+<section class="cena quiz" id="quiz" data-scene data-damp="0.14" data-ato="noite"
+         aria-labelledby="quiz-tit" data-quiz>
+
+  <div class="cena__palco">
+
+    <!-- IMG-05 quiz-mesa.avif ainda não existe. Esta camada ocupa exatamente
+         a mesma caixa e tem a mesma leitura: mesa de cozinha à noite, fora de
+         foco, luminância concentrada num terço superior. Trocar pelo arquivo
+         final é trocar este div por <picture>, sem mexer no layout. -->
+    <div class="camada" data-z="fundo">
+      <div class="quiz__mesa" aria-hidden="true"></div>
+    </div>
+
+    <div class="camada" data-z="tras" style="--giro: 4deg">
+      <div class="quiz__vapor" aria-hidden="true"></div>
+    </div>
+
+    <!-- A luz âmbar não responde ao scroll. Responde ao PROGRESSO DO QUIZ:
+         --progresso (0→1) é escrito pelo JS na própria <section>. Quanto mais
+         perguntas respondidas, mais a cena acende. É o pré-anúncio do clarão
+         da peça 4. -->
+    <div class="camada" data-z="meio" aria-hidden="true">
+      <div class="quiz__lampada luz"></div>
+    </div>
+
+    <div class="nevoa" aria-hidden="true"></div>
+    <div class="vinheta" aria-hidden="true"></div>
+  </div>
+
+  <div class="cena__conteudo cena__conteudo--texto quiz__conteudo">
+
+    <h2 class="vh" id="quiz-tit">Quiz do diagnóstico calórico</h2>
+
+    <!-- Trabalho visível: passo atual e quanto da conta já foi montada.
+         Sem contagem regressiva, sem urgência, sem prazo. -->
+    <div class="quiz__passo">
+      <p class="quiz__passo-rot">
+        Passo <span data-quiz-passo>1</span> de 7
+      </p>
+      <div class="quiz__trilho" role="progressbar" aria-valuemin="0" aria-valuemax="7"
+           aria-valuenow="0" aria-label="Respostas registradas" data-quiz-barra>
+        <span class="quiz__preenche"></span>
+      </div>
+    </div>
+
+    <form class="quiz__pilha" data-quiz-pilha novalidate>
+
+      <!-- 1 ................................................. peso atual -->
+      <div class="qcard" data-card="peso">
+        <label class="qcard__campo" for="q-peso">
+          <span class="qcard__pergunta">Qual é o seu peso agora?</span>
+          <span class="campo">
+            <input class="campo__input" id="q-peso" name="peso" type="number"
+                   inputmode="decimal" step="0.1"
+                   autocomplete="off" placeholder="Ex.: 70" data-quiz-num aria-describedby="q-peso-erro">
+            <span class="campo__un" aria-hidden="true">kg</span>
+          </span>
+        </label>
+        <p class="qcard__just">
+          <span class="qcard__rot">Por que perguntamos:</span>
+          Peso sozinho não diz muita coisa sobre o seu corpo. Altura, idade e amamentação dão o contexto da estimativa.
+        </p>
+        <p class="qcard__erro" id="q-peso-erro" data-quiz-erro hidden>Confira o número digitado.</p>
+
+        <div class="qcard__micro" data-quiz-micro role="status" aria-live="polite"></div>
+
+        <div class="qcard__nav">
+          <button class="btn qcard__seguir" type="button" data-quiz-seguir>Continuar</button>
+        </div>
+      </div>
+
+      <!-- 2 ..................................................... altura -->
+      <div class="qcard" data-card="altura">
+        <label class="qcard__campo" for="q-altura">
+          <span class="qcard__pergunta">Qual é a sua altura?</span>
+          <span class="campo">
+            <input class="campo__input" id="q-altura" name="altura" type="number"
+                   inputmode="numeric" step="1" min="120" max="220"
+                   autocomplete="off" placeholder="Ex.: 165" data-quiz-num aria-describedby="q-altura-erro">
+            <span class="campo__un" aria-hidden="true">cm</span>
+          </span>
+        </label>
+        <p class="qcard__just">
+          <span class="qcard__rot">Por que perguntamos:</span>
+          Peso e altura entram juntos na fórmula usada para estimar quanta energia seu corpo gasta em repouso.
+        </p>
+        <p class="qcard__erro" id="q-altura-erro" data-quiz-erro hidden>Confira o número digitado.</p>
+
+        <div class="qcard__micro" data-quiz-micro role="status" aria-live="polite"></div>
+
+        <div class="qcard__nav">
+          <button class="btn btn--fantasma qcard__voltar" type="button" data-quiz-voltar>Voltar</button>
+          <button class="btn qcard__seguir" type="button" data-quiz-seguir>Continuar</button>
+        </div>
+      </div>
+
+      <!-- 3 ...................................................... idade -->
+      <div class="qcard" data-card="idade">
+        <label class="qcard__campo" for="q-idade">
+          <span class="qcard__pergunta">Quantos anos você tem?</span>
+          <span class="campo">
+            <input class="campo__input" id="q-idade" name="idade" type="number"
+                   inputmode="numeric" step="1"
+                   autocomplete="off" placeholder="Ex.: 30" data-quiz-num aria-describedby="q-idade-erro">
+            <span class="campo__un" aria-hidden="true">anos</span>
+          </span>
+        </label>
+        <p class="qcard__just">
+          <span class="qcard__rot">Por que perguntamos:</span>
+          A idade participa da fórmula de Mifflin-St Jeor e ajusta a estimativa de gasto em repouso.
+        </p>
+        <p class="qcard__erro" id="q-idade-erro" data-quiz-erro hidden>Confira o número digitado.</p>
+
+        <div class="qcard__micro" data-quiz-micro role="status" aria-live="polite"></div>
+
+        <div class="qcard__nav">
+          <button class="btn btn--fantasma qcard__voltar" type="button" data-quiz-voltar>Voltar</button>
+          <button class="btn qcard__seguir" type="button" data-quiz-seguir>Continuar</button>
+        </div>
+      </div>
+
+      <!-- 4 ........................................ amamentação e fase -->
+      <div class="qcard" data-card="amamenta">
+        <fieldset class="qcard__campo">
+          <legend class="qcard__pergunta">
+            Você está amamentando? Se sim, em que fase (livre demanda, com intervalos, já
+            reduzindo)?
+          </legend>
+          <div class="opcoes">
+            <label class="opcao">
+              <input type="radio" name="amamenta" value="livre" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Sim, em livre demanda</span>
+            </label>
+            <label class="opcao">
+              <input type="radio" name="amamenta" value="intervalos" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Sim, com intervalos</span>
+            </label>
+            <label class="opcao">
+              <input type="radio" name="amamenta" value="reduzindo" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Sim, já reduzindo</span>
+            </label>
+            <label class="opcao">
+              <input type="radio" name="amamenta" value="nao" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Não estou amamentando</span>
+            </label>
+          </div>
+        </fieldset>
+        <p class="qcard__just">
+          <span class="qcard__rot">Por que perguntamos:</span>
+          A amamentação acrescenta energia à conta e ativa o piso de segurança de 1.800 kcal por dia.
+        </p>
+
+        <div class="qcard__micro" data-quiz-micro role="status" aria-live="polite"></div>
+
+        <div class="qcard__nav">
+          <button class="btn btn--fantasma qcard__voltar" type="button" data-quiz-voltar>Voltar</button>
+          <button class="btn qcard__seguir" type="button" data-quiz-seguir>Continuar</button>
+        </div>
+      </div>
+
+      <!-- 5 ................................... nível de atividade física -->
+      <div class="qcard" data-card="atividade">
+        <fieldset class="qcard__campo">
+          <legend class="qcard__pergunta">
+            Como é o seu dia? Mais parada, andando bastante em casa, ou com alguma atividade física
+            à parte?
+          </legend>
+          <div class="opcoes">
+            <label class="opcao">
+              <input type="radio" name="atividade" value="parada" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Mais parada</span>
+            </label>
+            <label class="opcao">
+              <input type="radio" name="atividade" value="casa" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Andando bastante em casa</span>
+            </label>
+            <label class="opcao">
+              <input type="radio" name="atividade" value="extra" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Com alguma atividade física à parte</span>
+            </label>
+          </div>
+        </fieldset>
+        <p class="qcard__just">
+          <span class="qcard__rot">Por que perguntamos:</span>
+          A rotina diária ajusta o gasto estimado, mesmo quando não existe exercício formal.
+        </p>
+
+        <div class="qcard__micro" data-quiz-micro role="status" aria-live="polite"></div>
+
+        <div class="qcard__nav">
+          <button class="btn btn--fantasma qcard__voltar" type="button" data-quiz-voltar>Voltar</button>
+          <button class="btn qcard__seguir" type="button" data-quiz-seguir>Continuar</button>
+        </div>
+      </div>
+
+      <!-- 6 ............................................... faixa de renda -->
+      <div class="qcard" data-card="renda">
+        <fieldset class="qcard__campo">
+          <legend class="qcard__pergunta">
+            Pra ajustar a lista de compras, sua renda familiar fica até 2 salários mínimos, entre 2
+            e 4, ou acima de 4?
+          </legend>
+          <div class="opcoes">
+            <label class="opcao">
+              <input type="radio" name="renda" value="ate2" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Até 2 salários mínimos</span>
+            </label>
+            <label class="opcao">
+              <input type="radio" name="renda" value="2a4" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Entre 2 e 4</span>
+            </label>
+            <label class="opcao">
+              <input type="radio" name="renda" value="mais4" data-quiz-opc>
+              <span class="opcao__marca" aria-hidden="true"></span>
+              <span class="opcao__txt">Acima de 4</span>
+            </label>
+          </div>
+        </fieldset>
+        <p class="qcard__just">
+          <span class="qcard__rot">Por que perguntamos:</span>
+          Essa resposta ajusta os exemplos e a lista de compras ao que cabe na sua rotina.
+        </p>
+
+        <div class="qcard__micro" data-quiz-micro role="status" aria-live="polite"></div>
+
+        <div class="qcard__nav">
+          <button class="btn btn--fantasma qcard__voltar" type="button" data-quiz-voltar>Voltar</button>
+          <button class="btn qcard__seguir" type="button" data-quiz-seguir>Continuar</button>
+        </div>
+      </div>
+
+      <!-- 7 ..................................................... LGPD -->
+      <div class="qcard qcard--lgpd" data-card="lgpd">
+        <fieldset class="qcard__campo">
+          <legend class="qcard__pergunta">Preencha seus dados para ver o seu número</legend>
+
+          <div class="lead-campos">
+            <label class="lead-campo" for="q-nome">
+              <span>Nome</span>
+              <input id="q-nome" name="nome" type="text" autocomplete="name" placeholder="Seu nome" data-quiz-contact="nome" required>
+            </label>
+            <label class="lead-campo" for="q-email">
+              <span>E-mail</span>
+              <input id="q-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com" data-quiz-contact="email" required>
+            </label>
+            <label class="lead-campo" for="q-whatsapp">
+              <span>WhatsApp</span>
+              <input id="q-whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(11) 99999-9999" data-quiz-contact="whatsapp" required>
+            </label>
+          </div>
+
+          <p class="qcard__erro" data-quiz-contact-error hidden>Preencha nome, e-mail e WhatsApp corretamente.</p>
+
+          <label class="marca marca--saude">
+            <input type="checkbox" name="lgpd-saude" value="1" data-quiz-consent
+                   aria-describedby="q-lgpd-erro">
+            <span class="marca__caixa" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true"><path d="M3 8.5 6.4 12 13 4.8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="marca__txt">
+              Autorizo o uso dos dados informados só para gerar e identificar o meu diagnóstico
+              calórico neste navegador, como pede a LGPD.
+            </span>
+          </label>
+
+          <label class="marca marca--opcional">
+            <input type="checkbox" name="lgpd-marketing" value="1" data-quiz-marketing>
+            <span class="marca__caixa" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true"><path d="M3 8.5 6.4 12 13 4.8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="marca__txt">
+              Quero receber e-mails com conteúdo sobre alimentação no puerpério. Opcional, não afeta
+              o resultado do quiz.
+            </span>
+          </label>
+        </fieldset>
+        <p class="qcard__just">
+          <span class="qcard__rot">Por que pedimos:</span>
+          Peso, altura e amamentação são dados de saúde. Sua autorização explícita é necessária para usá-los no cálculo dentro deste navegador.
+        </p>
+
+        <p class="qcard__erro" id="q-lgpd-erro" data-quiz-erro hidden>
+          Para calcular, é preciso marcar a autorização de uso de dados de saúde.
+        </p>
+
+        <div class="qcard__micro" data-quiz-micro role="status" aria-live="polite"></div>
+
+        <div class="qcard__nav">
+          <button class="btn btn--fantasma qcard__voltar" type="button" data-quiz-voltar>Voltar</button>
+          <button class="btn qcard__seguir" type="button" data-quiz-seguir>Quero ver o meu número</button>
+        </div>
+
+        <p class="mini qcard__nota">Nada do que você digitou sai deste navegador.</p>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- ====================================================================
+       Micro-resultados (peça 3). Ficam em <template> e o JS clona o
+       conteúdo para dentro do role="status" do card. Inserção real de nó é
+       o que faz o leitor de tela anunciar; alternar [hidden] não é.
+       Texto literal, títulos com aspas curvas como na copy.
+       ================================================================== -->
+
+  <template id="quiz-micro-m1">
+    <p class="micro__txt">Peso registrado. Ele entra na conta junto com as próximas respostas.</p>
+  </template>
+
+  <template id="quiz-micro-m2">
+    <p class="micro__tit">&ldquo;Isso muda a conta.&rdquo;</p>
+    <p class="micro__txt">Anotado que você amamenta. A partir daqui o cálculo entra num modo diferente: o mínimo calórico seguro passa a considerar isso, item por item, não como observação solta no final.</p>
+  </template>
+
+  <template id="quiz-micro-m3">
+    <p class="micro__tit">&ldquo;Rotina registrada.&rdquo;</p>
+    <p class="micro__txt">Pouco tempo sobrando pro corpo se mexer, com tudo que uma casa com bebê pequeno exige. Isso não entra na conta como falha, entra como dado.</p>
+    <p class="micro__txt">O cálculo se ajusta pra essa rotina, não pra uma que você não está vivendo.</p>
+  </template>
+
+  <template id="quiz-micro-m4">
+    <p class="micro__tit">&ldquo;Você em movimento.&rdquo;</p>
+    <p class="micro__txt">Você está se mexendo bastante mesmo com a rotina de agora sendo do jeito que é. Isso muda o gasto que entra na conta, e o cálculo já está incorporando esse número.</p>
+  </template>
+
+  <template id="quiz-micro-m5">
+    <p class="micro__tit">&ldquo;Faixa registrada.&rdquo;</p>
+    <p class="micro__txt">O cardápio que sai no final já nasce pensado pra essa faixa. Com o que existe de verdade no mercado do seu bairro, em embalagem real, não com ingrediente de vitrine.</p>
+  </template>
+
+</section>

@@ -1,0 +1,65 @@
+<!-- ==========================================================================
+     PEÇA 13 — FAQ / objeções
+     Ato: manha. <details>/<summary> nativos: teclado e leitor de tela de
+     graça, sem um byte de JS de acordeão. A profundidade vive só na
+     atmosfera de fundo — o conteúdo é lista, não cenário, então não força
+     camada 3D em cima de texto interativo.
+     ========================================================================== -->
+<section class="cena faq" data-scene data-damp="0.14" data-ato="manha" aria-labelledby="faq-tit">
+
+  <div class="cena__palco" aria-hidden="true">
+    <div class="camada" data-z="fundo" style="--deriva:7">
+      <div class="faq__luz"></div>
+    </div>
+    <div class="nevoa"></div>
+    <div class="vinheta"></div>
+  </div>
+
+  <div class="cena__conteudo faq__grade">
+
+    <header class="faq__cab">
+      <p class="etiqueta" data-reveal>PERGUNTAS DIRETAS</p>
+      <h2 class="h2" id="faq-tit" data-reveal style="--atraso:80ms">O que costuma ficar sem resposta</h2>
+    </header>
+
+    <div class="faq__lista reveal-serie">
+
+      <details class="faq__item" data-reveal style="--i:0">
+        <summary class="faq__pergunta">Isso é seguro pra quem amamenta?<span class="faq__mais" aria-hidden="true"></span></summary>
+        <div class="faq__resposta corpo">
+          <p>Não vou te dizer "sim, é seguro" e ponto, isso seria papo de vendedor. O que dá pra te dizer é como o número funciona: o quiz calcula o seu mínimo calórico seguro considerando que você está amamentando, pela fórmula de Mifflin-St Jeor, a mesma conta que profissional de saúde usa. Você vê o raciocínio inteiro na tela, não é um número que cai do céu sem explicação. Condição de saúde específica sua ou do bebê continua sendo assunto de pediatra ou nutricionista, isso a gente não substitui. A decisão de seguir ou não é sua, com a conta na mão.</p>
+        </div>
+      </details>
+
+      <details class="faq__item" data-reveal style="--i:1">
+        <summary class="faq__pergunta">Preciso ir num nutricionista antes?<span class="faq__mais" aria-hidden="true"></span></summary>
+        <div class="faq__resposta corpo">
+          <p>Depende do que você já sabe sobre sua saúde. Se não tem nenhuma condição que te preocupa, o diagnóstico calórico te dá o ponto de partida na hora, sem fila e sem agendar nada. Se você tem alguma questão de saúde específica, sua ou do bebê, ou alguma dúvida que só um profissional resolve, aí vale a pena consultar antes, e o material educativo não substitui isso. A gente não decide por você, só te dá a conta pra você decidir com mais clareza.</p>
+        </div>
+      </details>
+
+      <details class="faq__item" data-reveal style="--i:2">
+        <summary class="faq__pergunta">Funciona pra quem não consegue ganhar peso, está magra demais amamentando?<span class="faq__mais" aria-hidden="true"></span></summary>
+        <div class="faq__resposta corpo">
+          <p>Esse é exatamente o ponto do mínimo calórico seguro. A conta não existe só pra empurrar todo mundo pra baixo. Ela mostra o piso, o tanto que seu corpo precisa pra sustentar a amamentação sem faltar energia pra você. Se você já está abaixo desse piso, o cardápio das 12 semanas trabalha pra te levar pra cima dele, não pra baixo. O número é seu ponto de partida, pra mais ou pra menos, dependendo de onde você está agora.</p>
+        </div>
+      </details>
+
+      <details class="faq__item" data-reveal style="--i:3">
+        <summary class="faq__pergunta">O cardápio cabe no meu orçamento?<span class="faq__mais" aria-hidden="true"></span></summary>
+        <div class="faq__resposta corpo">
+          <p>O cardápio se ajusta pela faixa de renda que você informa no quiz: até 2 salários mínimos, de 2 a 4, ou acima disso. A lista de compras vem por quantidade e embalagem real, do jeito que você encontra no mercado, não em xícara ou grama solta. Isso muda os alimentos sugeridos pra caber no que você realmente consegue gastar.</p>
+        </div>
+      </details>
+
+      <details class="faq__item" data-reveal style="--i:4">
+        <summary class="faq__pergunta">Isso é uma dieta que vou ter que seguir à risca?<span class="faq__mais" aria-hidden="true"></span></summary>
+        <div class="faq__resposta corpo">
+          <p>Não. É material educativo com exemplos de referência, construído a partir do seu diagnóstico calórico. Você troca o que não faz sentido pra sua rotina, pro seu gosto, pro que tem na sua casa. Não é um conjunto de regras fixas pra cumprir à risca, é um ponto de partida pra organizar a semana sem ficar reinventando cardápio todo dia com um recém-nascido no colo.</p>
+        </div>
+      </details>
+
+    </div>
+
+  </div>
+</section>

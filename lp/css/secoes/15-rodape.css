@@ -1,0 +1,37 @@
+/* ============================================================================
+   PEÇA 15 — Rodapé
+   Sem palco 3D: é a única peça que a barra também não anima, e o contrato
+   não exige profundidade em disclaimer legal.
+   ========================================================================== */
+
+.rodape {
+  padding-block: var(--s-6) var(--s-5);
+  border-block-start: 1px solid color-mix(in oklab, var(--tinta-escura) 10%, transparent);
+}
+
+.rodape__grade {
+  display: grid;
+  gap: var(--s-3);
+  max-inline-size: 40rem;
+}
+
+.rodape__disclaimer { color: var(--tinta-escura-2); }
+
+.rodape__responsavel,
+.rodape__dados { color: var(--tinta-fraca); }
+
+.rodape__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  margin-block-start: var(--s-2);
+}
+.rodape__links a {
+  font-size: var(--t-sm);
+  color: var(--tinta-escura-2);
+  min-block-size: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rodape__copyright { color: var(--tinta-fraca); }

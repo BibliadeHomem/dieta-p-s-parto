@@ -1,0 +1,204 @@
+/* ============================================================================
+   Base e primitivas
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* Sem scroll-behavior: smooth global. Ela navega com o dedo; suavizar o
+     scroll nativo inteiro atrapalha quem usa teclado e quem rola rápido. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-color: #3A3238 transparent;
+  background: var(--noite);
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  font-size: var(--t-base);
+  line-height: var(--lh-body);
+  color: var(--texto);
+  background: var(--fundo);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;               /* nunca rolagem horizontal, em nenhuma tela */
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Grão global. Um pseudo-elemento fixo, sem custo de layout, é o que impede
+   que fotos de origens diferentes pareçam coladas de fontes diferentes. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: var(--grao);
+  background-size: 220px 220px;
+}
+
+img, picture, svg, video, canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+h1, h2, h3, h4, p, ul, ol, figure, blockquote { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+
+a {
+  color: inherit;
+  text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+  text-underline-offset: 0.22em;
+}
+a:hover { text-decoration-color: currentColor; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--realce);
+  outline-offset: 3px;
+  border-radius: var(--raio-1);
+}
+
+::selection { background: color-mix(in oklab, var(--ambar) 45%, transparent); color: #fff; }
+
+/* --- Tipografia -------------------------------------------------------- */
+
+.h1, .h2, .h3 {
+  font-weight: 760;
+  letter-spacing: -0.022em;
+  line-height: var(--lh-head);
+  text-wrap: balance;
+}
+.h1 { font-size: var(--t-2xl); line-height: var(--lh-tight); letter-spacing: -0.032em; }
+.h2 { font-size: var(--t-xl); }
+.h3 { font-size: var(--t-lg); letter-spacing: -0.014em; }
+
+.corpo   { max-width: var(--medida); font-size: var(--t-md); color: var(--texto-2); text-wrap: pretty; }
+.corpo-l { max-width: var(--medida-larga); }
+.corpo strong, .destaque { color: var(--texto); font-weight: 620; }
+
+.etiqueta {
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--realce);
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+}
+.etiqueta::before {
+  content: "";
+  inline-size: clamp(1.2rem, 4vw, 2.6rem);
+  block-size: 1px;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+
+.mini {
+  font-size: var(--t-sm);
+  color: var(--tinta-fraca);
+  line-height: 1.5;
+}
+
+/* --- Estruturas -------------------------------------------------------- */
+
+.env  { width: var(--largura); margin-inline: auto; }
+.env-texto { width: var(--largura-texto); margin-inline: auto; }
+
+.pilha > * + * { margin-block-start: var(--gap, var(--s-4)); }
+
+/* --- Botão ------------------------------------------------------------- */
+
+.btn {
+  --btn-bg: #2C4A52;
+  --btn-fg: #FFFFFF;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  min-block-size: 3rem;
+  padding: 0.7rem clamp(1.15rem, 3vw, 1.7rem);
+  border: 0;
+  border-radius: var(--raio-cheio);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-size: var(--t-base);
+  font-weight: 680;
+  letter-spacing: -0.012em;
+  cursor: pointer;
+  text-decoration: none;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.35s var(--ease-peso), box-shadow 0.35s var(--ease-peso),
+              filter 0.35s var(--ease-suave);
+  box-shadow: var(--sombra-1), var(--brilho-ambar);
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.5) 50%, transparent 65%);
+  opacity: 0;
+  transform: translateX(-60%);
+  transition: opacity 0.2s, transform 0.7s var(--ease-suave);
+  z-index: -1;
+}
+.btn:hover { transform: translate3d(0, -2px, 0); filter: brightness(1.06); }
+.btn:hover::before { opacity: 1; transform: translateX(60%); }
+.btn:active { transform: translate3d(0, 0, 0) scale(0.985); }
+
+.btn--fantasma {
+  --btn-bg: #FFFDF8;
+  --btn-fg: #4A6350;
+  box-shadow: inset 0 0 0 1px #C9D5CA;
+}
+.btn--largo { inline-size: 100%; }
+
+/* --- Utilidades -------------------------------------------------------- */
+
+.vh {
+  position: absolute !important;
+  inline-size: 1px; block-size: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+}
+
+.pular {
+  position: absolute;
+  inset-block-start: -100%;
+  inset-inline-start: var(--gutter);
+  z-index: 100;
+  padding: 0.8rem 1.2rem;
+  background: var(--ambar);
+  color: #21150B;
+  border-radius: 0 0 var(--raio-1) var(--raio-1);
+  font-weight: 640;
+}
+.pular:focus { inset-block-start: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.low-power *,
+.low-power *::before,
+.low-power *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}

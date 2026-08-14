@@ -1,0 +1,177 @@
+/* ============================================================================
+   PEÇA 6 — Lead de empatia
+   ----------------------------------------------------------------------------
+   Herda todas as primitivas do ato frio declaradas em 05-transicao.css
+   (.quadro, .frio-placa, .frio-moldura, .frio-piso, .frio-vidraca,
+   .frio-facho, .frio-sujeito). Aqui só entra o que é desta peça.
+
+   mae-cama-janela é RGB, sem alfa. Em vez de fingir recorte com máscara
+   radial (que sempre deixa a borda cinzenta boiando), ela vira um objeto
+   físico da cena: placa fotográfica com moldura, aresta clara e sombra
+   projetada, girada 21deg no eixo Y. A aresta reta da moldura é o que faz a
+   rotação ser vista, e não só suposta.
+   ========================================================================== */
+
+/* A base de cor é contínua e vem da <section>, emendando exatamente onde a
+   peça 5 terminou (#0F1720). Sem isso aparece uma faixa reta na costura. */
+.empatia {
+  background-image:
+    repeating-linear-gradient(96deg, transparent 0 6.2%, rgb(150 178 206 / 0.020) 6.2% 6.9%),
+    linear-gradient(to bottom, #0F1720 0%, #111A24 50%, #131C27 100%);
+}
+
+.emp-parede {
+  position: absolute;
+  inset: -12%;
+  background: radial-gradient(56% 44% at 22% 28%, rgb(104 140 184 / 0.22), transparent 74%);
+}
+.emp-parede--funda {
+  background: radial-gradient(52% 42% at 78% 32%, rgb(96 132 176 / 0.20), transparent 76%);
+}
+/* Um passo de luz a mais que a peça 5: o ato frio progride, não fica parado. */
+.emp-parede--clara {
+  background: radial-gradient(62% 50% at 30% 24%, rgb(122 160 202 / 0.28), transparent 74%);
+}
+
+/* --- A placa fotográfica --------------------------------------------------- */
+
+.emp-retrato {
+  position: absolute;
+  inset-block: 16% 20%;
+  inset-inline-start: 2%;
+  inline-size: min(56%, 40rem);
+  transform: rotateY(21deg);
+  transform-origin: 8% 50%;
+  border-radius: var(--raio-2);
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgb(170 194 218 / 0.30),
+    0 40px 90px -30px rgb(0 0 0 / 0.9);
+}
+.emp-retrato__img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: 42% 50%;
+  filter: saturate(0.84) brightness(0.9);
+}
+/* A luz do abajur que existe DENTRO da foto, continuada para fora dela. É o
+   que costura o objeto fotográfico à cena em vez de deixá-lo colado por cima. */
+.emp-retrato__luz {
+  position: absolute;
+  inset-block-end: 8%;
+  inset-inline-end: 6%;
+  inline-size: 46%;
+  aspect-ratio: 1.4;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(242 183 124 / 0.34), rgb(160 92 40 / 0.10) 46%, transparent 72%);
+  mix-blend-mode: screen;
+  opacity: calc(0.5 + var(--e) * 0.5);
+}
+
+/* --- O detalhe: outro enquadramento do mesmo quarto ------------------------ */
+
+.emp-detalhe {
+  position: absolute;
+  inset-block: 10% 22%;
+  inset-inline-end: 4%;
+  inline-size: min(48%, 32rem);
+  transform: rotateY(-23deg);
+  transform-origin: 92% 50%;
+  border-radius: var(--raio-2);
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgb(170 194 218 / 0.26),
+    0 40px 90px -30px rgb(0 0 0 / 0.9);
+}
+.emp-detalhe__img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  /* recorta na janela e na cortina, à esquerda do quadro original */
+  object-position: 7% 46%;
+  transform: scale(1.35);
+  filter: saturate(0.7) brightness(0.96) contrast(1.04);
+}
+
+/* --- O abajur -------------------------------------------------------------- */
+/* A primeira luz quente do ato. É um PONTO, não um céu: o céu quente é da
+   peça 7 e não pode ser antecipado aqui. */
+
+.emp-abajur {
+  position: absolute;
+  inset-block-end: 22%;
+  inset-inline-start: 44%;
+  inline-size: min(30vw, 20rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(242 183 124 / 0.30), rgb(160 92 40 / 0.09) 42%, transparent 70%);
+  filter: blur(clamp(14px, 3vw, 40px));
+  mix-blend-mode: screen;
+  opacity: calc(0.45 + var(--e) * 0.45);
+}
+.emp-abajur--d {
+  inset-block-end: 30%;
+  inset-inline-end: 12%;
+  inset-inline-start: auto;
+  inline-size: min(40vw, 26rem);
+}
+
+.emp-facho { inset-inline-end: 4%; inset-inline-start: auto; inline-size: min(50%, 32rem); transform: rotateX(68deg) rotateZ(9deg); }
+
+.emp-vidraca { opacity: 0.9; }
+.emp-vidraca--d { inset: 14% 8% 20% 46%; transform: rotateY(-26deg); transform-origin: 92% 50%; }
+
+/* A âncora de personagem de volta, um passo mais clara do que na peça 5. */
+.emp-mae {
+  inset-block-end: -3%;
+  inset-inline-start: -2%;
+  block-size: 88%;
+  filter:
+    drop-shadow(26px 12px 46px rgb(0 0 0 / 0.6))
+    saturate(0.88) brightness(1.02);
+}
+
+.emp-batida {
+  color: var(--frio);
+  font-weight: 700;
+  font-size: 1.08em;
+  letter-spacing: -0.012em;
+}
+
+@media (min-width: 48rem) and (max-width: 63.999rem) {
+  .emp-retrato { inline-size: min(50%, 26rem); inset-block: 10% 24%; inset-inline-start: 0; }
+  .emp-detalhe { inline-size: min(46%, 24rem); inset-block: 8% 26%; inset-inline-end: 0; }
+  .emp-mae { block-size: 74%; inset-inline-start: -8%; }
+  .emp-abajur { inset-inline-start: 34%; }
+}
+
+@media (max-width: 47.9375rem) {
+  .emp-retrato {
+    inset-block: 3% 52%;
+    inset-inline: 1% 8%;
+    inline-size: auto;
+    transform: rotateY(18deg);
+  }
+  .emp-detalhe {
+    inset-block: 3% 52%;
+    inset-inline: 10% 1%;
+    inline-size: auto;
+    transform: rotateY(-20deg);
+  }
+  .emp-abajur { inset-block: 22% auto; inset-inline-start: 48%; inline-size: 46vw; }
+  .emp-abajur--d { inset-block: 6% auto; inset-inline: auto 4%; inline-size: 56vw; }
+  .emp-mae { block-size: 48%; inset-block: 2% auto; inset-inline-start: -16%; }
+  .emp-vidraca--d { inset: 3% 6% 54% 34%; }
+  .emp-facho { inset-block: 8% 48%; inset-inline: -10% auto; inline-size: 78%; }
+}
+
+@media (max-width: 60rem) and (max-height: 30rem) {
+  .emp-retrato { inset-block: 8% 8%; inset-inline-start: 1%; inline-size: 46%; }
+  .emp-detalhe { inset-block: 8% 8%; inset-inline-end: 2%; inline-size: 42%; }
+  .emp-mae { block-size: 90%; inset-block-end: -4%; inset-inline-start: -6%; }
+}

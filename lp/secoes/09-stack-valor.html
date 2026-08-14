@@ -1,0 +1,264 @@
+<!-- ==========================================================================
+     PEÇA 9 — Stack de valor
+     Ato: aurora. É aqui que o fio âmbar que a peça 7 deixou no horizonte
+     abre em amanhecer. A peça 8 entregou a página em luz neutra de bancada
+     (#15131A); esta seção pega essa cor exata no topo e sobe, quadro a
+     quadro, até o barro quente que a peça 10 continua.
+
+     Estrutura: corredor de QUADROS, não uma coluna de cartões sobre uma foto
+     esticada. Quatro quadros, cada um com data-scene e palco próprios, então
+     nenhuma posição de scroll fica sem sujeito e o palco fixo que produzia o
+     quadro morto no meio da peça deixou de existir.
+
+     O stack é literal: a pilha de lâminas cresce de quadro em quadro (duas,
+     quatro, seis). Elas são superfície de verdade, com face iluminada e
+     sombra projetada, não retângulo de fio de 1 px.
+
+     As três fotos são RGB, sem alfa. Nenhuma delas é tratada como recorte:
+     cada uma é uma CHAPA fotográfica dentro da cena, com moldura, aresta
+     iluminada e sombra, girada no eixo Y sob a perspectiva compartilhada.
+     ========================================================================== -->
+<section class="cena ato-aurora stack" id="stack" data-ato="aurora" aria-labelledby="stack-tit">
+
+  <svg class="icones-defs" aria-hidden="true">
+    <symbol id="icone-numero" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h3"/><circle cx="15.5" cy="16" r="2.5"/></symbol>
+    <symbol id="icone-cardapio" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 9h18M8 13h2M14 13h2M8 17h2M14 17h2"/></symbol>
+    <symbol id="icone-compras" viewBox="0 0 24 24"><path d="M4 8h16l-1.5 12h-13L4 8Z"/><path d="M8 9a4 4 0 0 1 8 0M9 13v3M15 13v3"/></symbol>
+    <symbol id="icone-bolso" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M15 14h6"/><circle cx="16" cy="15" r="1"/></symbol>
+    <symbol id="icone-acesso" viewBox="0 0 24 24"><path d="M6 19h12a4 4 0 0 0 .7-7.9A7 7 0 0 0 5.2 9.4 4.8 4.8 0 0 0 6 19Z"/><path d="M12 10v7M9.5 14.5 12 17l2.5-2.5"/></symbol>
+    <symbol id="icone-ajuda" viewBox="0 0 24 24"><path d="M4 5h16v12H9l-5 4V5Z"/><path d="M8 9h8M8 13h5"/></symbol>
+  </svg>
+
+  <!-- ---------------------------------------------------------------- A --
+       A abertura. O horizonte da peça 7 volta como fio, e o céu já abriu
+       atrás dele. A cozinha é a chapa mais distante e mais fria do ato: ela
+       vai esquentar até o quadro D. -->
+  <div class="aur-quadro aur-quadro--alto aur-quadro--esq stk-a" data-scene data-damp="0.14">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:6">
+        <div class="aur-ceu stk-ceu"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:13">
+        <div class="aur-fio"></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:22; --giro:5deg">
+        <div class="aur-bancada"></div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:30; --giro:6deg">
+        <figure class="aur-chapa stk-cozinha">
+          <picture>
+            <img class="aur-chapa__img" src="img/novo-luz.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
+          </picture>
+          <i class="aur-chapa__luz"></i>
+        </figure>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:46; --giro:5deg">
+        <div class="aur-moldura">
+          <i class="aur-moldura__esq"></i><i class="aur-moldura__dir"></i><i class="aur-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="aur-placa stack-abertura">
+        <div class="stack-abertura__texto">
+          <p class="etiqueta">O material</p>
+          <h2 class="h2 aur-titulo" id="stack-tit" data-reveal>Você já tem o número. Agora falta colocar isso na comida do dia a dia. É isso que você recebe:</h2>
+        </div>
+        <figure class="stack-abertura__foto" data-reveal="escala" style="--atraso:100ms">
+          <img src="img/mae-correndo-carrinho-v1.webp" alt="Mãe correndo no parque com o bebê no carrinho" width="1600" height="893" loading="lazy" decoding="async">
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- B --
+       Itens 1 e 2. A chapa é o prato: o cardápio deixa de ser promessa e
+       vira objeto. A pilha nasce com duas lâminas. -->
+  <div class="aur-quadro aur-quadro--dir stk-b" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:6">
+        <div class="aur-ceu stk-ceu--b"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:14; --giro:7deg">
+        <div class="aur-piso"></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:24; --giro:-4deg">
+        <figure class="aur-chapa stk-prato">
+          <picture>
+            <img class="aur-chapa__img" src="img/novo-cardapio.webp" alt="Prato simples e nutritivo com arroz, feijão, carne e salada" width="1536" height="1024" loading="lazy" decoding="async">
+          </picture>
+          <i class="aur-chapa__luz"></i>
+        </figure>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:32; --giro:6deg">
+        <div class="aur-pilha stk-pilha--b">
+          <i style="--i:0"></i><i style="--i:1"></i>
+        </div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:48; --giro:5deg">
+        <div class="aur-moldura aur-moldura--larga">
+          <i class="aur-moldura__esq"></i><i class="aur-moldura__dir"></i><i class="aur-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="aur-placa">
+        <ol class="aur-itens" start="1">
+          <li class="aur-item" data-reveal>
+            <span class="aur-item__n" aria-hidden="true"><svg><use href="#icone-numero"/></svg></span>
+            <div class="aur-item__txt">
+              <h3 class="h3 aur-item__tit">Seu número guardado</h3>
+              <p class="corpo">A conta fica salva no material. Você pode abrir de novo quando quiser, sem precisar refazer tudo.</p>
+            </div>
+          </li>
+          <li class="aur-item" data-reveal style="--atraso:130ms">
+            <span class="aur-item__n" aria-hidden="true"><svg><use href="#icone-cardapio"/></svg></span>
+            <div class="aur-item__txt">
+              <h3 class="h3 aur-item__tit">Cardápio para 12 semanas</h3>
+              <p class="corpo">Você recebe café da manhã, almoço, jantar e lanches organizados. Não precisa inventar o que comer todo dia.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- C --
+       Itens 3 e 4. A chapa é a mercearia: a lista de compras em embalagem
+       de prateleira. Pilha com quatro lâminas. -->
+  <div class="aur-quadro aur-quadro--esq stk-c" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:6">
+        <div class="aur-ceu stk-ceu--c"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:14; --giro:-6deg">
+        <div class="aur-piso aur-piso--longe"></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:24; --giro:5deg">
+        <figure class="aur-chapa stk-mercado">
+          <picture>
+            <img class="aur-chapa__img" src="img/novo-compras.webp" alt="Compras básicas organizadas sobre uma mesa clara" width="1536" height="1024" loading="lazy" decoding="async">
+          </picture>
+          <i class="aur-chapa__luz"></i>
+        </figure>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:32; --giro:-7deg">
+        <div class="aur-pilha stk-pilha--c">
+          <i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i>
+        </div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:48; --giro:6deg">
+        <div class="aur-moldura">
+          <i class="aur-moldura__esq"></i><i class="aur-moldura__dir"></i><i class="aur-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="aur-placa">
+        <ol class="aur-itens" start="3">
+          <li class="aur-item" data-reveal>
+            <span class="aur-item__n" aria-hidden="true"><svg><use href="#icone-compras"/></svg></span>
+            <div class="aur-item__txt">
+              <h3 class="h3 aur-item__tit">Lista pronta para levar ao mercado</h3>
+              <p class="corpo">A lista mostra pacote, unidade e quilo. É do jeito que os produtos aparecem na prateleira.</p>
+            </div>
+          </li>
+          <li class="aur-item" data-reveal style="--atraso:130ms">
+            <span class="aur-item__n" aria-hidden="true"><svg><use href="#icone-bolso"/></svg></span>
+            <div class="aur-item__txt">
+              <h3 class="h3 aur-item__tit">Opções que cabem no seu bolso</h3>
+              <p class="corpo">Você marcou uma faixa de renda no quiz. O material usa isso para mostrar comidas mais possíveis para a sua casa.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- D --
+       Itens 5 e 6. A luz chega no ponto mais alto do ato: a cozinha volta,
+       perto e quente, e a pilha fecha com seis lâminas. É o estado que a
+       peça 10 recebe. -->
+  <div class="aur-quadro aur-quadro--dir stk-d" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:6">
+        <div class="aur-ceu stk-ceu--d"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:14; --giro:6deg">
+        <div class="aur-piso aur-piso--perto"></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:24; --giro:-5deg">
+        <figure class="aur-chapa stk-cozinha-perto">
+          <picture>
+            <img class="aur-chapa__img" src="img/novo-luz.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
+          </picture>
+          <i class="aur-chapa__luz"></i>
+        </figure>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:34; --giro:7deg">
+        <div class="aur-pilha stk-pilha--d">
+          <i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i>
+          <i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i>
+        </div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:50; --giro:5deg">
+        <div class="aur-moldura aur-moldura--larga">
+          <i class="aur-moldura__esq"></i><i class="aur-moldura__dir"></i><i class="aur-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="aur-placa">
+        <ol class="aur-itens" start="5">
+          <li class="aur-item" data-reveal>
+            <span class="aur-item__n" aria-hidden="true"><svg><use href="#icone-acesso"/></svg></span>
+            <div class="aur-item__txt">
+              <h3 class="h3 aur-item__tit">Receba tudo na hora</h3>
+              <p class="corpo">Depois da compra, o material fica disponível para você abrir no celular sem precisar esperar.</p>
+            </div>
+          </li>
+          <li class="aur-item" data-reveal style="--atraso:130ms">
+            <span class="aur-item__n" aria-hidden="true"><svg><use href="#icone-ajuda"/></svg></span>
+            <div class="aur-item__txt">
+              <h3 class="h3 aur-item__tit">Ajuda para usar o material</h3>
+              <p class="corpo">Se você travar na hora de abrir o cardápio ou usar a lista, pode chamar o suporte para pedir ajuda.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</section>

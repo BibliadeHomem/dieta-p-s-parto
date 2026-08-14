@@ -1,0 +1,137 @@
+<!-- ==========================================================================
+     PEÇA 7 — Virada de permissão
+     Ato: frio, e é aqui que o arco de luz vira. A peça 5 não tem um pixel de
+     âmbar, a 6 tem um ponto quente (o abajur), e a 7 abre o primeiro fio
+     âmbar no horizonte, que a peça 9 completa em amanhecer.
+
+     Sujeito: maos-mae-bebe, com alfa real e a silhueta ancorada na base do
+     recorte. Ele NÃO usa .camada__img: object-fit:cover esticaria a mão até o
+     retângulo da camada e mataria o recorte. Ele entra pela base do quadro
+     como um objeto que existe no espaço, com o horizonte por trás e a moldura
+     por cima.
+
+     Três quadros, um por movimento: a afirmação, a diferença, a devolução.
+     ========================================================================== -->
+<section class="cena ato-frio permissao" data-ato="frio" aria-labelledby="perm-tit">
+
+  <!-- ---------------------------------------------------------------- A -->
+  <div class="quadro quadro--alto quadro--centro per-a" data-scene data-damp="0.12">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:5">
+        <div class="per-horizonte"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:12">
+        <div class="per-fio"></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:20; --giro:8deg">
+        <div class="frio-piso frio-piso--longe per-piso"></div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:26; --giro:6deg; --inclina:4deg">
+        <picture>
+          <source srcset="img/maos-mae-bebe.webp" type="image/webp">
+          <img class="frio-sujeito per-maos" src="img/maos-mae-bebe.png" alt="" width="1800" height="841" loading="lazy" decoding="async">
+        </picture>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:46; --giro:6deg">
+        <div class="frio-moldura frio-moldura--larga">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa per-placa">
+        <h2 class="h1 per-titulo" id="perm-tit" data-reveal>Cuidar de você não é tirar do bebê.</h2>
+        <p class="corpo corpo-l" data-reveal style="--atraso:140ms">Não existe uma conta só, com você de um lado e ele do outro, onde o que sobra pra você é o que falta pra ele. Não funciona assim. Nunca funcionou.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- B -->
+  <div class="quadro quadro--esq per-b" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:5">
+        <div class="per-horizonte per-horizonte--b"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:13; --giro:10deg">
+        <div class="frio-vidraca per-vidraca"><i></i></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:22">
+        <div class="per-fio per-fio--b"></div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:32; --giro:9deg">
+        <div class="frio-piso frio-piso--perto per-piso"></div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:50; --giro:6deg">
+        <div class="frio-moldura frio-moldura--porta">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <p class="corpo corpo-l" data-reveal>O que aconteceu foi outra coisa. Você parou de aparecer na própria lista. Não por escolha. Por cansaço, por prioridade, por não sobrar nem tempo de perguntar o que você precisa. Isso não é falha sua. É o que acontece quando todo mundo, inclusive você, decide que o bebê vem antes em tudo, sempre, sem exceção.</p>
+        <p class="corpo corpo-l frio-linha per-linha" data-reveal="escala" style="--atraso:170ms">Só que existe uma diferença entre vir antes e ser a única coisa que existe.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- C -->
+  <!-- As mãos voltam, menores e mais quentes: o fio âmbar já alcança elas.
+       É a mesma cena da abertura da peça, com a luz um passo adiante. -->
+  <div class="quadro quadro--dir per-c" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:5">
+        <div class="per-horizonte per-horizonte--c"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:12">
+        <div class="per-fio per-fio--c"></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:22; --giro:8deg">
+        <div class="frio-piso per-piso"></div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:30; --giro:7deg; --inclina:3deg">
+        <picture>
+          <source srcset="img/maos-mae-bebe.webp" type="image/webp">
+          <img class="frio-sujeito per-maos per-maos--c" src="img/maos-mae-bebe.png" alt="" width="1800" height="841" loading="lazy" decoding="async">
+        </picture>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:48; --giro:6deg">
+        <div class="frio-moldura">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <p class="corpo corpo-l" data-reveal>O número que apareceu na sua tela há pouco não pediu nada dele. Não tirou tempo do colo, não trocou fralda, não fez ninguém esperar mais pela mamada. Ele fez uma coisa só: colocou você numa conta. A primeira em muito tempo que é sobre você, e não sobre o que você ainda precisa dar conta.</p>
+        <p class="corpo corpo-l frio-batida per-batida" data-reveal="escala" style="--atraso:160ms">Isso não é luxo. É o mínimo.</p>
+        <p class="corpo corpo-l frio-fecho per-fecho" data-reveal style="--atraso:210ms">E o motivo desse número poder ser diferente de tudo que você já tentou antes tem uma explicação. Vale a pena entender de onde ele vem.</p>
+      </div>
+    </div>
+  </div>
+
+</section>

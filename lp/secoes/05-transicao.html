@@ -1,0 +1,183 @@
+<!-- ==========================================================================
+     PEÇA 5 — Transição resultado → oferta
+     Ato: frio. Pré-amanhecer, fundo do poço, sem nenhum fio de âmbar ainda.
+
+     Estrutura: a peça não é um bloco de texto com uma foto atrás. É um
+     corredor de QUADROS. Cada .quadro carrega o seu próprio data-scene e o
+     seu próprio .cena__palco, então nenhuma posição de scroll fica sem
+     sujeito e a foto nunca precisa esticar por três telas.
+
+     A âncora de personagem é a mãe de mae-janela-caneca, que agora tem alfa
+     real: ela é sujeito recortado, não foto retangular. Ela aparece perto no
+     quadro A, e longe, pequena e mais fria no quadro C. Mesma pessoa, câmera
+     recuando. Na peça 6 ela volta, e na 7 só as mãos.
+
+     A luz é diegética: vem da janela que está dentro do recorte dela. O facho
+     no chão e o brilho da vidraça saem desse mesmo ponto.
+     ========================================================================== -->
+<section class="cena ato-frio transicao" id="transicao" data-ato="frio" aria-labelledby="tra-tit">
+
+  <!-- ---------------------------------------------------------------- A -->
+  <div class="quadro quadro--alto quadro--esq tra-a" data-scene data-damp="0.14">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:6">
+        <div class="tra-quarto"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:14; --giro:6deg">
+        <div class="frio-piso"></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:24">
+        <div class="frio-facho tra-facho"></div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:22; --giro:7deg">
+        <picture>
+          <source srcset="img/mae-janela-caneca.webp" type="image/webp">
+          <img class="frio-sujeito tra-mae" src="img/mae-janela-caneca.png" alt="" width="1600" height="1866" loading="lazy" decoding="async">
+        </picture>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:44; --giro:5deg">
+        <div class="frio-moldura">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <h2 class="h2 frio-titulo" id="tra-tit" data-reveal>Pronto. Esse número que apareceu na tela agora é seu.</h2>
+        <p class="corpo corpo-l" data-reveal style="--atraso:110ms">Não é uma média. Não é um número genérico que serve pra qualquer mulher amamentando. É a conta calculada com a sua altura, o seu peso, a sua idade, o jeito como o seu corpo está produzindo leite agora.</p>
+        <p class="corpo corpo-l frio-marca" data-reveal="lado" style="--atraso:180ms">Ninguém tinha feito essa conta por você antes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- B -->
+  <!-- A câmera vira pra janela. A vidraça em ângulo é a fonte de luz da cena
+       inteira e, girada de verdade sob a perspectiva compartilhada, é o que
+       torna a rotação visível: linhas retas convergindo, não um retângulo
+       inclinado. -->
+  <div class="quadro quadro--dir tra-b" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:6">
+        <div class="tra-quarto tra-quarto--fria"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:15; --giro:10deg">
+        <div class="frio-vidraca"><i></i></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:26">
+        <div class="frio-facho tra-facho--b"></div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:34; --giro:8deg">
+        <div class="frio-piso frio-piso--perto"></div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:52; --giro:6deg">
+        <div class="frio-moldura frio-moldura--larga">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <p class="corpo corpo-l frio-linha" data-reveal>Mas um número sozinho não bota comida na mesa.</p>
+        <p class="corpo corpo-l" data-reveal style="--atraso:130ms">Ele te diz o quanto. Não te diz o quê. Não te diz onde comprar, com o dinheiro que sobra depois das contas do mês. Não te diz o que fazer às seis da tarde, com o bebê no colo, quando bate a fome e a cabeça não tem energia pra pensar em refeição nenhuma.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- C -->
+  <!-- Mesma mãe, agora pequena e longe, atrás da moldura. É a continuidade de
+       personagem da barra, só que com a câmera se movendo entre os quadros
+       em vez de repetir a mesma composição. -->
+  <div class="quadro quadro--esq tra-c" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:5">
+        <div class="tra-quarto tra-quarto--fundo"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:12; --giro:9deg">
+        <div class="frio-piso frio-piso--longe"></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:20; --giro:6deg">
+        <picture>
+          <source srcset="img/mae-janela-caneca.webp" type="image/webp">
+          <img class="frio-sujeito tra-mae-longe" src="img/mae-janela-caneca.png" alt="" width="1600" height="1866" loading="lazy" decoding="async">
+        </picture>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:30">
+        <div class="frio-facho tra-facho--c"></div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:48; --giro:7deg">
+        <div class="frio-moldura frio-moldura--porta">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <p class="corpo corpo-l" data-reveal>É essa a parte que ninguém conta. Toda calculadora de caloria para no número. Como se o trabalho tivesse terminado ali.</p>
+        <p class="corpo corpo-l frio-batida" data-reveal="escala" style="--atraso:170ms">Não terminou. Começou.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------------- D -->
+  <div class="quadro quadro--dir tra-d" data-scene data-damp="0.13">
+
+    <div class="cena__palco" aria-hidden="true">
+      <div class="camada" data-z="fundo" style="--deriva:6">
+        <div class="tra-quarto tra-quarto--fria"></div>
+      </div>
+
+      <div class="camada" data-z="tras" style="--deriva:14; --giro:12deg">
+        <div class="frio-vidraca frio-vidraca--baixa"><i></i></div>
+      </div>
+
+      <div class="camada" data-z="meio" style="--deriva:24">
+        <div class="frio-facho tra-facho--d"></div>
+      </div>
+
+      <div class="camada" data-z="frente" style="--deriva:36; --giro:9deg">
+        <div class="frio-piso frio-piso--perto"></div>
+      </div>
+
+      <div class="camada" data-z="topo" style="--deriva:50; --giro:6deg">
+        <div class="frio-moldura">
+          <i class="frio-moldura__esq"></i><i class="frio-moldura__dir"></i><i class="frio-moldura__alto"></i>
+        </div>
+      </div>
+
+      <div class="vinheta"></div>
+    </div>
+
+    <div class="cena__conteudo">
+      <div class="frio-placa">
+        <p class="corpo corpo-l" data-reveal>O seu número vira comida de verdade quando alguém traduz ele em refeição. Não um cardápio genérico de internet, com ingrediente caro e porção medida em xícara que não existe na sua cozinha. Um cardápio pensado a partir desse número, com lista de compras em embalagem que você reconhece no mercado, na faixa que cabe no seu orçamento.</p>
+        <p class="corpo corpo-l frio-marca" data-reveal="lado" style="--atraso:150ms">Isso existe. E leva menos tempo pra te mostrar do que levou pra você chegar até aqui.</p>
+        <p class="corpo corpo-l frio-fecho" data-reveal style="--atraso:200ms">Só que antes de mostrar, tem uma coisa que precisa ficar dita. O motivo de você estar nessa tela, cansada, com fome atrasada e sem tempo sobrando pra si mesma, nunca foi falta de força de vontade.</p>
+      </div>
+    </div>
+  </div>
+
+</section>

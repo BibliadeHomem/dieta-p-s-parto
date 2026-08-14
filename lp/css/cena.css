@@ -1,0 +1,200 @@
+/* ============================================================================
+   Cena — o andaime 3D
+   ----------------------------------------------------------------------------
+   Uma cena é um trecho de página com profundidade real. A estrutura é sempre:
+
+     [data-scene]                 → recebe --p, --c, --e, --v do motor
+       .cena__palco               → perspective + preserve-3d. A câmera.
+         .camada[data-z="fundo"]  → translateZ negativo grande, contra-escala
+         .camada[data-z="meio"]
+         .camada[data-z="frente"]
+       .cena__conteudo            → texto, sempre em 2D, sempre nítido
+
+   Duas regras que não se negociam:
+
+   1. TEXTO NUNCA VAI PARA DENTRO DO 3D. Um translateZ em texto força
+      rasterização em escala errada e ele fica borrado em qualquer tela de
+      alta densidade. As camadas 3D carregam imagem e forma; o texto fica
+      num plano 2D por cima. É por isso que a nossa página lê nítida enquanto
+      a barra borra o texto durante o movimento.
+
+   2. Todo movimento de camada é translate3d/rotate3d/scale3d. Nada de top,
+      left, width ou margin animados. Só composição, zero layout, zero paint.
+   ========================================================================== */
+
+[data-scene] {
+  --p: 0; --c: -1; --e: 0; --v: 0;
+  position: relative;
+}
+
+.cena {
+  position: relative;
+  isolation: isolate;
+  background: var(--fundo);
+  color: var(--texto);
+  padding-block: var(--s-7);
+  /* A transição de cor entre atos acontece aqui, e é lenta de propósito:
+     o amanhecer não pode ser percebido como um corte. */
+  transition: background-color 900ms var(--ease-suave), color 900ms var(--ease-suave);
+}
+
+/* Emenda entre atos: a cena seguinte sobe por cima com um degradê da própria
+   cor, então a troca de paleta nunca aparece como uma linha reta. */
+.cena::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: clamp(4rem, 12vh, 10rem);
+  background: linear-gradient(to bottom, var(--fundo), transparent);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.cena--alta { min-block-size: 100svh; display: grid; align-content: center; }
+.cena--dupla { min-block-size: 175svh; }
+
+/* --- Palco ------------------------------------------------------------- */
+
+.cena__palco {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  perspective: var(--persp);
+  perspective-origin: 50% 45%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  overflow: clip;
+}
+.cena__palco--fixo {
+  position: sticky;
+  inset-block-start: 0;
+  block-size: 100svh;
+}
+
+.camada {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* A contra-escala mantém a camada do mesmo tamanho aparente depois de ser
+   empurrada para trás. Fórmula: escala = (perspectiva - z) / perspectiva.
+   Sem isso, empurrar para trás só encolhe, e o efeito lê como zoom-out. */
+.camada[data-z="fundo"]  { --z: var(--z-fundo);  --k: 1.86; }
+.camada[data-z="tras"]   { --z: var(--z-tras);   --k: 1.50; }
+.camada[data-z="meio"]   { --z: var(--z-meio);   --k: 1.23; }
+.camada[data-z="frente"] { --z: var(--z-frente); --k: 1.08; }
+.camada[data-z="topo"]   { --z: var(--z-topo);   --k: 0.88; }
+
+/* --deriva: quanto essa camada anda no eixo Y, em svh, do começo ao fim da
+   cena. Negativo sobe. Camadas de frente derivam mais: é isso que produz a
+   sensação de que a câmera atravessa o espaço em vez de deslizar sobre ele. */
+.camada {
+  --deriva: 0;
+  --giro: 0deg;
+  --inclina: 0deg;
+  --escala: 1;
+  transform:
+    translate3d(0, calc(var(--deriva) * (var(--p) - 0.5) * 1svh), var(--z))
+    rotateY(calc(var(--giro) * (var(--p) - 0.5)))
+    rotateX(calc(var(--inclina) * (var(--p) - 0.5)))
+    scale(calc(var(--k) * var(--escala)));
+}
+
+.camada[data-z="fundo"]  { --deriva: 10; }
+.camada[data-z="tras"]   { --deriva: 22; }
+.camada[data-z="meio"]   { --deriva: 40; }
+.camada[data-z="frente"] { --deriva: 68; }
+.camada[data-z="topo"]   { --deriva: 96; }
+
+.camada__img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* --- Conteúdo (sempre 2D, sempre nítido) -------------------------------- */
+
+.cena__conteudo {
+  position: relative;
+  z-index: 5;
+  width: var(--largura);
+  margin-inline: auto;
+}
+.cena__conteudo--texto { width: var(--largura-texto); }
+
+/* --- Reveal ------------------------------------------------------------ */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 1.4rem, 0);
+  transition:
+    opacity 780ms var(--ease-saida) var(--atraso, 0ms),
+    transform 900ms var(--ease-saida) var(--atraso, 0ms);
+}
+[data-reveal].is-in { opacity: 1; transform: none; }
+
+[data-reveal="lado"]  { transform: translate3d(-1.6rem, 0, 0); }
+[data-reveal="escala"]{ transform: translate3d(0, 1rem, 0) scale(0.965); }
+[data-reveal="giro"]  { transform: perspective(900px) rotateX(9deg) translate3d(0, 1.6rem, 0); transform-origin: 50% 100%; }
+
+.reveal-serie > * { --atraso: calc(var(--i, 0) * 85ms); }
+
+/* --- Névoa / vinheta de profundidade ------------------------------------ */
+/* Atenuar o que está longe é o truque de profundidade mais barato que existe
+   e o que a barra não faz: lá o fundo tem o mesmo contraste da frente, o que
+   achata a cena inteira. */
+
+.nevoa {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 40%, transparent 30%, color-mix(in oklab, var(--fundo) 88%, transparent) 100%);
+}
+.vinheta {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  box-shadow: inset 0 0 clamp(6rem, 18vw, 16rem) clamp(2rem, 6vw, 6rem)
+              color-mix(in oklab, var(--fundo) 82%, transparent);
+}
+
+.luz {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(clamp(30px, 7vw, 90px));
+  mix-blend-mode: screen;
+}
+
+/* --- Mobile ------------------------------------------------------------ */
+/* Em telas estreitas a perspectiva encurta e as derivas caem: o mesmo
+   deslocamento em svh atravessa uma fração muito maior de uma tela de 390 px,
+   e o que era profundidade vira embrulho. */
+
+@media (max-width: 47.9375rem) {
+  :root { --persp: clamp(520px, 130vw, 900px); }
+  .camada[data-z="fundo"]  { --deriva: 6;  --k: 1.62; --z: -560px; }
+  .camada[data-z="tras"]   { --deriva: 13; --k: 1.38; --z: -340px; }
+  .camada[data-z="meio"]   { --deriva: 24; --k: 1.18; --z: -160px; }
+  .camada[data-z="frente"] { --deriva: 40; --k: 1.06; --z: -55px; }
+  .camada[data-z="topo"]   { --deriva: 56; --k: 0.93; --z: 70px; }
+  .cena { padding-block: var(--s-6); }
+}
+
+/* Telas muito largas: a perspectiva precisa abrir junto, senão a distorção
+   nas bordas denuncia o truque. */
+@media (min-width: 100rem) {
+  :root { --persp: 1800px; }
+}
+
+/* Sem movimento: as camadas ficam onde estão, o texto aparece, e nada mais. */
+.reduced-motion .camada { transform: translate3d(0, 0, var(--z)) scale(var(--k)); }
+.reduced-motion [data-reveal] { opacity: 1; transform: none; transition: none; }

@@ -1,0 +1,507 @@
+/* ============================================================================
+   PEÇA 4 — Tela de resultado do quiz
+   ----------------------------------------------------------------------------
+   Esta é a dobradiça da página. As peças 1 a 3 são penumbra; as 5 a 7 são o
+   ato frio. Aqui, e só aqui no primeiro terço, alguma coisa ACENDE. O quadro
+   mais luminoso até o amanhecer nasce de um objeto que existe na cena: o halo
+   atrás da placa do número. Luz diegética, não filtro.
+
+   ----------------------------------------------------------------------------
+   A PLACA E O NÚMERO — por que são dois elementos e não um
+   ----------------------------------------------------------------------------
+   O número em kcal é o maior tipo da página e o elemento mais importante dela.
+   Se ele entrasse numa camada 3D, o translateZ o rasterizaria numa escala e
+   depois o projetaria em outra: em tela retina isso é borrão garantido, e
+   borrão exatamente no dígito que a leitora veio buscar.
+
+   Então o bloco do número é um composto de dois planos irmãos, nunca aninhados:
+
+     .numero-central            2D, position: relative, sem transform
+       .numero-palco            3D: perspective própria + overflow clip
+         .numero-halo           camada de luz, mix-blend-mode: screen
+         .numero-placa          a placa, translateZ + rotate, contra-escalada
+       .numero-texto            2D puro: label, número, legenda. ZERO transform.
+
+   O texto é IRMÃO do palco, não filho: nenhum ancestral dele tem perspective,
+   preserve-3d ou transform, então ele é pintado direto na resolução do
+   dispositivo, parado ou em movimento.
+
+   A sincronia entre os dois planos é feita por uma custom property só:
+   `--assento` (0 = placa longe e torta, 1 = placa assentada e reta), derivada
+   de --p e lida pelos dois lados. A placa usa --assento para geometria; o
+   texto usa a mesma variável para opacidade e para o brilho do dígito. Um
+   valor, duas leituras, nunca duas animações que possam dessincronizar.
+
+   `.numero-central` carrega o seu próprio [data-scene] porque o número precisa
+   acender quando ELE cruza o centro da tela, não quando a seção inteira cruza.
+   --assento chega exatamente a 1 em --p 0.5, que é onde --e vale 1.
+   ========================================================================== */
+
+.resultado {
+  padding-block: var(--s-8) var(--s-7);
+  overflow: clip;               /* o halo nunca vira rolagem horizontal */
+}
+
+/* --- Camadas do palco da seção ------------------------------------------ */
+
+.res__poeira {
+  opacity: calc(0.16 + var(--e) * 0.26);
+  object-position: 38% 62%;
+}
+
+/* O clarão da cena inteira é fraco de propósito: quem acende é o número.
+   Teto de opacidade calculado para o corpo de texto continuar acima de 4.5:1
+   sobre ele. */
+.res__clarao {
+  inset-inline-start: 50%;
+  inset-block-start: 34%;
+  inline-size: min(120vw, 70rem);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: radial-gradient(circle, rgb(255 201 142 / 0.5), rgb(167 211 192 / 0.14) 42%, transparent 70%);
+  opacity: calc(0.08 + var(--e) * 0.2);
+}
+
+/* Piso em fuga. É o que dá chão ao número: sem um plano horizontal, uma placa
+   flutuando lê como sobreposição, não como objeto no espaço. */
+.res__piso {
+  position: absolute;
+  inset-inline: -60%;
+  inset-block-end: -24%;
+  block-size: 84%;
+  transform: rotateX(76deg);
+  transform-origin: 50% 100%;
+  background:
+    repeating-linear-gradient(to right,
+      rgb(242 183 124 / 0.16) 0 1px, transparent 1px 7.5%),
+    repeating-linear-gradient(to bottom,
+      rgb(242 183 124 / 0.13) 0 1px, transparent 1px 9%);
+  -webkit-mask-image: radial-gradient(58% 70% at 50% 100%, #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 82%);
+          mask-image: radial-gradient(58% 70% at 50% 100%, #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 82%);
+  opacity: calc(0.35 + var(--e) * 0.65);
+}
+
+/* --- Grade da peça ------------------------------------------------------ */
+
+.resultado__grade {
+  display: grid;
+  gap: var(--s-6);
+  align-items: start;
+}
+
+.resultado__cab .h1 { max-inline-size: 15ch; }
+.resultado__titulo { margin-block-start: var(--s-3); color: var(--tinta-clara); }
+.resultado__cab .sub { margin-block-start: var(--s-4); }
+
+/* --- Recibo do cálculo -------------------------------------------------- */
+/* O trabalho visível. Os quatro itens empilham como folhas: cada um entra de
+   um Z um pouco mais fundo que o anterior e assenta na pilha. */
+
+.recibo-calculo {
+  position: relative;
+  padding: var(--s-4) var(--s-4) var(--s-4) 0;
+  border-block-start: 1px solid color-mix(in oklab, var(--ambar) 26%, transparent);
+  counter-reset: passo;
+}
+.recibo-calculo::before {
+  content: "";
+  position: absolute;
+  inset-block-start: -1px;
+  inset-inline-start: 0;
+  inline-size: clamp(3rem, 20%, 7rem);
+  block-size: 2px;
+  background: var(--ambar);
+  transform-origin: left center;
+  transform: scaleX(var(--e));
+}
+
+.recibo-titulo {
+  font-size: var(--t-sm);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto);
+}
+
+.recibo-calculo ul {
+  margin-block-start: var(--s-4);
+  display: grid;
+  gap: var(--s-3);
+}
+
+.recibo-calculo li {
+  position: relative;
+  padding: var(--s-3) var(--s-3) var(--s-3) clamp(2.9rem, 9vw, 3.9rem);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--texto-2);
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--noite-2) 92%, var(--ambar) 8%),
+    color-mix(in oklab, var(--noite) 96%, transparent));
+  border: 1px solid color-mix(in oklab, var(--tinta-clara) 9%, transparent);
+  border-radius: var(--raio-2);
+  box-shadow: var(--sombra-1);
+}
+.recibo-calculo li::before {
+  counter-increment: passo;
+  content: counter(passo, decimal-leading-zero);
+  position: absolute;
+  inset-inline-start: var(--s-3);
+  inset-block-start: calc(var(--s-3) + 0.15em);
+  font-family: var(--fonte-num);
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ambar);
+  opacity: 0.85;
+}
+
+/* Entrada em cascata com deslocamento em Z. O transform é transitório e
+   termina em `none`: enquanto o item está parado, o texto é 2D puro. */
+.recibo-calculo li[data-reveal],
+.projecao li[data-reveal] {
+  transform:
+    perspective(800px)
+    rotateX(11deg)
+    translate3d(0, calc(1.1rem + var(--i, 0) * 0.22rem), calc(-42px - var(--i, 0) * 24px));
+  transform-origin: 50% -30%;
+}
+.recibo-calculo li[data-reveal].is-in,
+.projecao li[data-reveal].is-in { transform: none; }
+
+.recibo-nota,
+.projecao-nota { --atraso: calc(var(--i, 0) * 85ms); }
+
+.recibo-nota {
+  margin-block-start: var(--s-4);
+  font-size: var(--t-sm);
+  color: var(--texto);
+  font-weight: 620;
+}
+
+/* O valor que o quiz preenche em runtime. Marcado para a leitora reconhecer
+   que aquele pedaço da frase é a resposta dela. */
+.dado {
+  color: var(--ambar-forte);
+  font-weight: 680;
+  white-space: nowrap;
+  border-block-end: 1px solid color-mix(in oklab, var(--ambar) 45%, transparent);
+}
+
+/* --- O número ----------------------------------------------------------- */
+
+.numero-central {
+  --placa-sobra: clamp(1.3rem, 4.5vw, 2.4rem);
+  --halo-sobra: clamp(2.5rem, 8vw, 6rem);
+  --pk: 1300;                    /* perspectiva local, sem unidade, p/ calc  */
+  --zk: 520;                     /* profundidade de partida da placa, em px  */
+  --giro-placa: -17deg;
+  --inclina-placa: 9deg;
+
+  /* A ÚNICA variável de sincronia entre o plano 3D e o plano 2D.
+     0 = placa longe, torta e chegando. 1 = placa assentada, reta, no lugar.
+     Bate 1 em --p 0.5, que é o instante em que --e vale 1. */
+  --assento: clamp(0, calc(var(--p) * 2.4 - 0.2), 1);
+  --voo: calc(1 - var(--assento));
+
+  position: relative;
+  isolation: isolate;
+  margin-block: var(--s-3);
+}
+
+.numero-palco {
+  position: absolute;
+  inset: calc(var(--halo-sobra) * -1);
+  z-index: 0;
+  perspective: calc(var(--pk) * 1px);
+  perspective-origin: 50% 46%;
+  transform-style: preserve-3d;
+  overflow: clip;                /* o halo nunca escapa para o texto vizinho */
+  pointer-events: none;
+  border-radius: var(--raio-3);
+}
+
+/* O halo é camada separada, ATRÁS da placa, e é o "acender" da página.
+   mix-blend-mode: screen sobre o fundo de noite: só soma luz, nunca escurece.
+   A máscara radial garante que a borda do clip nunca apareça como linha. */
+.numero-halo {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  opacity: calc(0.1 + var(--e) * 0.6);
+  transform: scale(calc(0.62 + var(--e) * 0.46));
+  -webkit-mask-image: radial-gradient(closest-side, #000 40%, rgb(0 0 0 / 0.4) 70%, transparent 100%);
+          mask-image: radial-gradient(closest-side, #000 40%, rgb(0 0 0 / 0.4) 70%, transparent 100%);
+}
+/* <picture> vira display:contents para que a porcentagem abaixo resolva
+   contra o palco, e não contra um wrapper que encolhe até o tamanho
+   intrínseco da imagem. O centro é feito por posicionamento absoluto, não por
+   alinhamento de grade: um item que estoura a área de grade não centraliza de
+   forma confiável entre navegadores. */
+.numero-halo picture { display: contents; }
+.numero-halo img {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  translate: -50% -50%;
+  inline-size: 128%;
+  max-inline-size: none;
+  block-size: auto;
+  aspect-ratio: 1;
+}
+
+/* A PLACA: este é o objeto 3D. Chega de longe (translateZ negativo grande),
+   torta nos dois eixos, e assenta reta. A contra-escala (pk + zk) / pk mantém
+   o tamanho aparente constante durante a viagem: sem ela o movimento lê como
+   zoom, não como aproximação.
+   O fundo é OPACO de propósito: é o que garante contraste do número por cima
+   do halo, que é claro. */
+.numero-placa {
+  position: absolute;
+  inset: calc(var(--halo-sobra) - var(--placa-sobra));
+  border-radius: var(--raio-3);
+  background:
+    linear-gradient(168deg, #1B1218 0%, #120D13 46%, #0B080C 100%);
+  border: 1px solid color-mix(in oklab, var(--ambar) 30%, transparent);
+  box-shadow:
+    var(--sombra-3),
+    inset 0 1px 0 color-mix(in oklab, var(--ambar-forte) 22%, transparent);
+  transform-origin: 50% 62%;
+  transform:
+    translate3d(calc(var(--voo) * -5%), calc(var(--voo) * 7%), calc(var(--voo) * var(--zk) * -1px))
+    rotateY(calc(var(--voo) * var(--giro-placa)))
+    rotateX(calc(var(--voo) * var(--inclina-placa)))
+    scale(calc(1 + var(--voo) * var(--zk) / var(--pk)));
+}
+
+/* O NÚMERO: plano 2D por cima, sem uma linha de transform, nunca.
+   Só opacidade responde ao scroll, e ela sobe e fica: o número não pode
+   apagar quando a leitora rola para ler o resto. */
+.numero-texto {
+  position: relative;
+  z-index: 1;
+  padding: var(--placa-sobra) calc(var(--placa-sobra) * 1.15);
+  text-align: center;
+  opacity: clamp(0.18, calc(var(--p) * 2.6), 1);
+}
+
+.numero-label {
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  color: var(--tinta-media);
+  max-inline-size: 26ch;
+  margin-inline: auto;
+}
+
+.numero-valor {
+  margin-block: var(--s-2);
+  font-family: var(--fonte-num);
+  font-size: clamp(3.2rem, 14vw, 6.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--salvia-clara);
+  /* brilho estático: text-shadow animado é paint, e paint por scroll está
+     fora do contrato. O que varia com --assento é só a opacidade do bloco. */
+  text-shadow: 0 0 34px rgb(127 181 155 / 0.42), 0 2px 0 rgb(0 0 0 / 0.5);
+  overflow-wrap: anywhere;
+}
+.numero-unidade {
+  font-size: 0.34em;
+  font-weight: 620;
+  letter-spacing: 0.02em;
+  color: #B5D8C7;   /* salvia clara puxada para o branco, valor fixo: este é o
+                       segundo texto mais importante da página e não pode
+                       depender de como cada navegador resolve color-mix */
+}
+
+.numero-legenda {
+  font-size: var(--t-sm);
+  line-height: 1.5;
+  color: var(--texto-2);
+  max-inline-size: 34ch;
+  margin-inline: auto;
+}
+
+/* --- Bloco de segurança ------------------------------------------------- */
+
+.bloco-seguranca {
+  display: grid;
+  gap: var(--s-3);
+  padding-inline-start: var(--s-4);
+  border-inline-start: 1px solid color-mix(in oklab, var(--tinta-clara) 14%, transparent);
+}
+.bloco-seguranca .h3 { color: var(--tinta-clara); }
+.bloco-seguranca p {
+  font-size: var(--t-sm);
+  line-height: 1.6;
+  color: var(--texto-2);
+  max-inline-size: var(--medida-larga);
+  text-wrap: pretty;
+}
+
+/* --- Projeção ----------------------------------------------------------- */
+/* Fala de energia e de rotina. Nunca de peso, de medida, de prazo. A nota
+   final sobre não haver prazo é obrigatória e é o fecho do bloco. */
+
+.projecao { display: grid; gap: var(--s-3); }
+
+.projecao-titulo {
+  font-size: var(--t-md);
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  color: var(--tinta-clara);
+  text-wrap: balance;
+}
+.projecao-intro { font-size: var(--t-sm); color: var(--texto-2); }
+
+.projecao ul { display: grid; gap: var(--s-2); margin-block-start: var(--s-2); }
+.projecao li {
+  position: relative;
+  padding-inline-start: 1.75em;
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  color: var(--texto-2);
+}
+.projecao li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.62em;
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  border-radius: 50%;
+  background: var(--salvia);
+  box-shadow: 0 0 10px rgb(127 181 155 / 0.6);
+}
+
+.projecao-nota {
+  margin-block-start: var(--s-2);
+  font-size: var(--t-sm);
+  line-height: 1.55;
+  /* --tinta-fraca reprovou aqui: sobre o clarão desta cena ela mede 3.9:1.
+     Esta nota é obrigatória por compliance, então ela sobe para --texto-2. */
+  color: var(--texto-2);
+  border-block-start: 1px dashed color-mix(in oklab, var(--tinta-clara) 16%, transparent);
+  padding-block-start: var(--s-3);
+}
+
+/* --- Loop aberto -------------------------------------------------------- */
+
+.loop-aberto {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-4);
+  text-align: center;
+  padding: var(--s-5) var(--s-4);
+  border-radius: var(--raio-3);
+  background:
+    radial-gradient(120% 140% at 50% 0%,
+      color-mix(in oklab, var(--ambar-fundo) 26%, transparent) 0%,
+      transparent 62%),
+    color-mix(in oklab, var(--noite-2) 88%, transparent);
+  border: 1px solid color-mix(in oklab, var(--ambar) 18%, transparent);
+}
+.loop-aberto > p:first-child {
+  font-size: var(--t-md);
+  line-height: 1.5;
+  color: var(--texto);
+  max-inline-size: 44ch;
+  text-wrap: pretty;
+}
+.cta-transicao { min-inline-size: min(100%, 24rem); }
+.microcopy-cta {
+  font-size: var(--t-sm);
+  /* mesma correção da projecao-nota: o card do loop é o ponto mais claro da
+     seção depois da placa, e --tinta-fraca cai para 4.1:1 em cima dele */
+  color: var(--texto-2);
+  max-inline-size: 40ch;
+}
+
+/* --- Desktop: o recibo ao lado do número -------------------------------- */
+/* A conta à esquerda e o resultado à direita, no mesmo quadro. A leitora vê
+   o trabalho e o produto do trabalho ao mesmo tempo. */
+
+@media (min-width: 64rem) {
+  .resultado__grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+    column-gap: clamp(2.5rem, 5vw, 5rem);
+    row-gap: var(--s-7);
+  }
+  .resultado__cab  { grid-column: 1 / -1; }
+  .recibo-calculo  { grid-column: 1; }
+  .numero-central  { grid-column: 2; align-self: center; }
+  .bloco-seguranca { grid-column: 1; }
+  .projecao        { grid-column: 2; }
+  .loop-aberto     { grid-column: 1 / -1; }
+
+  .recibo-calculo li { font-size: var(--t-base); }
+  .bloco-seguranca p, .projecao li { font-size: var(--t-base); }
+}
+
+/* Telas muito largas: a placa não pode virar um outdoor. Trava de medida. */
+@media (min-width: 100rem) {
+  .numero-central { --zk: 620; --pk: 1700; max-inline-size: 44rem; }
+  .numero-valor { font-size: clamp(4rem, 6vw, 7.2rem); }
+}
+
+/* --- Mobile ------------------------------------------------------------- */
+/* Profundidade real em 390 px: a placa continua chegando de longe, só que de
+   uma distância proporcional à perspectiva curta. Mesma sensação, sem
+   embrulho: o giro cai porque a placa ocupa quase a largura da tela e um
+   rotateY de 17 graus jogaria metade dela para fora do quadro. */
+
+@media (max-width: 47.9375rem) {
+  .resultado { padding-block: var(--s-7) var(--s-6); }
+  .numero-central {
+    --pk: 820;
+    --zk: 300;
+    --giro-placa: -11deg;
+    --inclina-placa: 7deg;
+  }
+  /* a placa cresce --placa-sobra para fora do bloco de texto; sem esta margem
+     ela encostaria exatamente na borda da tela em 390 px e a moldura de 1 px
+     seria cortada. Assim a placa fica alinhada com a coluna de texto da
+     página inteira. */
+  .numero-central { margin-inline: var(--placa-sobra); }
+  .numero-valor { font-size: clamp(2.8rem, 13.5vw, 4.4rem); }
+  .recibo-calculo li { padding-inline-start: clamp(2.6rem, 11vw, 3.4rem); }
+  .cta-transicao { inline-size: 100%; }
+  .loop-aberto { padding-inline: var(--s-3); }
+}
+
+/* Celular deitado: a seção não pode virar uma coluna infinita de 8 telas. */
+@media (max-height: 33rem) and (orientation: landscape) and (min-width: 40rem) {
+  .resultado__grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--s-5);
+  }
+  .resultado__cab, .loop-aberto { grid-column: 1 / -1; }
+  .numero-central { align-self: center; }
+}
+
+/* --- Sem movimento ------------------------------------------------------ */
+/* A placa fica assentada e reta, o halo fica aceso num nível fixo, o número
+   é legível. A cena inteira faz sentido parada. */
+
+.reduced-motion .numero-placa,
+.reduced-motion .recibo-calculo li[data-reveal],
+.reduced-motion .projecao li[data-reveal] { transform: none; }
+.reduced-motion .numero-halo { transform: scale(1); opacity: 0.5; }
+.reduced-motion .numero-texto { opacity: 1; }
+.reduced-motion .recibo-calculo::before { transform: scaleX(1); }
+.reduced-motion .res__clarao { opacity: 0.2; }
+.reduced-motion .res__poeira { opacity: 0.3; }
+.reduced-motion .res__piso { opacity: 0.8; }
+
+@media (prefers-reduced-motion: reduce) {
+  .numero-placa,
+  .recibo-calculo li[data-reveal],
+  .projecao li[data-reveal] { transform: none; }
+  .numero-halo { transform: scale(1); opacity: 0.5; }
+  .numero-texto { opacity: 1; }
+  .recibo-calculo::before { transform: scaleX(1); }
+  .res__clarao { opacity: 0.2; }
+  .res__poeira { opacity: 0.3; }
+  .res__piso { opacity: 0.8; }
+}
